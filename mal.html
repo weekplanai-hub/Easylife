@@ -155,27 +155,27 @@ Mål · Easylife
       gap: 24px;
     }
 
-    .view-tabs {
-      display: inline-flex;
+    .toggle-add-button {
+      border: none;
       background: rgba(255, 255, 255, 0.52);
       border-radius: 999px;
-      padding: 4px;
+      padding: 12px 28px;
+      font-weight: 600;
+      color: var(--text-primary);
+      cursor: pointer;
       border: 1px solid rgba(255, 255, 255, 0.4);
       box-shadow: 0 10px 30px rgba(31, 63, 104, 0.12);
+      transition: background 160ms ease, transform 160ms ease;
     }
 
-    .view-tabs button {
-      border: none;
-      background: transparent;
-      padding: 10px 20px;
-      border-radius: 999px;
-      font-weight: 500;
-      color: var(--text-secondary);
-      cursor: pointer;
-      transition: background 160ms ease, color 160ms ease;
+    .toggle-add-button:hover,
+    .toggle-add-button:focus-visible {
+      background: rgba(255, 255, 255, 0.82);
+      transform: translateY(-1px);
+      outline: none;
     }
 
-    .view-tabs button[aria-pressed="true"] {
+    .toggle-add-button[aria-pressed="true"] {
       background: #0f1c2e;
       color: #ffffff;
       box-shadow: 0 10px 25px rgba(15, 28, 46, 0.22);
@@ -193,16 +193,101 @@ Mål · Easylife
       gap: 16px;
     }
 
+    .quick-add[hidden] {
+      display: none;
+    }
+
     .quick-add h2 {
       margin: 0;
       font-size: 1.25rem;
     }
 
-    .quick-add form {
+    .quick-add__layout {
       display: grid;
+      gap: clamp(20px, 2vw, 32px);
+      grid-template-columns: minmax(220px, 1fr) minmax(260px, 1.3fr);
+      align-items: start;
+    }
+
+    .media-field {
+      display: flex;
+      flex-direction: column;
       gap: 16px;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      align-items: end;
+    }
+
+    .image-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .image-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 18px;
+      border-radius: 14px;
+      border: 1px solid rgba(15, 28, 46, 0.12);
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--text-primary);
+      font-weight: 500;
+      font: inherit;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    .image-action:hover,
+    .image-action:focus-visible {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px rgba(15, 28, 46, 0.14);
+      outline: none;
+    }
+
+    .image-action[aria-disabled="true"] {
+      opacity: 0.6;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .image-action[aria-disabled="true"]:hover,
+    .image-action[aria-disabled="true"]:focus-visible {
+      transform: none;
+      box-shadow: none;
+    }
+
+    .image-preview {
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px dashed rgba(15, 28, 46, 0.18);
+      background: linear-gradient(135deg, rgba(15, 28, 46, 0.08), rgba(15, 28, 46, 0.02));
+      min-height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+      text-align: center;
+      padding: 24px;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .image-preview::after {
+      content: attr(data-placeholder);
+      position: relative;
+      z-index: 1;
+    }
+
+    .image-preview[data-has-image="true"]::after {
+      content: '';
+    }
+
+    .quick-add form {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
     }
 
     .form-field {
@@ -227,8 +312,39 @@ Mål · Easylife
       min-height: 48px;
     }
 
+    .form-field--title input {
+      font-size: clamp(1.75rem, 2.4vw, 2.3rem);
+      font-weight: 600;
+      padding-top: 18px;
+      padding-bottom: 18px;
+    }
+
     .form-field textarea {
       min-height: 52px;
+    }
+
+    .goal-details {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .goal-details__row {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
     }
 
     .quick-add button[type="submit"] {
@@ -247,6 +363,11 @@ Mål · Easylife
       transform: translateY(-1px);
       box-shadow: 0 12px 30px rgba(15, 120, 212, 0.28);
       outline: none;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
     }
 
     .goals-grid {
@@ -371,7 +492,9 @@ Mål · Easylife
       }
       .menu a { padding: 10px 14px; }
       main { padding: 32px 24px 48px; }
-      .quick-add form { grid-template-columns: 1fr; }
+      .quick-add__layout {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -401,31 +524,50 @@ Mål
           </h1>
           <p>Få oversikt over livsmålene dine og hold motivasjonen oppe med klare beskrivelser og frister.</p>
         </div>
-        <div class="view-tabs" role="toolbar" aria-label="Visning">
-          <button type="button" aria-pressed="true">Delmål</button>
-          <button type="button" aria-pressed="false">Fremdrift</button>
-          <button type="button" aria-pressed="false">Start</button>
-        </div>
+        <button id="toggle-add-button" class="toggle-add-button" type="button" aria-pressed="false" aria-controls="quick-add">
+          Legg til
+        </button>
       </div>
-      <section class="quick-add" aria-labelledby="quick-add-title">
+      <section class="quick-add" id="quick-add" aria-labelledby="quick-add-title" hidden>
         <div>
-          <h2 id="quick-add-title">Legg til mål raskt</h2>
+          <h2 id="quick-add-title">Legg til mål</h2>
           <p>Beskriv hva du vil oppnå, sett en deadline og minne deg selv på hvorfor.</p>
         </div>
         <form id="quick-add-form">
-          <div class="form-field">
-            <label for="goal-title">Hva</label>
-            <input id="goal-title" name="goal-title" type="text" placeholder="F.eks. Løpe en maraton" required />
+          <div class="quick-add__layout">
+            <div class="media-field">
+              <div id="goal-image-preview" class="image-preview" data-placeholder="Legg til et inspirerende bilde" data-has-image="false"></div>
+              <div class="image-actions">
+                <a id="goal-image-suggest" class="image-action" href="#" target="_blank" rel="noopener noreferrer">Finn bilde på nett</a>
+                <button id="goal-image-choose" class="image-action" type="button">Velg fra fil</button>
+              </div>
+              <div class="form-field">
+                <label for="goal-image-url">Bildeadresse (URL)</label>
+                <input id="goal-image-url" name="goal-image-url" type="url" placeholder="https://..." inputmode="url" />
+              </div>
+              <label class="visually-hidden" for="goal-image-upload">Last opp bilde</label>
+              <input id="goal-image-upload" name="goal-image-upload" type="file" accept="image/*" class="visually-hidden" />
+            </div>
+            <div class="goal-details">
+              <div class="form-field form-field--title">
+                <label for="goal-title">Mål</label>
+                <input id="goal-title" name="goal-title" type="text" placeholder="F.eks. Løpe en maraton" required />
+              </div>
+              <div class="goal-details__row">
+                <div class="form-field">
+                  <label for="goal-deadline">Deadline</label>
+                  <input id="goal-deadline" name="goal-deadline" type="date" />
+                </div>
+              </div>
+              <div class="form-field">
+                <label for="goal-why">Hvorfor</label>
+                <textarea id="goal-why" name="goal-why" rows="3" placeholder="Hva motiverer deg?" required></textarea>
+              </div>
+            </div>
           </div>
-          <div class="form-field">
-            <label for="goal-deadline">Deadline</label>
-            <input id="goal-deadline" name="goal-deadline" type="date" />
+          <div class="form-actions">
+            <button type="submit">Legg til mål</button>
           </div>
-          <div class="form-field">
-            <label for="goal-why">Hvorfor</label>
-            <textarea id="goal-why" name="goal-why" rows="2" placeholder="Hva motiverer deg?" required></textarea>
-          </div>
-          <button type="submit">Legg til mål</button>
         </form>
       </section>
     </section>
@@ -543,6 +685,13 @@ Mål
     const goalsGrid = document.getElementById('goals-grid');
     const quickAddForm = document.getElementById('quick-add-form');
     const titleInput = document.getElementById('goal-title');
+    const toggleAddButton = document.getElementById('toggle-add-button');
+    const quickAddSection = document.getElementById('quick-add');
+    const imageUrlInput = document.getElementById('goal-image-url');
+    const imageUploadInput = document.getElementById('goal-image-upload');
+    const imagePreview = document.getElementById('goal-image-preview');
+    const imageSuggestLink = document.getElementById('goal-image-suggest');
+    const imageChooseButton = document.getElementById('goal-image-choose');
 
     const formatDeadline = (deadline) => {
       if (!deadline) return 'Ingen deadline';
@@ -620,7 +769,103 @@ Mål
       goalsGrid.appendChild(fragment);
     };
 
-    quickAddForm.addEventListener('submit', (event) => {
+    const getNextFallbackImage = () => {
+      const image = fallbackImages[fallbackIndex % fallbackImages.length];
+      fallbackIndex += 1;
+      return image;
+    };
+
+    const sanitizeForCssUrl = (value) => value.replace(/(["'\\])/g, '\\$1');
+
+    const resetImagePreview = () => {
+      imagePreview.style.backgroundImage = '';
+      imagePreview.dataset.hasImage = 'false';
+    };
+
+    const updatePreviewFromSource = (source) => {
+      if (source) {
+        const sanitizedSource = sanitizeForCssUrl(source);
+        imagePreview.style.backgroundImage = `linear-gradient(rgba(15, 28, 46, 0.2), rgba(15, 28, 46, 0.2)), url("${sanitizedSource}")`;
+        imagePreview.dataset.hasImage = 'true';
+      } else {
+        resetImagePreview();
+      }
+    };
+
+    const updateImageSuggestionLink = () => {
+      const title = titleInput.value.trim();
+      if (!imageSuggestLink) {
+        return;
+      }
+
+      if (title) {
+        const query = encodeURIComponent(`${title} inspirasjon`);
+        imageSuggestLink.href = `https://unsplash.com/s/photos/${query}`;
+        imageSuggestLink.removeAttribute('aria-disabled');
+      } else {
+        imageSuggestLink.href = '#';
+        imageSuggestLink.setAttribute('aria-disabled', 'true');
+      }
+    };
+
+    imageUrlInput.addEventListener('input', () => {
+      if (imageUrlInput.value) {
+        imageUploadInput.value = '';
+      }
+      updatePreviewFromSource(imageUrlInput.value.trim());
+    });
+
+    if (imageChooseButton) {
+      imageChooseButton.addEventListener('click', () => {
+        imageUploadInput.click();
+      });
+    }
+
+    imageUploadInput.addEventListener('change', () => {
+      const [file] = imageUploadInput.files;
+      if (file) {
+        imageUrlInput.value = '';
+        const reader = new FileReader();
+        reader.onload = () => {
+          updatePreviewFromSource(reader.result);
+        };
+        reader.onerror = () => {
+          resetImagePreview();
+        };
+        reader.readAsDataURL(file);
+      } else {
+        resetImagePreview();
+      }
+    });
+
+    if (imageSuggestLink) {
+      imageSuggestLink.addEventListener('click', (event) => {
+        if (!titleInput.value.trim()) {
+          event.preventDefault();
+          titleInput.focus();
+        }
+      });
+    }
+
+    titleInput.addEventListener('input', updateImageSuggestionLink);
+
+    const resolveImageSource = () => new Promise((resolve) => {
+      const url = imageUrlInput.value.trim();
+      const [file] = imageUploadInput.files;
+
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => resolve(getNextFallbackImage());
+        reader.readAsDataURL(file);
+      } else if (url) {
+        resolve(url);
+      } else {
+        resolve(getNextFallbackImage());
+      }
+    });
+
+    quickAddForm.addEventListener('submit', async (event) => {
       event.preventDefault();
 
       const title = quickAddForm['goal-title'].value.trim();
@@ -631,22 +876,47 @@ Mål
         return;
       }
 
+      const image = await resolveImageSource();
+
       const newGoal = {
         title,
         deadline,
         why,
         tag: 'Nytt mål',
         status: '0%',
-        image: fallbackImages[fallbackIndex % fallbackImages.length]
+        image
       };
 
-      fallbackIndex += 1;
       goals.unshift(newGoal);
       goalsGrid.prepend(createGoalCard(newGoal));
       quickAddForm.reset();
+      resetImagePreview();
       titleInput.focus();
     });
 
+    quickAddForm.addEventListener('reset', () => {
+      imageUploadInput.value = '';
+      imageUrlInput.value = '';
+      resetImagePreview();
+      updateImageSuggestionLink();
+    });
+
+    toggleAddButton.addEventListener('click', () => {
+      const willShow = quickAddSection.hasAttribute('hidden');
+      if (willShow) {
+        quickAddSection.removeAttribute('hidden');
+        toggleAddButton.setAttribute('aria-pressed', 'true');
+        requestAnimationFrame(() => {
+          titleInput.focus();
+        });
+      } else {
+        quickAddSection.setAttribute('hidden', '');
+        toggleAddButton.setAttribute('aria-pressed', 'false');
+        quickAddForm.reset();
+      }
+    });
+
+    updateImageSuggestionLink();
     renderGoals();
   </script>
 </body>
