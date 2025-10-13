@@ -44,10 +44,15 @@ Action · Easylife
     }
 
     .logo {
-      font-size: 1.4rem;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+    }
+
+    .logo img {
+      display: block;
+      width: 170px;
+      max-width: 100%;
+      height: auto;
     }
 
     .add-button {
@@ -170,7 +175,9 @@ Action · Easylife
 </head>
 <body>
   <aside class="sidebar">
-    <div class="logo">easylife</div>
+    <div class="logo">
+      <img src="images/logo%20white.png" alt="Easylife logo" />
+    </div>
     <a class="add-button" href="#">
       <span class="icon">+</span>
       Ny modul
