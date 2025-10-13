@@ -263,7 +263,8 @@ Mål · Easylife
       overflow: hidden;
       border: 1px dashed rgba(15, 28, 46, 0.18);
       background: linear-gradient(135deg, rgba(15, 28, 46, 0.08), rgba(15, 28, 46, 0.02));
-      min-height: 220px;
+      min-height: 260px;
+      aspect-ratio: 4 / 3;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -567,12 +568,8 @@ Mål
             <div class="media-field">
               <div id="goal-image-preview" class="image-preview" data-placeholder="Legg til et inspirerende bilde" data-has-image="false"></div>
               <div class="image-actions">
-                <a id="goal-image-suggest" class="image-action" href="#" target="_blank" rel="noopener noreferrer">Finn bilde på nett</a>
+                <button id="goal-image-suggest" class="image-action" type="button">Finn bilde på nett</button>
                 <button id="goal-image-choose" class="image-action" type="button">Velg fra fil</button>
-              </div>
-              <div class="form-field">
-                <label for="goal-image-url">Bildeadresse (URL)</label>
-                <input id="goal-image-url" name="goal-image-url" type="url" placeholder="https://..." inputmode="url" />
               </div>
               <label class="visually-hidden" for="goal-image-upload">Last opp bilde</label>
               <input id="goal-image-upload" name="goal-image-upload" type="file" accept="image/*" class="visually-hidden" />
@@ -704,16 +701,16 @@ Mål
     const titleInput = document.getElementById('goal-title');
     const toggleAddButton = document.getElementById('toggle-add-button');
     const quickAddSection = document.getElementById('quick-add');
-    const imageUrlInput = document.getElementById('goal-image-url');
     const imageUploadInput = document.getElementById('goal-image-upload');
     const imagePreview = document.getElementById('goal-image-preview');
-    const imageSuggestLink = document.getElementById('goal-image-suggest');
+    const imageSuggestButton = document.getElementById('goal-image-suggest');
     const imageChooseButton = document.getElementById('goal-image-choose');
     const quickAddTitle = document.getElementById('quick-add-title');
     const submitButton = quickAddForm.querySelector('button[type="submit"]');
 
     let editingGoalIndex = null;
     let editingImageSource = '';
+    let suggestedImageSource = '';
 
     const formatDeadline = (deadline) => {
       if (!deadline) return 'Ingen deadline';
@@ -800,6 +797,21 @@ Mål
       imagePreview.dataset.hasImage = 'false';
     };
 
+    const setSuggestedImageSource = (source) => {
+      suggestedImageSource = source || '';
+      if (!imageSuggestButton) {
+        return;
+      }
+
+      if (suggestedImageSource) {
+        imageSuggestButton.textContent = 'Bytt bilde';
+        imageSuggestButton.dataset.hasImage = 'true';
+      } else {
+        imageSuggestButton.textContent = 'Finn bilde på nett';
+        imageSuggestButton.dataset.hasImage = 'false';
+      }
+    };
+
     const updatePreviewFromSource = (source) => {
       if (source) {
         const sanitizedSource = sanitizeForCssUrl(source);
@@ -810,20 +822,11 @@ Mål
       }
     };
 
-    const updateImageSuggestionLink = () => {
+    const buildSuggestedImageUrl = () => {
       const title = titleInput.value.trim();
-      if (!imageSuggestLink) {
-        return;
-      }
-
-      if (title) {
-        const query = encodeURIComponent(`${title} inspirasjon`);
-        imageSuggestLink.href = `https://unsplash.com/s/photos/${query}`;
-        imageSuggestLink.removeAttribute('aria-disabled');
-      } else {
-        imageSuggestLink.href = '#';
-        imageSuggestLink.setAttribute('aria-disabled', 'true');
-      }
+      const query = title ? `${title} inspirasjon` : 'motivasjon';
+      const encodedQuery = encodeURIComponent(query);
+      return `https://source.unsplash.com/featured/800x600/?${encodedQuery}&t=${Date.now()}`;
     };
 
     function showQuickAdd() {
@@ -858,15 +861,13 @@ Mål
       quickAddForm['goal-title'].value = goal.title || '';
       quickAddForm['goal-deadline'].value = goal.deadline || '';
       quickAddForm['goal-why'].value = goal.why || '';
-      const isDataImage = (goal.image || '').startsWith('data:');
-      imageUrlInput.value = !isDataImage && goal.image ? goal.image : '';
       imageUploadInput.value = '';
       if (goal.image) {
         updatePreviewFromSource(goal.image);
       } else {
         resetImagePreview();
       }
-      updateImageSuggestionLink();
+      setSuggestedImageSource('');
     }
 
     function startEditingGoal(index) {
@@ -883,12 +884,14 @@ Mål
       });
     }
 
-    imageUrlInput.addEventListener('input', () => {
-      if (imageUrlInput.value) {
+    if (imageSuggestButton) {
+      imageSuggestButton.addEventListener('click', () => {
+        const suggestedUrl = buildSuggestedImageUrl();
         imageUploadInput.value = '';
-      }
-      updatePreviewFromSource(imageUrlInput.value.trim());
-    });
+        setSuggestedImageSource(suggestedUrl);
+        updatePreviewFromSource(suggestedUrl);
+      });
+    }
 
     if (imageChooseButton) {
       imageChooseButton.addEventListener('click', () => {
@@ -899,33 +902,23 @@ Mål
     imageUploadInput.addEventListener('change', () => {
       const [file] = imageUploadInput.files;
       if (file) {
-        imageUrlInput.value = '';
         const reader = new FileReader();
         reader.onload = () => {
+          setSuggestedImageSource('');
           updatePreviewFromSource(reader.result);
         };
         reader.onerror = () => {
           resetImagePreview();
+          setSuggestedImageSource('');
         };
         reader.readAsDataURL(file);
       } else {
         resetImagePreview();
+        setSuggestedImageSource('');
       }
     });
 
-    if (imageSuggestLink) {
-      imageSuggestLink.addEventListener('click', (event) => {
-        if (!titleInput.value.trim()) {
-          event.preventDefault();
-          titleInput.focus();
-        }
-      });
-    }
-
-    titleInput.addEventListener('input', updateImageSuggestionLink);
-
     const resolveImageSource = (defaultImage = '') => new Promise((resolve) => {
-      const url = imageUrlInput.value.trim();
       const [file] = imageUploadInput.files;
 
       if (file) {
@@ -933,8 +926,8 @@ Mål
         reader.onload = () => resolve(reader.result);
         reader.onerror = () => resolve(getNextFallbackImage());
         reader.readAsDataURL(file);
-      } else if (url) {
-        resolve(url);
+      } else if (suggestedImageSource) {
+        resolve(suggestedImageSource);
       } else if (defaultImage) {
         resolve(defaultImage);
       } else {
@@ -965,10 +958,9 @@ Mål
           image
         };
         renderGoals();
-        prepareFormForCreate();
-        showQuickAdd();
+        hideQuickAdd();
         requestAnimationFrame(() => {
-          titleInput.focus();
+          toggleAddButton.focus();
         });
         return;
       }
@@ -983,22 +975,20 @@ Mål
 
       goals.unshift(newGoal);
       renderGoals();
-      prepareFormForCreate();
-      showQuickAdd();
+      hideQuickAdd();
       requestAnimationFrame(() => {
-        titleInput.focus();
+        toggleAddButton.focus();
       });
     });
 
     quickAddForm.addEventListener('reset', () => {
       imageUploadInput.value = '';
-      imageUrlInput.value = '';
       resetImagePreview();
+      setSuggestedImageSource('');
       editingGoalIndex = null;
       editingImageSource = '';
       quickAddTitle.textContent = 'Legg til mål';
       submitButton.textContent = 'Legg til mål';
-      updateImageSuggestionLink();
     });
 
     toggleAddButton.addEventListener('click', () => {
@@ -1013,7 +1003,7 @@ Mål
       }
     });
 
-    updateImageSuggestionLink();
+    setSuggestedImageSource('');
     renderGoals();
   </script>
 </body>
