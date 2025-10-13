@@ -357,8 +357,14 @@
     .goal-milestone__header {
       display: flex;
       justify-content: space-between;
-      gap: 16px;
+      gap: 12px;
       align-items: flex-start;
+    }
+
+    .goal-milestone__actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .goal-milestone__toggle {
@@ -371,10 +377,36 @@
       font-weight: 500;
     }
 
+    .goal-milestone__edit {
+      border: none;
+      background: rgba(15, 28, 46, 0.06);
+      color: #0f172a;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 160ms ease, color 160ms ease;
+    }
+
+    .goal-milestone__edit:hover,
+    .goal-milestone__edit:focus-visible {
+      background: rgba(15, 28, 46, 0.12);
+      color: #020617;
+      outline: none;
+    }
+
+    .goal-milestone__edit svg {
+      width: 16px;
+      height: 16px;
+    }
+
     .goal-milestone__todos {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 12px;
     }
 
     .goal-milestone__todo-list {
@@ -383,17 +415,17 @@
       padding: 0;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }
 
     .goal-milestone__todo-item {
       background: rgba(248, 250, 252, 0.9);
-      border-radius: 16px;
-      padding: 14px 16px;
-      border: 1px solid rgba(15, 28, 46, 0.06);
+      border-radius: 12px;
+      padding: 10px 12px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       position: relative;
     }
 
@@ -405,14 +437,14 @@
     .goal-list__todo {
       display: flex;
       align-items: flex-start;
-      gap: 12px;
+      gap: 10px;
       width: 100%;
     }
 
     .goal-list__todo label {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 2px;
       cursor: pointer;
       font-weight: 400;
       color: #0f172a;
@@ -1160,6 +1192,38 @@
         milestoneToggleAllButton.setAttribute('aria-pressed', allCollapsed ? 'true' : 'false');
       }
 
+      function toggleMilestoneTodos(goal, milestoneIndex) {
+        if (!goal || !Array.isArray(goal.milestones)) {
+          return;
+        }
+
+        ensureGoalCollections(goal);
+        const milestone = goal.milestones[milestoneIndex];
+        if (!milestone || typeof milestone !== 'object') {
+          return;
+        }
+
+        milestone.isExpanded = !Boolean(milestone.isExpanded);
+        renderMilestones(goal);
+      }
+
+      function setAllMilestoneTodos(goal, shouldExpand) {
+        if (!goal || !Array.isArray(goal.milestones)) {
+          return;
+        }
+
+        ensureGoalCollections(goal);
+        goal.milestones.forEach((milestone) => {
+          if (!milestone || typeof milestone !== 'object') {
+            return;
+          }
+
+          milestone.isExpanded = shouldExpand ? true : false;
+        });
+
+        renderMilestones(goal);
+      }
+
       function renderMilestones(goal) {
         if (!milestoneList) {
           return;
@@ -1211,6 +1275,9 @@
 
           header.appendChild(label);
 
+          const actions = document.createElement('div');
+          actions.className = 'goal-milestone__actions';
+
           const toggleButton = document.createElement('button');
           toggleButton.type = 'button';
           toggleButton.className = 'goal-milestone__toggle';
@@ -1218,10 +1285,27 @@
           toggleButton.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
           toggleButton.textContent = isExpanded ? 'Skjul to-dos' : 'Vis to-dos';
           toggleButton.addEventListener('click', () => {
-            milestone.isExpanded = !Boolean(milestone.isExpanded);
-            renderMilestones(goal);
+            toggleMilestoneTodos(goal, index);
           });
-          header.appendChild(toggleButton);
+
+          const editButton = document.createElement('button');
+          editButton.type = 'button';
+          editButton.className = 'goal-milestone__edit';
+          const trimmedTitle = (milestone.title || '').trim();
+          const editLabel = trimmedTitle ? `Rediger milepælen ${trimmedTitle}` : 'Rediger milepælen';
+          editButton.setAttribute('aria-label', editLabel);
+          editButton.title = editLabel;
+          editButton.innerHTML = `
+            <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+              <path d="M13.586 3.586a2 2 0 0 1 2.828 2.828l-8.25 8.25-3.664.836.836-3.664 8.25-8.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M11.75 5.422 14.58 8.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          `;
+
+          actions.appendChild(toggleButton);
+          actions.appendChild(editButton);
+
+          header.appendChild(actions);
 
           item.appendChild(header);
 
@@ -1370,17 +1454,7 @@
 
           ensureGoalCollections(currentGoal);
           const allCollapsed = currentGoal.milestones.every((milestone) => !Boolean(milestone.isExpanded));
-          const shouldExpand = allCollapsed;
-
-          currentGoal.milestones.forEach((milestone, index) => {
-            if (typeof milestone.isExpanded !== 'boolean') {
-              milestone.isExpanded = index === 0;
-            }
-
-            milestone.isExpanded = shouldExpand ? true : false;
-          });
-
-          renderMilestones(currentGoal);
+          setAllMilestoneTodos(currentGoal, allCollapsed);
         });
       }
 
