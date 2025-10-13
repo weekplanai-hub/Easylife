@@ -17,6 +17,9 @@ Mål · Easylife
       --card-bg: rgba(255, 255, 255, 0.08);
       --text-primary: #0f1c2e;
       --text-secondary: rgba(15, 28, 46, 0.64);
+      --surface: rgba(255, 255, 255, 0.55);
+      --surface-border: rgba(255, 255, 255, 0.35);
+      --chip-bg: rgba(15, 28, 46, 0.55);
     }
 
     * { box-sizing: border-box; }
@@ -120,10 +123,10 @@ Mål · Easylife
 
     main {
       flex: 1;
-      padding: 48px;
+      padding: 48px clamp(24px, 4vw, 64px);
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 32px;
     }
 
     h1 {
@@ -138,14 +141,217 @@ Mål · Easylife
       line-height: 1.6;
     }
 
-    .placeholder-card {
-      margin-top: 40px;
-      background: rgba(255, 255, 255, 0.18);
-      border-radius: 32px;
-      padding: 48px;
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      backdrop-filter: blur(24px);
-      box-shadow: 0 20px 45px rgba(31, 48, 80, 0.18);
+    .page-header {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .page-header__top {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 24px;
+    }
+
+    .view-tabs {
+      display: inline-flex;
+      background: rgba(255, 255, 255, 0.52);
+      border-radius: 999px;
+      padding: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      box-shadow: 0 10px 30px rgba(31, 63, 104, 0.12);
+    }
+
+    .view-tabs button {
+      border: none;
+      background: transparent;
+      padding: 10px 20px;
+      border-radius: 999px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: background 160ms ease, color 160ms ease;
+    }
+
+    .view-tabs button[aria-pressed="true"] {
+      background: #0f1c2e;
+      color: #ffffff;
+      box-shadow: 0 10px 25px rgba(15, 28, 46, 0.22);
+    }
+
+    .quick-add {
+      background: var(--surface);
+      border-radius: 28px;
+      padding: clamp(20px, 2vw + 12px, 32px);
+      border: 1px solid var(--surface-border);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 20px 45px rgba(31, 48, 80, 0.16);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .quick-add h2 {
+      margin: 0;
+      font-size: 1.25rem;
+    }
+
+    .quick-add form {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      align-items: end;
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-field label {
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .form-field input,
+    .form-field textarea {
+      border-radius: 16px;
+      border: 1px solid rgba(15, 28, 46, 0.12);
+      padding: 14px 16px;
+      font: inherit;
+      background: rgba(255, 255, 255, 0.82);
+      resize: vertical;
+      min-height: 48px;
+    }
+
+    .form-field textarea {
+      min-height: 52px;
+    }
+
+    .quick-add button[type="submit"] {
+      border: none;
+      border-radius: 18px;
+      padding: 16px 22px;
+      font-weight: 600;
+      background: linear-gradient(120deg, #0f78d4, #1f5f87);
+      color: #ffffff;
+      cursor: pointer;
+      transition: transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    .quick-add button[type="submit"]:hover,
+    .quick-add button[type="submit"]:focus-visible {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 30px rgba(15, 120, 212, 0.28);
+      outline: none;
+    }
+
+    .goals-grid {
+      display: grid;
+      gap: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    .goal-card {
+      position: relative;
+      border-radius: 26px;
+      overflow: hidden;
+      min-height: 260px;
+      color: #ffffff;
+      background: #0f1c2e;
+      box-shadow: 0 25px 40px rgba(15, 28, 46, 0.22);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    .goal-card img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: saturate(1.1);
+      transition: transform 220ms ease;
+    }
+
+    .goal-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(5, 12, 25, 0.1) 35%, rgba(5, 12, 25, 0.85) 100%);
+      z-index: 1;
+    }
+
+    .goal-card:hover img {
+      transform: scale(1.03);
+    }
+
+    .goal-card__content {
+      position: relative;
+      z-index: 2;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .goal-card__top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--chip-bg);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .chip--light {
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    .goal-card h3 {
+      margin: 0;
+      font-size: 1.4rem;
+      line-height: 1.25;
+    }
+
+    .goal-card p {
+      color: rgba(255, 255, 255, 0.75);
+      max-width: none;
+    }
+
+    .goal-card__footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .goal-card__footer span {
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.78);
+    }
+
+    .goal-card__footer button {
+      border: none;
+      border-radius: 12px;
+      padding: 8px 14px;
+      background: rgba(255, 255, 255, 0.16);
+      color: inherit;
+      font-weight: 500;
+      cursor: pointer;
     }
 
     @media (max-width: 960px) {
@@ -164,7 +370,8 @@ Mål · Easylife
         gap: 12px;
       }
       .menu a { padding: 10px 14px; }
-      main { padding: 32px 24px; }
+      main { padding: 32px 24px 48px; }
+      .quick-add form { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -186,17 +393,261 @@ Mål · Easylife
     </nav>
   </aside>
   <main>
-    <header>
-      <h1>
+    <section class="page-header">
+      <div class="page-header__top">
+        <div>
+          <h1>
 Mål
-      </h1>
-      <p>Denne siden er et tomt oppsett der innholdet kan fylles inn senere.</p>
-    </header>
-    <section class="placeholder-card">
-      <p>
-        Arbeid videre med innholdet for å gjøre Easylife-opplevelsen komplett.
-      </p>
+          </h1>
+          <p>Få oversikt over livsmålene dine og hold motivasjonen oppe med klare beskrivelser og frister.</p>
+        </div>
+        <div class="view-tabs" role="toolbar" aria-label="Visning">
+          <button type="button" aria-pressed="true">Delmål</button>
+          <button type="button" aria-pressed="false">Fremdrift</button>
+          <button type="button" aria-pressed="false">Start</button>
+        </div>
+      </div>
+      <section class="quick-add" aria-labelledby="quick-add-title">
+        <div>
+          <h2 id="quick-add-title">Legg til mål raskt</h2>
+          <p>Beskriv hva du vil oppnå, sett en deadline og minne deg selv på hvorfor.</p>
+        </div>
+        <form id="quick-add-form">
+          <div class="form-field">
+            <label for="goal-title">Hva</label>
+            <input id="goal-title" name="goal-title" type="text" placeholder="F.eks. Løpe en maraton" required />
+          </div>
+          <div class="form-field">
+            <label for="goal-deadline">Deadline</label>
+            <input id="goal-deadline" name="goal-deadline" type="date" />
+          </div>
+          <div class="form-field">
+            <label for="goal-why">Hvorfor</label>
+            <textarea id="goal-why" name="goal-why" rows="2" placeholder="Hva motiverer deg?" required></textarea>
+          </div>
+          <button type="submit">Legg til mål</button>
+        </form>
+      </section>
     </section>
+
+    <section class="goals-grid" id="goals-grid" aria-live="polite"></section>
   </main>
+  <script>
+    const goals = [
+      {
+        title: 'Løpe en maraton',
+        why: 'Bygge utholdenhet, styrke og disiplin.',
+        deadline: '2024-09-15',
+        tag: 'Delmål',
+        status: '77%',
+        image: 'https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?auto=format&fit=crop&w=800&q=80'
+      },
+      {
+        title: 'Fullføre prosjekt',
+        why: 'Levere et ferdig produkt til kundene våre.',
+        deadline: '2024-06-01',
+        tag: 'Delmål',
+        status: '77%',
+        image: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80'
+      },
+      {
+        title: 'Spise sunt',
+        why: 'Mer energi i hverdagen og bedre helse.',
+        deadline: '2024-05-10',
+        tag: 'Delmål',
+        status: '77%',
+        image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80'
+      },
+      {
+        title: 'Reise mer',
+        why: 'Utforske nye kulturer og perspektiver.',
+        deadline: '2024-08-21',
+        tag: 'Delmål',
+        status: '77%',
+        image: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80'
+      },
+      {
+        title: 'Lære et språk',
+        why: 'Kunne kommunisere med kolleger i utlandet.',
+        deadline: '2024-12-01',
+        tag: 'Delmål',
+        status: '77%',
+        image: 'https://images.unsplash.com/photo-1523475472560-d2df97ec485c?auto=format&fit=crop&w=800&q=80'
+      },
+      {
+        title: 'Trene regelmessig',
+        why: 'Styrke kroppen og forebygge skader.',
+        deadline: '2024-04-30',
+        tag: 'Delmål',
+        status: '77%',
+        image: 'https://images.unsplash.com/photo-1571019613576-2b22c76fd955?auto=format&fit=crop&w=800&q=80'
+      },
+      {
+        title: 'Spare penger',
+        why: 'Skape økonomisk trygghet.',
+        deadline: '2025-01-01',
+        tag: 'Delmål',
+        status: '77%',
+        image: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=800&q=80'
+      },
+      {
+        title: 'Les mer bøker',
+        why: 'Utvikle kompetanse og kreativitet.',
+        deadline: '2024-07-05',
+        tag: 'Delmål',
+        status: '77%',
+        image: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=800&q=80'
+      },
+      {
+        title: 'Forbedre ferdigheter',
+        why: 'Styrke fagkunnskap og karrieremuligheter.',
+        deadline: '2024-11-18',
+        tag: 'Delmål',
+        status: '77%',
+        image: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80'
+      },
+      {
+        title: 'Game livet',
+        why: 'Ha det gøy og skape balanse mellom jobb og fritid.',
+        deadline: '2024-05-30',
+        tag: 'Delmål',
+        status: '77%',
+        image: 'https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=800&q=80'
+      },
+      {
+        title: 'Starte egen bedrift',
+        why: 'Realiser en forretningsidé og bygge noe eget.',
+        deadline: '2024-10-01',
+        tag: 'Delmål',
+        status: '77%',
+        image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80'
+      },
+      {
+        title: 'Meditér daglig',
+        why: 'Skape indre ro og mental klarhet.',
+        deadline: '2024-04-05',
+        tag: 'Delmål',
+        status: '77%',
+        image: 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=800&q=80'
+      }
+    ];
+
+    const fallbackImages = [
+      'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1514996937319-344454492b37?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?auto=format&fit=crop&w=800&q=80'
+    ];
+
+    let fallbackIndex = 0;
+
+    const goalsGrid = document.getElementById('goals-grid');
+    const quickAddForm = document.getElementById('quick-add-form');
+    const titleInput = document.getElementById('goal-title');
+
+    const formatDeadline = (deadline) => {
+      if (!deadline) return 'Ingen deadline';
+      const date = new Date(deadline);
+      if (Number.isNaN(date.getTime())) return deadline;
+      return new Intl.DateTimeFormat('nb-NO', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      }).format(date);
+    };
+
+    const createGoalCard = ({ title, why, deadline, tag, status, image }) => {
+      const article = document.createElement('article');
+      article.className = 'goal-card';
+
+      const img = document.createElement('img');
+      img.src = image;
+      img.alt = '';
+      img.loading = 'lazy';
+      article.appendChild(img);
+
+      const content = document.createElement('div');
+      content.className = 'goal-card__content';
+
+      const top = document.createElement('div');
+      top.className = 'goal-card__top';
+
+      const tagChip = document.createElement('span');
+      tagChip.className = 'chip';
+      tagChip.textContent = tag;
+      top.appendChild(tagChip);
+
+      if (status) {
+        const statusChip = document.createElement('span');
+        statusChip.className = 'chip chip--light';
+        statusChip.textContent = status;
+        top.appendChild(statusChip);
+      }
+
+      content.appendChild(top);
+
+      const heading = document.createElement('h3');
+      heading.textContent = title;
+      content.appendChild(heading);
+
+      const whyParagraph = document.createElement('p');
+      whyParagraph.textContent = why;
+      content.appendChild(whyParagraph);
+
+      const footer = document.createElement('div');
+      footer.className = 'goal-card__footer';
+
+      const deadlineSpan = document.createElement('span');
+      deadlineSpan.textContent = formatDeadline(deadline);
+      footer.appendChild(deadlineSpan);
+
+      const editButton = document.createElement('button');
+      editButton.type = 'button';
+      editButton.textContent = 'Rediger';
+      footer.appendChild(editButton);
+
+      content.appendChild(footer);
+      article.appendChild(content);
+
+      return article;
+    };
+
+    const renderGoals = () => {
+      const fragment = document.createDocumentFragment();
+      goals.forEach((goal) => {
+        fragment.appendChild(createGoalCard(goal));
+      });
+      goalsGrid.innerHTML = '';
+      goalsGrid.appendChild(fragment);
+    };
+
+    quickAddForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const title = quickAddForm['goal-title'].value.trim();
+      const deadline = quickAddForm['goal-deadline'].value;
+      const why = quickAddForm['goal-why'].value.trim();
+
+      if (!title || !why) {
+        return;
+      }
+
+      const newGoal = {
+        title,
+        deadline,
+        why,
+        tag: 'Nytt mål',
+        status: '0%',
+        image: fallbackImages[fallbackIndex % fallbackImages.length]
+      };
+
+      fallbackIndex += 1;
+      goals.unshift(newGoal);
+      goalsGrid.prepend(createGoalCard(newGoal));
+      quickAddForm.reset();
+      titleInput.focus();
+    });
+
+    renderGoals();
+  </script>
 </body>
 </html>
