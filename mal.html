@@ -205,7 +205,7 @@ Mål · Easylife
     .quick-add__layout {
       display: grid;
       gap: clamp(20px, 2vw, 32px);
-      grid-template-columns: minmax(220px, 1fr) minmax(260px, 1.3fr);
+      grid-template-columns: minmax(220px, clamp(220px, 30vw, 320px)) minmax(260px, 1.3fr);
       align-items: start;
     }
 
@@ -213,6 +213,8 @@ Mål · Easylife
       display: flex;
       flex-direction: column;
       gap: 16px;
+      max-width: clamp(220px, 30vw, 320px);
+      width: 100%;
     }
 
     .image-actions {
@@ -271,8 +273,20 @@ Mål · Easylife
       color: var(--text-secondary);
       text-align: center;
       padding: 24px;
-      background-size: cover;
-      background-position: center;
+      width: 100%;
+    }
+
+    .image-preview__img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    .image-preview[data-has-image="true"] .image-preview__img {
+      display: block;
     }
 
     .image-preview::after {
@@ -334,6 +348,32 @@ Mål · Easylife
       display: grid;
       gap: 16px;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+
+    .deadline-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .deadline-action {
+      border-radius: 999px;
+      border: 1px solid rgba(15, 28, 46, 0.12);
+      background: rgba(255, 255, 255, 0.88);
+      padding: 8px 14px;
+      font: inherit;
+      font-weight: 500;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    .deadline-action:hover,
+    .deadline-action:focus-visible {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px rgba(15, 28, 46, 0.14);
+      outline: none;
     }
 
     .visually-hidden {
@@ -566,7 +606,9 @@ Mål
         <form id="quick-add-form">
           <div class="quick-add__layout">
             <div class="media-field">
-              <div id="goal-image-preview" class="image-preview" data-placeholder="Legg til et inspirerende bilde" data-has-image="false"></div>
+              <div id="goal-image-preview" class="image-preview" data-placeholder="Legg til et inspirerende bilde" data-has-image="false">
+                <img id="goal-image-preview-image" class="image-preview__img" alt="" hidden />
+              </div>
               <div class="image-actions">
                 <button id="goal-image-suggest" class="image-action" type="button">Finn bilde på nett</button>
                 <button id="goal-image-choose" class="image-action" type="button">Velg fra fil</button>
@@ -583,6 +625,11 @@ Mål
                 <div class="form-field">
                   <label for="goal-deadline">Deadline</label>
                   <input id="goal-deadline" name="goal-deadline" type="date" />
+                  <div class="deadline-actions" role="group" aria-label="Hurtigvalg for deadline">
+                    <button class="deadline-action" type="button" data-deadline-offset="3">+3 mnd</button>
+                    <button class="deadline-action" type="button" data-deadline-offset="6">+6 mnd</button>
+                    <button class="deadline-action" type="button" data-deadline-offset="12">+1 år</button>
+                  </div>
                 </div>
               </div>
               <div class="form-field">
@@ -703,10 +750,13 @@ Mål
     const quickAddSection = document.getElementById('quick-add');
     const imageUploadInput = document.getElementById('goal-image-upload');
     const imagePreview = document.getElementById('goal-image-preview');
+    const imagePreviewImage = document.getElementById('goal-image-preview-image');
     const imageSuggestButton = document.getElementById('goal-image-suggest');
     const imageChooseButton = document.getElementById('goal-image-choose');
     const quickAddTitle = document.getElementById('quick-add-title');
     const submitButton = quickAddForm.querySelector('button[type="submit"]');
+    const deadlineInput = document.getElementById('goal-deadline');
+    const deadlineQuickActions = quickAddForm.querySelectorAll('.deadline-action');
 
     let editingGoalIndex = null;
     let editingImageSource = '';
@@ -790,11 +840,12 @@ Mål
       return image;
     };
 
-    const sanitizeForCssUrl = (value) => value.replace(/(["'\\])/g, '\\$1');
-
     const resetImagePreview = () => {
-      imagePreview.style.backgroundImage = '';
       imagePreview.dataset.hasImage = 'false';
+      imagePreviewImage.src = '';
+      imagePreviewImage.hidden = true;
+      imagePreviewImage.onload = null;
+      imagePreviewImage.onerror = null;
     };
 
     const setSuggestedImageSource = (source) => {
@@ -813,13 +864,24 @@ Mål
     };
 
     const updatePreviewFromSource = (source) => {
-      if (source) {
-        const sanitizedSource = sanitizeForCssUrl(source);
-        imagePreview.style.backgroundImage = `linear-gradient(rgba(15, 28, 46, 0.2), rgba(15, 28, 46, 0.2)), url("${sanitizedSource}")`;
-        imagePreview.dataset.hasImage = 'true';
-      } else {
+      if (!source) {
         resetImagePreview();
+        return;
       }
+
+      imagePreview.dataset.hasImage = 'false';
+      imagePreviewImage.hidden = true;
+
+      imagePreviewImage.onload = () => {
+        imagePreview.dataset.hasImage = 'true';
+        imagePreviewImage.hidden = false;
+      };
+
+      imagePreviewImage.onerror = () => {
+        resetImagePreview();
+      };
+
+      imagePreviewImage.src = source;
     };
 
     const buildSuggestedImageUrl = () => {
@@ -916,6 +978,35 @@ Mål
         resetImagePreview();
         setSuggestedImageSource('');
       }
+    });
+
+    const formatDateForInput = (date) => {
+      const iso = date.toISOString();
+      return iso.split('T')[0];
+    };
+
+    const createDateMonthsAhead = (monthsAhead) => {
+      const now = new Date();
+      const currentDay = now.getDate();
+      const target = new Date(now.getFullYear(), now.getMonth() + monthsAhead, 1);
+      const lastDayOfTargetMonth = new Date(target.getFullYear(), target.getMonth() + 1, 0).getDate();
+      target.setDate(Math.min(currentDay, lastDayOfTargetMonth));
+      target.setHours(0, 0, 0, 0);
+      return target;
+    };
+
+    deadlineQuickActions.forEach((button) => {
+      button.addEventListener('click', () => {
+        const monthsAhead = Number.parseInt(button.dataset.deadlineOffset, 10);
+        if (Number.isNaN(monthsAhead) || !deadlineInput) {
+          return;
+        }
+
+        const targetDate = createDateMonthsAhead(monthsAhead);
+        deadlineInput.value = formatDateForInput(targetDate);
+        deadlineInput.dispatchEvent(new Event('input', { bubbles: true }));
+        deadlineInput.focus();
+      });
     });
 
     const resolveImageSource = (defaultImage = '') => new Promise((resolve) => {
