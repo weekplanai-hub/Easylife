@@ -147,16 +147,17 @@
 
     .goal-detail__hero {
       display: grid;
-      grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
+      grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
       gap: 32px;
-      align-items: stretch;
+      align-items: flex-start;
     }
 
     .goal-detail__image {
       border-radius: 28px;
       overflow: hidden;
       position: relative;
-      min-height: 280px;
+      min-height: 240px;
+      max-height: 320px;
       background: rgba(15, 28, 46, 0.08);
       display: flex;
       align-items: center;
@@ -231,6 +232,52 @@
       align-items: center;
       gap: 16px;
       flex-wrap: wrap;
+    }
+
+    .goal-section__actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .goal-section__action-button {
+      border: none;
+      background: #2563eb;
+      color: #ffffff;
+      padding: 10px 18px;
+      border-radius: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: background 160ms ease, transform 160ms ease;
+    }
+
+    .goal-section__action-button::before {
+      content: "+";
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.18);
+      font-size: 1.05rem;
+      line-height: 1;
+    }
+
+    .goal-section__action-button[data-state="open"]::before {
+      content: "×";
+      font-size: 1.1rem;
+    }
+
+    .goal-section__action-button:hover,
+    .goal-section__action-button:focus-visible {
+      background: #1d4ed8;
+      transform: translateY(-1px);
+      outline: none;
     }
 
     .goal-section__header h3 {
@@ -350,6 +397,11 @@
       position: relative;
     }
 
+    .goal-milestone__todo-item[data-completed="true"] {
+      background: rgba(226, 232, 240, 0.7);
+      border-color: rgba(148, 163, 184, 0.45);
+    }
+
     .goal-list__todo {
       display: flex;
       align-items: flex-start;
@@ -362,14 +414,17 @@
       flex-direction: column;
       gap: 4px;
       cursor: pointer;
-      font-weight: 500;
+      font-weight: 400;
       color: #0f172a;
     }
 
-    .goal-list__todo label span:last-child {
-      color: var(--text-secondary);
-      font-size: 0.9rem;
+    .goal-list__todo-title {
       font-weight: 400;
+    }
+
+    .goal-milestone__todo-item[data-completed="true"] .goal-list__todo-title {
+      text-decoration: line-through;
+      color: rgba(15, 28, 46, 0.6);
     }
 
     .goal-list__todo input[type="checkbox"] {
@@ -378,22 +433,60 @@
       accent-color: #2563eb;
     }
 
-    .inline-form {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
+    .goal-milestone__todo-add {
+      align-self: flex-start;
+      border: none;
+      border-radius: 12px;
+      background: rgba(37, 99, 235, 0.12);
+      color: #1d4ed8;
+      padding: 10px 14px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: background 160ms ease, transform 160ms ease;
     }
 
-    .inline-form input[type="text"] {
-      flex: 1;
-      min-width: 160px;
+    .goal-milestone__todo-add span[aria-hidden="true"] {
+      font-size: 1.1rem;
+      line-height: 1;
+    }
+
+    .goal-milestone__todo-add[data-state="open"] {
+      background: rgba(37, 99, 235, 0.22);
+    }
+
+    .goal-milestone__todo-add:hover,
+    .goal-milestone__todo-add:focus-visible {
+      background: rgba(29, 78, 216, 0.24);
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .goal-milestone__todo-form {
+      display: grid;
+      gap: 12px;
+      padding: 16px;
+      border-radius: 16px;
+      border: 1px dashed rgba(37, 99, 235, 0.35);
+      background: rgba(248, 250, 252, 0.9);
+    }
+
+    .goal-milestone__todo-form[hidden] {
+      display: none;
+    }
+
+    .goal-milestone__todo-form input[type="text"] {
       border-radius: 12px;
       border: 1px solid rgba(15, 28, 46, 0.12);
       padding: 10px 12px;
       font-size: 0.95rem;
     }
 
-    .inline-form button {
+    .goal-milestone__todo-form button[type="submit"] {
+      justify-self: flex-start;
       border-radius: 12px;
       border: none;
       background: #2563eb;
@@ -402,6 +495,64 @@
       font-weight: 600;
       cursor: pointer;
     }
+
+    .goal-milestone__todo-form button[type="submit"]:hover,
+    .goal-milestone__todo-form button[type="submit"]:focus-visible {
+      background: #1d4ed8;
+      outline: none;
+    }
+
+    .goal-section__form {
+      padding: 18px;
+      border-radius: 20px;
+      border: 1px dashed rgba(37, 99, 235, 0.35);
+      background: rgba(248, 250, 252, 0.9);
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .goal-section__form[hidden] {
+      display: none;
+    }
+
+    .goal-section__form input[type="text"] {
+      flex: 1;
+      min-width: 160px;
+      border-radius: 12px;
+      border: 1px solid rgba(15, 28, 46, 0.12);
+      padding: 10px 12px;
+      font-size: 0.95rem;
+    }
+
+    .goal-section__form button[type="submit"] {
+      border-radius: 12px;
+      border: none;
+      background: #2563eb;
+      color: #ffffff;
+      padding: 10px 18px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .goal-section__form button[type="submit"]:hover,
+    .goal-section__form button[type="submit"]:focus-visible {
+      background: #1d4ed8;
+      outline: none;
+    }
+
+    .goal-sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
 
     .goal-detail__notes {
       position: sticky;
@@ -602,12 +753,12 @@
         padding: 18px;
       }
 
-      .inline-form {
+      .goal-section__form {
         flex-direction: column;
         align-items: stretch;
       }
 
-      .inline-form button {
+      .goal-section__form button[type="submit"] {
         width: 100%;
       }
     }
@@ -658,10 +809,17 @@
           <section class="goal-section" aria-labelledby="goal-milestones-title">
             <div class="goal-section__header">
               <h3 id="goal-milestones-title">Milepæler</h3>
-              <span class="chip chip--light">Dra for å sortere</span>
+              <div class="goal-section__actions">
+                <button type="button" class="goal-section__action-button" id="goal-milestone-toggle-all" aria-pressed="false">
+                  Skjul alle
+                </button>
+                <button type="button" class="goal-section__action-button" id="goal-milestone-add-button" aria-expanded="false">
+                  Legg til milepæl
+                </button>
+              </div>
             </div>
             <ul class="goal-list goal-milestone-list" id="goal-milestone-list"></ul>
-            <form class="inline-form" id="goal-milestone-form">
+            <form class="goal-section__form" id="goal-milestone-form" hidden>
               <input type="text" name="milestone-title" placeholder="Legg til milepæl" required />
               <input type="text" name="milestone-detail" placeholder="Detaljer (valgfritt)" />
               <button type="submit">Legg til</button>
@@ -720,6 +878,8 @@
       const goalDetailCategory = document.getElementById('goal-detail-category');
       const goalDetailImportant = document.getElementById('goal-detail-important');
       const milestoneList = document.getElementById('goal-milestone-list');
+      const milestoneToggleAllButton = document.getElementById('goal-milestone-toggle-all');
+      const milestoneFormToggle = document.getElementById('goal-milestone-add-button');
       const milestoneForm = document.getElementById('goal-milestone-form');
       const notesList = document.getElementById('goal-notes-list');
       const notesSearchInput = document.getElementById('goal-notes-search');
@@ -741,6 +901,7 @@
       let currentGoal = currentGoalIndex !== null ? cloneGoal(baseGoalsData[currentGoalIndex]) : null;
       let noteSearchQuery = '';
       let activeModalCount = 0;
+      let milestoneFormIsOpen = false;
 
       const lockBodyScroll = () => {
         activeModalCount += 1;
@@ -753,6 +914,30 @@
         activeModalCount = Math.max(0, activeModalCount - 1);
         if (activeModalCount === 0) {
           document.body.style.overflow = '';
+        }
+      };
+
+      const setMilestoneFormVisibility = (isVisible, { focusField = false } = {}) => {
+        milestoneFormIsOpen = Boolean(isVisible);
+
+        if (milestoneForm) {
+          if (milestoneFormIsOpen) {
+            milestoneForm.removeAttribute('hidden');
+          } else {
+            milestoneForm.setAttribute('hidden', '');
+            milestoneForm.reset();
+          }
+        }
+
+        if (milestoneFormToggle) {
+          milestoneFormToggle.setAttribute('aria-expanded', milestoneFormIsOpen ? 'true' : 'false');
+          milestoneFormToggle.dataset.state = milestoneFormIsOpen ? 'open' : 'closed';
+        }
+
+        if (milestoneFormIsOpen && focusField && milestoneForm) {
+          requestAnimationFrame(() => {
+            milestoneForm['milestone-title']?.focus();
+          });
         }
       };
 
@@ -806,7 +991,9 @@
               detail: '',
               completed: false,
               todos: [],
-              isExpanded: index === 0
+              isExpanded: index === 0,
+              isTodoFormOpen: false,
+              shouldFocusTodoTitle: false
             };
             return;
           }
@@ -823,6 +1010,14 @@
 
           if (typeof milestone.isExpanded !== 'boolean') {
             milestone.isExpanded = index === 0;
+          }
+
+          if (typeof milestone.isTodoFormOpen !== 'boolean') {
+            milestone.isTodoFormOpen = false;
+          }
+
+          if (typeof milestone.shouldFocusTodoTitle !== 'boolean') {
+            milestone.shouldFocusTodoTitle = false;
           }
         });
 
@@ -946,6 +1141,25 @@
         });
       }
 
+      function updateMilestoneToggleAllButton(goal) {
+        if (!milestoneToggleAllButton) {
+          return;
+        }
+
+        const hasMilestones = Array.isArray(goal.milestones) && goal.milestones.length > 0;
+        milestoneToggleAllButton.disabled = !hasMilestones;
+
+        if (!hasMilestones) {
+          milestoneToggleAllButton.textContent = 'Skjul alle';
+          milestoneToggleAllButton.setAttribute('aria-pressed', 'false');
+          return;
+        }
+
+        const allCollapsed = goal.milestones.every((milestone) => !Boolean(milestone.isExpanded));
+        milestoneToggleAllButton.textContent = allCollapsed ? 'Vis alle' : 'Skjul alle';
+        milestoneToggleAllButton.setAttribute('aria-pressed', allCollapsed ? 'true' : 'false');
+      }
+
       function renderMilestones(goal) {
         if (!milestoneList) {
           return;
@@ -953,6 +1167,8 @@
 
         milestoneList.innerHTML = '';
         ensureGoalCollections(goal);
+
+        updateMilestoneToggleAllButton(goal);
 
         if (!goal.milestones.length) {
           const emptyItem = document.createElement('li');
@@ -1054,14 +1270,9 @@
               todoLabel.setAttribute('for', checkboxId);
 
               const todoTitleSpan = document.createElement('span');
+              todoTitleSpan.className = 'goal-list__todo-title';
               todoTitleSpan.textContent = todo.title;
               todoLabel.appendChild(todoTitleSpan);
-
-              if (todo.detail) {
-                const todoDetailSpan = document.createElement('span');
-                todoDetailSpan.textContent = todo.detail;
-                todoLabel.appendChild(todoDetailSpan);
-              }
 
               todoWrapper.appendChild(checkbox);
               todoWrapper.appendChild(todoLabel);
@@ -1075,45 +1286,68 @@
             });
           }
 
+          const isTodoFormOpen = Boolean(milestone.isTodoFormOpen);
+
+          const todoAddButton = document.createElement('button');
+          todoAddButton.type = 'button';
+          todoAddButton.className = 'goal-milestone__todo-add';
+          todoAddButton.dataset.state = isTodoFormOpen ? 'open' : 'closed';
+          todoAddButton.setAttribute('aria-expanded', isTodoFormOpen ? 'true' : 'false');
+          todoAddButton.innerHTML = `<span aria-hidden="true">${isTodoFormOpen ? '×' : '+'}</span><span class="goal-sr-only">${
+            isTodoFormOpen ? 'Lukk skjema for ny to-do' : 'Legg til to-do for denne milepælen'
+          }</span>`;
+          todoAddButton.addEventListener('click', () => {
+            const shouldOpen = !Boolean(milestone.isTodoFormOpen);
+            milestone.isTodoFormOpen = shouldOpen;
+            if (shouldOpen) {
+              milestone.shouldFocusTodoTitle = true;
+            }
+            renderMilestones(goal);
+          });
+          todosContainer.appendChild(todoAddButton);
+
           const todoForm = document.createElement('form');
-          todoForm.className = 'inline-form goal-milestone__todo-form';
+          todoForm.className = 'goal-milestone__todo-form';
+          if (!isTodoFormOpen) {
+            todoForm.setAttribute('hidden', '');
+          }
 
           const todoTitleInput = document.createElement('input');
           todoTitleInput.type = 'text';
           todoTitleInput.name = 'todo-title';
-          todoTitleInput.placeholder = 'Legg til oppgave';
+          todoTitleInput.placeholder = 'Legg til to-do';
           todoTitleInput.required = true;
-
-          const todoDetailInput = document.createElement('input');
-          todoDetailInput.type = 'text';
-          todoDetailInput.name = 'todo-detail';
-          todoDetailInput.placeholder = 'Detaljer (valgfritt)';
 
           const todoSubmit = document.createElement('button');
           todoSubmit.type = 'submit';
           todoSubmit.textContent = 'Legg til';
 
           todoForm.appendChild(todoTitleInput);
-          todoForm.appendChild(todoDetailInput);
           todoForm.appendChild(todoSubmit);
+
+          if (isTodoFormOpen && milestone.shouldFocusTodoTitle) {
+            requestAnimationFrame(() => {
+              todoTitleInput.focus();
+            });
+            milestone.shouldFocusTodoTitle = false;
+          }
 
           todoForm.addEventListener('submit', (event) => {
             event.preventDefault();
             const titleValue = todoTitleInput.value.trim();
-            const detailValue = todoDetailInput.value.trim();
-
             if (!titleValue) {
               return;
             }
 
             milestone.todos.push({
               title: titleValue,
-              detail: detailValue,
               completed: false
             });
             milestone.isExpanded = true;
 
             todoForm.reset();
+            milestone.isTodoFormOpen = false;
+            milestone.shouldFocusTodoTitle = false;
             renderMilestones(goal);
           });
 
@@ -1125,6 +1359,28 @@
         setupDragAndDrop(milestoneList, goal.milestones, (updated) => {
           goal.milestones = updated;
           renderMilestones(goal);
+        });
+      }
+
+      if (milestoneToggleAllButton) {
+        milestoneToggleAllButton.addEventListener('click', () => {
+          if (!currentGoal) {
+            return;
+          }
+
+          ensureGoalCollections(currentGoal);
+          const allCollapsed = currentGoal.milestones.every((milestone) => !Boolean(milestone.isExpanded));
+          const shouldExpand = allCollapsed;
+
+          currentGoal.milestones.forEach((milestone, index) => {
+            if (typeof milestone.isExpanded !== 'boolean') {
+              milestone.isExpanded = index === 0;
+            }
+
+            milestone.isExpanded = shouldExpand ? true : false;
+          });
+
+          renderMilestones(currentGoal);
         });
       }
 
@@ -1195,6 +1451,7 @@
         }
 
         ensureGoalCollections(goal);
+        setMilestoneFormVisibility(false);
 
         goalDetailTitle.textContent = goal.title || '';
         goalDetailWhy.textContent = goal.description || goal.why || '';
@@ -1288,6 +1545,7 @@
       function showEmptyState() {
         goalDetailSection?.setAttribute('hidden', '');
         emptyStateSection?.removeAttribute('hidden');
+        setMilestoneFormVisibility(false);
       }
 
       if (goalDetailBackButton) {
@@ -1335,6 +1593,13 @@
 
       if (addNoteButton) {
         addNoteButton.addEventListener('click', () => openNoteCreateModal());
+      }
+
+      if (milestoneFormToggle) {
+        milestoneFormToggle.addEventListener('click', () => {
+          const shouldOpen = !milestoneFormIsOpen;
+          setMilestoneFormVisibility(shouldOpen, { focusField: shouldOpen });
+        });
       }
 
       if (noteCreateForm) {
@@ -1398,10 +1663,13 @@
             detail: detailValue,
             completed: false,
             todos: [],
-            isExpanded: true
+            isExpanded: true,
+            isTodoFormOpen: false,
+            shouldFocusTodoTitle: false
           });
 
           milestoneForm.reset();
+          setMilestoneFormVisibility(false);
           renderMilestones(currentGoal);
         });
       }
