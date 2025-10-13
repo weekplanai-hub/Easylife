@@ -276,6 +276,17 @@ Mål · Easylife
       width: 100%;
     }
 
+    .image-preview__link {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      text-decoration: none;
+    }
+
+    .image-preview__link[hidden] {
+      display: none;
+    }
+
     .image-preview__img {
       position: absolute;
       inset: 0;
@@ -607,7 +618,9 @@ Mål
           <div class="quick-add__layout">
             <div class="media-field">
               <div id="goal-image-preview" class="image-preview" data-placeholder="Legg til et inspirerende bilde" data-has-image="false">
-                <img id="goal-image-preview-image" class="image-preview__img" alt="" hidden />
+                <a id="goal-image-preview-link" class="image-preview__link" href="#" target="_blank" rel="noopener noreferrer" hidden>
+                  <img id="goal-image-preview-image" class="image-preview__img" alt="" hidden />
+                </a>
               </div>
               <div class="image-actions">
                 <button id="goal-image-suggest" class="image-action" type="button">Finn bilde på nett</button>
@@ -750,6 +763,7 @@ Mål
     const quickAddSection = document.getElementById('quick-add');
     const imageUploadInput = document.getElementById('goal-image-upload');
     const imagePreview = document.getElementById('goal-image-preview');
+    const imagePreviewLink = document.getElementById('goal-image-preview-link');
     const imagePreviewImage = document.getElementById('goal-image-preview-image');
     const imageSuggestButton = document.getElementById('goal-image-suggest');
     const imageChooseButton = document.getElementById('goal-image-choose');
@@ -757,6 +771,7 @@ Mål
     const submitButton = quickAddForm.querySelector('button[type="submit"]');
     const deadlineInput = document.getElementById('goal-deadline');
     const deadlineQuickActions = quickAddForm.querySelectorAll('.deadline-action');
+    const whyInput = document.getElementById('goal-why');
 
     let editingGoalIndex = null;
     let editingImageSource = '';
@@ -846,6 +861,11 @@ Mål
       imagePreviewImage.hidden = true;
       imagePreviewImage.onload = null;
       imagePreviewImage.onerror = null;
+      if (imagePreviewLink) {
+        imagePreviewLink.setAttribute('hidden', '');
+        imagePreviewLink.removeAttribute('href');
+        imagePreviewLink.removeAttribute('aria-label');
+      }
     };
 
     const setSuggestedImageSource = (source) => {
@@ -875,18 +895,43 @@ Mål
       imagePreviewImage.onload = () => {
         imagePreview.dataset.hasImage = 'true';
         imagePreviewImage.hidden = false;
+        if (imagePreviewLink) {
+          imagePreviewLink.removeAttribute('hidden');
+          imagePreviewLink.setAttribute('aria-label', 'Åpne bilde i ny fane');
+        }
       };
 
       imagePreviewImage.onerror = () => {
         resetImagePreview();
+        setSuggestedImageSource('');
       };
 
+      if (imagePreviewLink) {
+        imagePreviewLink.setAttribute('hidden', '');
+        imagePreviewLink.href = source;
+      }
       imagePreviewImage.src = source;
     };
 
+    const extractKeywords = (text) => {
+      if (!text) {
+        return [];
+      }
+
+      return text
+        .toLowerCase()
+        .normalize('NFKD')
+        .replace(/[^\p{L}\p{N}\s]/gu, ' ')
+        .split(/\s+/)
+        .filter(Boolean)
+        .slice(0, 6);
+    };
+
     const buildSuggestedImageUrl = () => {
-      const title = titleInput.value.trim();
-      const query = title ? `${title} inspirasjon` : 'motivasjon';
+      const titleKeywords = extractKeywords(titleInput.value.trim());
+      const whyKeywords = extractKeywords(whyInput ? whyInput.value.trim() : '');
+      const keywords = [...titleKeywords, ...whyKeywords].slice(0, 8);
+      const query = keywords.length > 0 ? keywords.join(',') : 'motivasjon,inspirasjon';
       const encodedQuery = encodeURIComponent(query);
       return `https://source.unsplash.com/featured/800x600/?${encodedQuery}&t=${Date.now()}`;
     };
