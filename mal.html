@@ -773,9 +773,51 @@ Mål
     const deadlineQuickActions = quickAddForm.querySelectorAll('.deadline-action');
     const whyInput = document.getElementById('goal-why');
 
+    const defaultImagePlaceholder = imagePreview ? imagePreview.dataset.placeholder || '' : '';
+    const loadingImagePlaceholder = 'Laster inn bilde...';
+    const searchingImagePlaceholder = 'Leter etter bilde...';
+    const errorImagePlaceholder = 'Kunne ikke laste bilde. Prøv igjen.';
+    const defaultSuggestLabel = imageSuggestButton
+      ? imageSuggestButton.textContent.trim() || 'Finn bilde på nett'
+      : 'Finn bilde på nett';
+
     let editingGoalIndex = null;
     let editingImageSource = '';
     let suggestedImageSource = '';
+    let isSuggestingImage = false;
+    let imageSuggestionRequestId = 0;
+
+    const setImagePreviewPlaceholder = (message = defaultImagePlaceholder) => {
+      if (!imagePreview) {
+        return;
+      }
+
+      imagePreview.dataset.placeholder = message || defaultImagePlaceholder;
+    };
+
+    const updateSuggestButtonState = () => {
+      if (!imageSuggestButton) {
+        return;
+      }
+
+      imageSuggestButton.dataset.hasImage = suggestedImageSource ? 'true' : 'false';
+
+      if (isSuggestingImage) {
+        imageSuggestButton.textContent = 'Søker...';
+        imageSuggestButton.setAttribute('aria-disabled', 'true');
+        imageSuggestButton.disabled = true;
+        return;
+      }
+
+      imageSuggestButton.disabled = false;
+      imageSuggestButton.removeAttribute('aria-disabled');
+      imageSuggestButton.textContent = suggestedImageSource ? 'Bytt bilde' : defaultSuggestLabel;
+    };
+
+    const setSuggestedImageSource = (source) => {
+      suggestedImageSource = source || '';
+      updateSuggestButtonState();
+    };
 
     const formatDeadline = (deadline) => {
       if (!deadline) return 'Ingen deadline';
@@ -855,7 +897,7 @@ Mål
       return image;
     };
 
-    const resetImagePreview = () => {
+    const resetImagePreview = (placeholderMessage = defaultImagePlaceholder) => {
       imagePreview.dataset.hasImage = 'false';
       imagePreviewImage.src = '';
       imagePreviewImage.hidden = true;
@@ -866,21 +908,7 @@ Mål
         imagePreviewLink.removeAttribute('href');
         imagePreviewLink.removeAttribute('aria-label');
       }
-    };
-
-    const setSuggestedImageSource = (source) => {
-      suggestedImageSource = source || '';
-      if (!imageSuggestButton) {
-        return;
-      }
-
-      if (suggestedImageSource) {
-        imageSuggestButton.textContent = 'Bytt bilde';
-        imageSuggestButton.dataset.hasImage = 'true';
-      } else {
-        imageSuggestButton.textContent = 'Finn bilde på nett';
-        imageSuggestButton.dataset.hasImage = 'false';
-      }
+      setImagePreviewPlaceholder(placeholderMessage);
     };
 
     const updatePreviewFromSource = (source) => {
@@ -889,29 +917,54 @@ Mål
         return;
       }
 
-      imagePreview.dataset.hasImage = 'false';
-      imagePreviewImage.hidden = true;
+      resetImagePreview(loadingImagePlaceholder);
 
       imagePreviewImage.onload = () => {
         imagePreview.dataset.hasImage = 'true';
         imagePreviewImage.hidden = false;
+        setImagePreviewPlaceholder(defaultImagePlaceholder);
         if (imagePreviewLink) {
           imagePreviewLink.removeAttribute('hidden');
           imagePreviewLink.setAttribute('aria-label', 'Åpne bilde i ny fane');
+          const finalSrc = imagePreviewImage.currentSrc || source;
+          imagePreviewLink.href = finalSrc;
         }
       };
 
       imagePreviewImage.onerror = () => {
-        resetImagePreview();
-        setSuggestedImageSource('');
+        resetImagePreview(errorImagePlaceholder);
+        if (suggestedImageSource === source) {
+          setSuggestedImageSource('');
+        }
       };
 
       if (imagePreviewLink) {
         imagePreviewLink.setAttribute('hidden', '');
-        imagePreviewLink.href = source;
+        imagePreviewLink.removeAttribute('aria-label');
       }
       imagePreviewImage.src = source;
     };
+
+    const loadImageFromSource = (url) => new Promise((resolve, reject) => {
+      const testImage = new Image();
+      testImage.decoding = 'async';
+      testImage.crossOrigin = 'anonymous';
+
+      testImage.onload = () => {
+        const finalUrl = testImage.currentSrc || testImage.src || url;
+        testImage.onload = null;
+        testImage.onerror = null;
+        resolve(finalUrl);
+      };
+
+      testImage.onerror = () => {
+        testImage.onload = null;
+        testImage.onerror = null;
+        reject(new Error('Kunne ikke laste bilde'));
+      };
+
+      testImage.src = url;
+    });
 
     const extractKeywords = (text) => {
       if (!text) {
@@ -992,11 +1045,39 @@ Mål
     }
 
     if (imageSuggestButton) {
-      imageSuggestButton.addEventListener('click', () => {
-        const suggestedUrl = buildSuggestedImageUrl();
+      imageSuggestButton.addEventListener('click', async () => {
+        const requestId = ++imageSuggestionRequestId;
         imageUploadInput.value = '';
-        setSuggestedImageSource(suggestedUrl);
-        updatePreviewFromSource(suggestedUrl);
+        isSuggestingImage = true;
+        updateSuggestButtonState();
+        setImagePreviewPlaceholder(searchingImagePlaceholder);
+
+        try {
+          const suggestedUrl = buildSuggestedImageUrl();
+          const resolvedUrl = await loadImageFromSource(suggestedUrl);
+
+          if (requestId !== imageSuggestionRequestId) {
+            return;
+          }
+
+          setSuggestedImageSource(resolvedUrl);
+          updatePreviewFromSource(resolvedUrl);
+        } catch (error) {
+          if (requestId !== imageSuggestionRequestId) {
+            return;
+          }
+
+          if (imagePreview.dataset.hasImage === 'true') {
+            setImagePreviewPlaceholder(defaultImagePlaceholder);
+          } else {
+            resetImagePreview(errorImagePlaceholder);
+          }
+        } finally {
+          if (requestId === imageSuggestionRequestId) {
+            isSuggestingImage = false;
+            updateSuggestButtonState();
+          }
+        }
       });
     }
 
@@ -1015,7 +1096,7 @@ Mål
           updatePreviewFromSource(reader.result);
         };
         reader.onerror = () => {
-          resetImagePreview();
+          resetImagePreview(errorImagePlaceholder);
           setSuggestedImageSource('');
         };
         reader.readAsDataURL(file);
@@ -1118,6 +1199,8 @@ Mål
     });
 
     quickAddForm.addEventListener('reset', () => {
+      imageSuggestionRequestId += 1;
+      isSuggestingImage = false;
       imageUploadInput.value = '';
       resetImagePreview();
       setSuggestedImageSource('');
