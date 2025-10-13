@@ -560,6 +560,418 @@ Mål · Easylife
       text-align: center;
     }
 
+    .goal-detail {
+      background: var(--surface);
+      border-radius: 32px;
+      padding: clamp(24px, 3vw, 40px);
+      border: 1px solid var(--surface-border);
+      box-shadow: 0 24px 48px rgba(31, 48, 80, 0.18);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(24px, 3vw, 36px);
+    }
+
+    .goal-detail[hidden] {
+      display: none;
+    }
+
+    .goal-detail__back {
+      align-self: flex-start;
+      border: none;
+      background: rgba(15, 28, 46, 0.08);
+      color: var(--text-primary);
+      border-radius: 999px;
+      padding: 10px 18px;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 160ms ease, transform 160ms ease;
+    }
+
+    .goal-detail__back:hover,
+    .goal-detail__back:focus-visible {
+      background: rgba(15, 28, 46, 0.14);
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .goal-detail__hero {
+      display: grid;
+      gap: clamp(20px, 3vw, 40px);
+      grid-template-columns: minmax(220px, clamp(240px, 32vw, 320px)) minmax(260px, 1fr);
+      align-items: center;
+    }
+
+    .goal-detail__image {
+      width: 100%;
+      border-radius: 28px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .goal-detail__image img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .goal-detail__info {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .goal-detail__info h2 {
+      margin: 0;
+      font-size: clamp(1.9rem, 2.4vw, 2.4rem);
+    }
+
+    .goal-detail__meta {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    }
+
+    .goal-detail__meta-item {
+      background: rgba(255, 255, 255, 0.82);
+      border-radius: 18px;
+      border: 1px solid rgba(15, 28, 46, 0.08);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .goal-detail__meta-item span:first-child {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .goal-detail__meta-item span:last-child {
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .goal-detail__layout {
+      display: grid;
+      gap: clamp(24px, 3vw, 40px);
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.9fr);
+      align-items: start;
+    }
+
+    .goal-detail__main {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(20px, 3vw, 28px);
+    }
+
+    .goal-section {
+      background: rgba(255, 255, 255, 0.78);
+      border-radius: 26px;
+      border: 1px solid rgba(15, 28, 46, 0.08);
+      padding: clamp(20px, 3vw, 28px);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .goal-section__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .goal-section__header h3 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+
+    .inline-form {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .inline-form input,
+    .inline-form textarea {
+      flex: 1;
+      min-width: 180px;
+      border-radius: 16px;
+      border: 1px solid rgba(15, 28, 46, 0.12);
+      background: rgba(255, 255, 255, 0.92);
+      padding: 12px 14px;
+      font: inherit;
+    }
+
+    .inline-form button {
+      border: none;
+      border-radius: 16px;
+      background: linear-gradient(120deg, #0f78d4, #1f5f87);
+      color: #ffffff;
+      padding: 12px 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    .inline-form button:hover,
+    .inline-form button:focus-visible {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 30px rgba(15, 120, 212, 0.22);
+      outline: none;
+    }
+
+    .stacked-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .stacked-form input,
+    .stacked-form textarea {
+      border-radius: 16px;
+      border: 1px solid rgba(15, 28, 46, 0.12);
+      background: rgba(255, 255, 255, 0.92);
+      padding: 12px 14px;
+      font: inherit;
+    }
+
+    .stacked-form textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .stacked-form button {
+      border: none;
+      border-radius: 16px;
+      background: linear-gradient(120deg, #0f78d4, #1f5f87);
+      color: #ffffff;
+      padding: 12px 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 160ms ease, box-shadow 160ms ease;
+      align-self: flex-start;
+    }
+
+    .stacked-form button:hover,
+    .stacked-form button:focus-visible {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 30px rgba(15, 120, 212, 0.22);
+      outline: none;
+    }
+
+    .goal-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .goal-list__item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      background: rgba(15, 28, 46, 0.04);
+      border-radius: 18px;
+      border: 1px solid rgba(15, 28, 46, 0.08);
+      cursor: grab;
+      position: relative;
+    }
+
+    .goal-list__item:active {
+      cursor: grabbing;
+    }
+
+    .goal-list__item::before {
+      content: '';
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid rgba(15, 28, 46, 0.38);
+      flex-shrink: 0;
+    }
+
+    .goal-list__item[data-completed="true"]::before {
+      background: linear-gradient(120deg, #0f78d4, #1f5f87);
+      border-color: transparent;
+    }
+
+    .goal-list__item[data-progress]::after {
+      content: attr(data-progress);
+      margin-left: auto;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .goal-list__item.is-drag-over::after {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      top: var(--drop-indicator, 50%);
+      height: 0;
+      border-top: 2px dashed #0f78d4;
+      content: '';
+    }
+
+    .goal-list__label {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      color: var(--text-primary);
+    }
+
+    .goal-list__label span:first-child {
+      font-weight: 600;
+    }
+
+    .goal-list__label span:last-child {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .goal-list__todo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .goal-list__todo label {
+      flex: 1;
+      display: inline-flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .goal-list__todo input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      border-radius: 6px;
+      border: 1px solid rgba(15, 28, 46, 0.3);
+    }
+
+    .goal-list__todo span:first-child {
+      font-weight: 600;
+    }
+
+    .goal-list__todo span:last-child {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .goal-list__item[data-completed="true"] .goal-list__todo span:first-child {
+      text-decoration: line-through;
+      color: rgba(15, 28, 46, 0.45);
+    }
+
+    .goal-detail__notes {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .goal-notes {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .goal-note {
+      border-radius: 18px;
+      border: 1px solid rgba(15, 28, 46, 0.08);
+      padding: 16px 18px;
+      background: rgba(255, 255, 255, 0.92);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      cursor: pointer;
+      transition: transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    .goal-note:hover,
+    .goal-note:focus-visible {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 32px rgba(15, 28, 46, 0.16);
+      outline: none;
+    }
+
+    .goal-note h4 {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .goal-note p {
+      margin: 0;
+      color: var(--text-secondary);
+    }
+
+    .note-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 28, 46, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      z-index: 10;
+    }
+
+    .note-modal[hidden] {
+      display: none;
+    }
+
+    .note-modal__dialog {
+      background: #ffffff;
+      border-radius: 24px;
+      width: min(640px, 100%);
+      padding: clamp(24px, 4vw, 40px);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+      box-shadow: 0 30px 60px rgba(15, 28, 46, 0.24);
+    }
+
+    .note-modal__dialog button[type="button"] {
+      align-self: flex-end;
+      border: none;
+      background: rgba(15, 28, 46, 0.08);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .note-modal__dialog h3 {
+      margin: 0;
+      font-size: 1.4rem;
+    }
+
+    .note-modal__dialog p {
+      margin: 0;
+      line-height: 1.6;
+      color: var(--text-primary);
+      white-space: pre-wrap;
+    }
+
+    .empty-state {
+      border-radius: 18px;
+      border: 1px dashed rgba(15, 28, 46, 0.2);
+      padding: 18px;
+      text-align: center;
+      color: var(--text-secondary);
+    }
+
     @media (max-width: 960px) {
       body { flex-direction: column; }
       .sidebar {
@@ -579,6 +991,28 @@ Mål · Easylife
       main { padding: 32px 24px 48px; }
       .quick-add__layout {
         grid-template-columns: 1fr;
+      }
+      .goal-detail__hero {
+        grid-template-columns: 1fr;
+      }
+      .goal-detail__layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .goal-detail {
+        padding: 20px;
+      }
+      .goal-section {
+        padding: 18px;
+      }
+      .inline-form {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .inline-form button {
+        width: 100%;
       }
     }
   </style>
@@ -665,15 +1099,114 @@ Mål
     </section>
 
     <section class="goals-grid" id="goals-grid" aria-live="polite"></section>
+
+    <section class="goal-detail" id="goal-detail" aria-live="polite" hidden>
+      <button class="goal-detail__back" type="button" id="goal-detail-back">← Tilbake til oversikten</button>
+      <div class="goal-detail__hero">
+        <div class="goal-detail__image">
+          <img id="goal-detail-image" src="" alt="" loading="lazy" />
+        </div>
+        <div class="goal-detail__info">
+          <h2 id="goal-detail-title"></h2>
+          <p id="goal-detail-why"></p>
+          <div class="goal-detail__meta">
+            <div class="goal-detail__meta-item">
+              <span>Deadline</span>
+              <span id="goal-detail-deadline"></span>
+            </div>
+            <div class="goal-detail__meta-item">
+              <span>Kategori</span>
+              <span id="goal-detail-category"></span>
+            </div>
+            <div class="goal-detail__meta-item">
+              <span>Hvorfor det er viktig</span>
+              <span id="goal-detail-important"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="goal-detail__layout">
+        <div class="goal-detail__main">
+          <section class="goal-section" aria-labelledby="goal-milestones-title">
+            <div class="goal-section__header">
+              <h3 id="goal-milestones-title">Milepæler</h3>
+              <span class="chip chip--light">Dra for å sortere</span>
+            </div>
+            <ul class="goal-list" id="goal-milestone-list"></ul>
+            <form class="inline-form" id="goal-milestone-form">
+              <input type="text" name="milestone-title" placeholder="Legg til milepæl" required />
+              <input type="text" name="milestone-detail" placeholder="Detaljer (valgfritt)" />
+              <button type="submit">Legg til</button>
+            </form>
+          </section>
+          <section class="goal-section" aria-labelledby="goal-todos-title">
+            <div class="goal-section__header">
+              <h3 id="goal-todos-title">To-do's</h3>
+              <span class="chip chip--light">Dra for å sortere</span>
+            </div>
+            <ul class="goal-list" id="goal-todo-list"></ul>
+            <form class="inline-form" id="goal-todo-form">
+              <input type="text" name="todo-title" placeholder="Legg til oppgave" required />
+              <input type="text" name="todo-detail" placeholder="Detaljer (valgfritt)" />
+              <button type="submit">Legg til</button>
+            </form>
+          </section>
+        </div>
+        <aside class="goal-detail__notes">
+          <section class="goal-section" aria-labelledby="goal-notes-title">
+            <div class="goal-section__header">
+              <h3 id="goal-notes-title">Notater</h3>
+            </div>
+            <div class="goal-notes" id="goal-notes-list"></div>
+            <form class="stacked-form" id="goal-note-form">
+              <input type="text" name="note-title" placeholder="Tittel" required />
+              <textarea name="note-content" rows="4" placeholder="Skriv notat" required></textarea>
+              <button type="submit">Lagre notat</button>
+            </form>
+          </section>
+        </aside>
+      </div>
+    </section>
   </main>
+  <div class="note-modal" id="goal-note-modal" role="dialog" aria-modal="true" aria-hidden="true" hidden>
+    <div class="note-modal__dialog">
+      <button type="button" id="goal-note-close">Lukk</button>
+      <h3 id="goal-note-modal-title"></h3>
+      <p id="goal-note-modal-content"></p>
+    </div>
+  </div>
   <script>
     const goals = [
       {
         title: 'Løpe en maraton',
         why: 'Bygge utholdenhet, styrke og disiplin.',
-        deadline: '2024-09-15',
+        deadline: '2024-09-30',
         status: '77%',
-        image: 'https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?auto=format&fit=crop&w=800&q=80'
+        image: 'https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?auto=format&fit=crop&w=800&q=80',
+        category: 'Delmål',
+        important: 'For å utfordre meg selv fysisk og mentalt',
+        description: 'Trene strukturert med tydelige delmål for å komme meg gjennom mitt første maraton.',
+        milestones: [
+          { title: 'Fullfør et halvmaraton', detail: 'Delmål', completed: true },
+          { title: 'Sett opp en treningsplan', detail: 'Planlegg ukentlige økter', completed: false },
+          { title: 'Øk ukentlig distanse til 30 km', detail: 'Hold oversikt over progresjon', progress: '25%', completed: false },
+          { title: 'Kjøp maratonutstyr', detail: 'Sko, klær og ernæring', completed: false }
+        ],
+        todos: [
+          { title: 'Finn et maraton å melde meg på', detail: 'Se etter løp i september', completed: false },
+          { title: 'Book time hos fysioterapeut', detail: 'Få løpsanalyse', completed: true },
+          { title: 'Planlegg langtur med løpegruppa', detail: 'Helgen 12. mai', completed: false }
+        ],
+        notes: [
+          {
+            title: 'Treningsstrategi',
+            content: '3 kvalitetsøkter i uken (intervall, terskel og langtur). Restitusjon dag etter langtur. Registrer progresjon i Strava.'
+          },
+          {
+            title: 'Kosthold og hvile',
+            content: 'Fokus på karbohydratopplading torsdager. Minimum 7 timer søvn per natt. Vannflaske tilgjengelig hele dagen.'
+          }
+        ]
       },
       {
         title: 'Fullføre prosjekt',
@@ -778,6 +1311,24 @@ Mål
     const deadlineInput = document.getElementById('goal-deadline');
     const deadlineQuickActions = quickAddForm.querySelectorAll('.deadline-action');
     const whyInput = document.getElementById('goal-why');
+    const goalDetailSection = document.getElementById('goal-detail');
+    const goalDetailBackButton = document.getElementById('goal-detail-back');
+    const goalDetailImage = document.getElementById('goal-detail-image');
+    const goalDetailTitle = document.getElementById('goal-detail-title');
+    const goalDetailWhy = document.getElementById('goal-detail-why');
+    const goalDetailDeadline = document.getElementById('goal-detail-deadline');
+    const goalDetailCategory = document.getElementById('goal-detail-category');
+    const goalDetailImportant = document.getElementById('goal-detail-important');
+    const milestoneList = document.getElementById('goal-milestone-list');
+    const todoList = document.getElementById('goal-todo-list');
+    const notesList = document.getElementById('goal-notes-list');
+    const milestoneForm = document.getElementById('goal-milestone-form');
+    const todoForm = document.getElementById('goal-todo-form');
+    const noteForm = document.getElementById('goal-note-form');
+    const noteModal = document.getElementById('goal-note-modal');
+    const noteModalTitle = document.getElementById('goal-note-modal-title');
+    const noteModalContent = document.getElementById('goal-note-modal-content');
+    const noteModalClose = document.getElementById('goal-note-close');
 
     const defaultImagePlaceholder = imagePreview ? imagePreview.dataset.placeholder || '' : '';
     const loadingImagePlaceholder = 'Laster inn bilde...';
@@ -792,6 +1343,8 @@ Mål
     let suggestedImageSource = '';
     let isSuggestingImage = false;
     let imageSuggestionRequestId = 0;
+    let currentGoalIndex = null;
+    let lastFocusedGoalCard = null;
 
     const setImagePreviewPlaceholder = (message = defaultImagePlaceholder) => {
       if (!imagePreview) {
@@ -836,9 +1389,517 @@ Mål
       }).format(date);
     };
 
+    const formatLongDeadline = (deadline) => {
+      if (!deadline) {
+        return 'Ingen deadline';
+      }
+
+      const date = new Date(deadline);
+      if (Number.isNaN(date.getTime())) {
+        return deadline;
+      }
+
+      return new Intl.DateTimeFormat('nb-NO', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+      }).format(date);
+    };
+
+    function ensureGoalCollections(goal) {
+      if (!goal) {
+        return;
+      }
+
+      if (!Array.isArray(goal.milestones)) {
+        goal.milestones = [];
+      }
+      if (!Array.isArray(goal.todos)) {
+        goal.todos = [];
+      }
+      if (!Array.isArray(goal.notes)) {
+        goal.notes = [];
+      }
+    }
+
+    const reorderWithDrag = (items, fromIndex, toIndex, placeBefore) => {
+      const updated = Array.from(items);
+      const [moved] = updated.splice(fromIndex, 1);
+
+      if (placeBefore) {
+        let insertIndex = toIndex;
+        if (fromIndex < toIndex) {
+          insertIndex -= 1;
+        }
+        updated.splice(insertIndex < 0 ? 0 : insertIndex, 0, moved);
+      } else {
+        let insertIndex = toIndex;
+        if (fromIndex > toIndex) {
+          insertIndex += 1;
+        }
+        updated.splice(insertIndex, 0, moved);
+      }
+
+      return updated;
+    };
+
+    function setupDragAndDrop(listElement, items, onReorder) {
+      if (!listElement || !Array.isArray(items) || items.length === 0) {
+        listElement.ondragover = null;
+        listElement.ondrop = null;
+        return;
+      }
+
+      const handleListDragOver = (event) => {
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'move';
+      };
+
+      const handleListDrop = (event) => {
+        if (event.target.closest('[data-draggable-index]')) {
+          return;
+        }
+
+        event.preventDefault();
+        const sourceIndex = Number.parseInt(event.dataTransfer.getData('text/plain'), 10);
+        if (Number.isNaN(sourceIndex)) {
+          return;
+        }
+
+        const updated = Array.from(items);
+        const [moved] = updated.splice(sourceIndex, 1);
+        updated.push(moved);
+        onReorder(updated);
+      };
+
+      listElement.ondragover = handleListDragOver;
+      listElement.ondrop = handleListDrop;
+
+      Array.from(listElement.children).forEach((child) => {
+        const handleDragStart = (event) => {
+          const index = Number.parseInt(child.dataset.draggableIndex || '-1', 10);
+          if (Number.isNaN(index)) {
+            return;
+          }
+          child.classList.add('is-dragging');
+          event.dataTransfer.effectAllowed = 'move';
+          event.dataTransfer.setData('text/plain', String(index));
+        };
+
+        const handleDragEnd = () => {
+          child.classList.remove('is-dragging');
+          child.classList.remove('is-drag-over');
+          child.style.removeProperty('--drop-indicator');
+        };
+
+        const handleDragOver = (event) => {
+          event.preventDefault();
+          const draggingIndex = Number.parseInt(event.dataTransfer.getData('text/plain'), 10);
+          const currentIndex = Number.parseInt(child.dataset.draggableIndex || '-1', 10);
+          if (Number.isNaN(draggingIndex) || Number.isNaN(currentIndex) || draggingIndex === currentIndex) {
+            return;
+          }
+          const rect = child.getBoundingClientRect();
+          const dropBefore = event.clientY < rect.top + rect.height / 2;
+          child.classList.add('is-drag-over');
+          child.style.setProperty('--drop-indicator', dropBefore ? '0%' : '100%');
+          event.dataTransfer.dropEffect = 'move';
+        };
+
+        const handleDragLeave = () => {
+          child.classList.remove('is-drag-over');
+          child.style.removeProperty('--drop-indicator');
+        };
+
+        const handleDrop = (event) => {
+          event.preventDefault();
+          const sourceIndex = Number.parseInt(event.dataTransfer.getData('text/plain'), 10);
+          const targetIndex = Number.parseInt(child.dataset.draggableIndex || '-1', 10);
+          if (Number.isNaN(sourceIndex) || Number.isNaN(targetIndex) || sourceIndex === targetIndex) {
+            child.classList.remove('is-drag-over');
+            child.style.removeProperty('--drop-indicator');
+            return;
+          }
+
+          const rect = child.getBoundingClientRect();
+          const dropBefore = event.clientY < rect.top + rect.height / 2;
+          const updated = reorderWithDrag(items, sourceIndex, targetIndex, dropBefore);
+          child.classList.remove('is-drag-over');
+          child.style.removeProperty('--drop-indicator');
+          onReorder(updated);
+        };
+
+        child.addEventListener('dragstart', handleDragStart);
+        child.addEventListener('dragend', handleDragEnd);
+        child.addEventListener('dragover', handleDragOver);
+        child.addEventListener('dragleave', handleDragLeave);
+        child.addEventListener('drop', handleDrop);
+      });
+    }
+
+    function renderMilestones(goal) {
+      if (!milestoneList) {
+        return;
+      }
+
+      milestoneList.innerHTML = '';
+      ensureGoalCollections(goal);
+
+      if (!goal.milestones.length) {
+        const emptyItem = document.createElement('li');
+        emptyItem.className = 'empty-state';
+        emptyItem.textContent = 'Legg til milepælene dine her.';
+        milestoneList.appendChild(emptyItem);
+        milestoneList.ondragover = null;
+        milestoneList.ondrop = null;
+        return;
+      }
+
+      goal.milestones.forEach((milestone, index) => {
+        const item = document.createElement('li');
+        item.className = 'goal-list__item';
+        item.draggable = true;
+        item.dataset.draggableIndex = String(index);
+        item.dataset.completed = milestone.completed ? 'true' : 'false';
+        if (milestone.progress) {
+          item.dataset.progress = milestone.progress;
+        } else {
+          item.removeAttribute('data-progress');
+        }
+
+        const label = document.createElement('div');
+        label.className = 'goal-list__label';
+
+        const titleSpan = document.createElement('span');
+        titleSpan.textContent = milestone.title;
+        label.appendChild(titleSpan);
+
+        if (milestone.detail) {
+          const detailSpan = document.createElement('span');
+          detailSpan.textContent = milestone.detail;
+          label.appendChild(detailSpan);
+        }
+
+        item.appendChild(label);
+        milestoneList.appendChild(item);
+      });
+
+      setupDragAndDrop(milestoneList, goal.milestones, (updated) => {
+        goal.milestones = updated;
+        renderMilestones(goal);
+      });
+    }
+
+    function renderTodos(goal) {
+      if (!todoList) {
+        return;
+      }
+
+      todoList.innerHTML = '';
+      ensureGoalCollections(goal);
+
+      if (!goal.todos.length) {
+        const emptyItem = document.createElement('li');
+        emptyItem.className = 'empty-state';
+        emptyItem.textContent = 'Ingen oppgaver ennå. Legg til en for å komme i gang.';
+        todoList.appendChild(emptyItem);
+        todoList.ondragover = null;
+        todoList.ondrop = null;
+        return;
+      }
+
+      goal.todos.forEach((todo, index) => {
+        const item = document.createElement('li');
+        item.className = 'goal-list__item';
+        item.draggable = true;
+        item.dataset.draggableIndex = String(index);
+        item.dataset.completed = todo.completed ? 'true' : 'false';
+
+        const todoWrapper = document.createElement('div');
+        todoWrapper.className = 'goal-list__todo';
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        const checkboxId = `goal-${currentGoalIndex ?? 'x'}-todo-${index}`;
+        checkbox.id = checkboxId;
+        checkbox.checked = Boolean(todo.completed);
+
+        checkbox.addEventListener('click', (event) => {
+          event.stopPropagation();
+        });
+
+        checkbox.addEventListener('change', () => {
+          todo.completed = checkbox.checked;
+          renderTodos(goal);
+        });
+
+        const label = document.createElement('label');
+        label.setAttribute('for', checkboxId);
+
+        const titleSpan = document.createElement('span');
+        titleSpan.textContent = todo.title;
+        label.appendChild(titleSpan);
+
+        if (todo.detail) {
+          const detailSpan = document.createElement('span');
+          detailSpan.textContent = todo.detail;
+          label.appendChild(detailSpan);
+        }
+
+        todoWrapper.appendChild(checkbox);
+        todoWrapper.appendChild(label);
+        item.appendChild(todoWrapper);
+        todoList.appendChild(item);
+      });
+
+      setupDragAndDrop(todoList, goal.todos, (updated) => {
+        goal.todos = updated;
+        renderTodos(goal);
+      });
+    }
+
+    function renderNotes(goal) {
+      if (!notesList) {
+        return;
+      }
+
+      notesList.innerHTML = '';
+      ensureGoalCollections(goal);
+
+      if (!goal.notes.length) {
+        const empty = document.createElement('div');
+        empty.className = 'empty-state';
+        empty.textContent = 'Ingen notater ennå. Skriv ned viktige tanker eller ressurser her.';
+        notesList.appendChild(empty);
+        return;
+      }
+
+      goal.notes.forEach((note, index) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'goal-note';
+        button.dataset.noteIndex = String(index);
+
+        const heading = document.createElement('h4');
+        heading.textContent = note.title;
+        button.appendChild(heading);
+
+        if (note.content) {
+          const preview = document.createElement('p');
+          preview.textContent = note.content.length > 120
+            ? `${note.content.slice(0, 117)}...`
+            : note.content;
+          button.appendChild(preview);
+        }
+
+        button.addEventListener('click', () => {
+          openNoteModal(note);
+        });
+
+        notesList.appendChild(button);
+      });
+    }
+
+    function renderGoalDetail(goal) {
+      if (!goalDetailSection) {
+        return;
+      }
+
+      ensureGoalCollections(goal);
+
+      goalDetailTitle.textContent = goal.title || '';
+      goalDetailWhy.textContent = goal.description || goal.why || '';
+      goalDetailDeadline.textContent = formatLongDeadline(goal.deadline);
+      goalDetailCategory.textContent = goal.category || 'Personlig mål';
+      goalDetailImportant.textContent = goal.important || goal.why || 'Holder meg motivert';
+
+      const imageSource = goal.image || fallbackImages[0];
+      goalDetailImage.src = imageSource;
+      goalDetailImage.alt = goal.title ? `Illustrasjon for ${goal.title}` : '';
+
+      renderMilestones(goal);
+      renderTodos(goal);
+      renderNotes(goal);
+    }
+
+    function openGoalDetail(index, sourceElement) {
+      const goal = goals[index];
+      if (!goal || !goalDetailSection) {
+        return;
+      }
+
+      currentGoalIndex = index;
+      lastFocusedGoalCard = sourceElement || null;
+      renderGoalDetail(goal);
+      goalDetailSection.removeAttribute('hidden');
+      goalsGrid.setAttribute('hidden', '');
+      if (quickAddSection && !quickAddSection.hasAttribute('hidden')) {
+        hideQuickAdd();
+      }
+
+      goalDetailSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      requestAnimationFrame(() => {
+        goalDetailBackButton?.focus();
+      });
+    }
+
+    function closeGoalDetail() {
+      if (!goalDetailSection) {
+        return;
+      }
+
+      goalDetailSection.setAttribute('hidden', '');
+      goalsGrid.removeAttribute('hidden');
+      currentGoalIndex = null;
+
+      if (lastFocusedGoalCard && document.body.contains(lastFocusedGoalCard)) {
+        lastFocusedGoalCard.focus();
+      }
+      lastFocusedGoalCard = null;
+    }
+
+    function openNoteModal(note) {
+      if (!noteModal) {
+        return;
+      }
+
+      noteModalTitle.textContent = note.title || 'Notat';
+      noteModalContent.textContent = note.content || '';
+      noteModal.removeAttribute('hidden');
+      noteModal.setAttribute('aria-hidden', 'false');
+      noteModalClose?.focus();
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeNoteModal() {
+      if (!noteModal) {
+        return;
+      }
+
+      noteModal.setAttribute('hidden', '');
+      noteModal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      const firstNoteButton = notesList?.querySelector('.goal-note');
+      if (firstNoteButton) {
+        firstNoteButton.focus();
+      }
+    }
+
+    if (goalDetailBackButton) {
+      goalDetailBackButton.addEventListener('click', closeGoalDetail);
+    }
+
+    if (noteModalClose) {
+      noteModalClose.addEventListener('click', closeNoteModal);
+    }
+
+    if (noteModal) {
+      noteModal.addEventListener('click', (event) => {
+        if (event.target === noteModal) {
+          closeNoteModal();
+        }
+      });
+    }
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        if (noteModal && !noteModal.hasAttribute('hidden')) {
+          closeNoteModal();
+        } else if (goalDetailSection && !goalDetailSection.hasAttribute('hidden')) {
+          closeGoalDetail();
+        }
+      }
+    });
+
+    if (milestoneForm) {
+      milestoneForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        if (currentGoalIndex === null) {
+          return;
+        }
+
+        const goal = goals[currentGoalIndex];
+        ensureGoalCollections(goal);
+        const titleField = milestoneForm['milestone-title'];
+        const detailField = milestoneForm['milestone-detail'];
+        const titleValue = titleField?.value.trim();
+        const detailValue = detailField?.value.trim();
+
+        if (!titleValue) {
+          return;
+        }
+
+        goal.milestones.push({
+          title: titleValue,
+          detail: detailValue,
+          completed: false
+        });
+
+        milestoneForm.reset();
+        renderMilestones(goal);
+      });
+    }
+
+    if (todoForm) {
+      todoForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        if (currentGoalIndex === null) {
+          return;
+        }
+
+        const goal = goals[currentGoalIndex];
+        ensureGoalCollections(goal);
+        const titleValue = todoForm['todo-title']?.value.trim();
+        const detailValue = todoForm['todo-detail']?.value.trim();
+
+        if (!titleValue) {
+          return;
+        }
+
+        goal.todos.push({
+          title: titleValue,
+          detail: detailValue,
+          completed: false
+        });
+
+        todoForm.reset();
+        renderTodos(goal);
+      });
+    }
+
+    if (noteForm) {
+      noteForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        if (currentGoalIndex === null) {
+          return;
+        }
+
+        const goal = goals[currentGoalIndex];
+        ensureGoalCollections(goal);
+        const titleValue = noteForm['note-title']?.value.trim();
+        const contentValue = noteForm['note-content']?.value.trim();
+
+        if (!titleValue || !contentValue) {
+          return;
+        }
+
+        goal.notes.unshift({
+          title: titleValue,
+          content: contentValue
+        });
+
+        noteForm.reset();
+        renderNotes(goal);
+      });
+    }
+
     const createGoalCard = ({ title, deadline, status, image }, index) => {
       const article = document.createElement('article');
       article.className = 'goal-card';
+      article.tabIndex = 0;
+      article.setAttribute('role', 'button');
+      article.setAttribute('aria-label', `Åpne detaljene for ${title}`);
 
       const img = document.createElement('img');
       img.src = image;
@@ -861,7 +1922,10 @@ Mål
         </svg>
         <span class="visually-hidden">Rediger mål</span>
       `;
-      editButton.addEventListener('click', () => startEditingGoal(index));
+      editButton.addEventListener('click', (event) => {
+        event.stopPropagation();
+        startEditingGoal(index);
+      });
       top.appendChild(editButton);
 
       content.appendChild(top);
@@ -884,6 +1948,15 @@ Mål
 
       content.appendChild(footer);
       article.appendChild(content);
+
+      article.addEventListener('click', () => openGoalDetail(index, article));
+
+      article.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          openGoalDetail(index, article);
+        }
+      });
 
       return article;
     };
