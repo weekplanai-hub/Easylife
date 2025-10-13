@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mål · Detaljer · Easylife</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --sidebar-bg: linear-gradient(180deg, #101828 0%, #020617 100%);
+      --sidebar-width: 260px;
+      --card-bg: rgba(255, 255, 255, 0.08);
+      --text-primary: #0f1c2e;
+      --text-secondary: rgba(15, 28, 46, 0.64);
+      --surface: rgba(255, 255, 255, 0.55);
+      --surface-border: rgba(255, 255, 255, 0.35);
+      --chip-bg: rgba(15, 28, 46, 0.55);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(120% 120% at 10% 0%, rgba(201, 226, 255, 0.9) 0%, rgba(228, 241, 255, 0.9) 45%, rgba(196, 215, 238, 0.95) 100%), #f1f5f9;
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+    }
+
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--sidebar-bg);
+      color: rgba(255, 255, 255, 0.92);
+      padding: 32px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      position: relative;
+      box-shadow: 12px 0 32px rgba(18, 38, 63, 0.25);
+      z-index: 2;
+    }
+
+    .logo {
+      display: block;
+    }
+
+    .logo img {
+      display: block;
+      width: 160px;
+      max-width: 100%;
+      height: auto;
+    }
+
+    .add-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.12);
+      border: none;
+      color: inherit;
+      border-radius: 16px;
+      padding: 12px 20px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 160ms ease;
+    }
+
+    .add-button:hover,
+    .add-button:focus-visible {
+      background: rgba(255, 255, 255, 0.22);
+      outline: none;
+    }
+
+    .add-button .icon {
+      display: inline-flex;
+      width: 32px;
+      height: 32px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.18);
+      font-size: 1.2rem;
+    }
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .menu a {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 16px;
+      border-radius: 14px;
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      font-weight: 500;
+      transition: background 160ms ease, color 160ms ease;
+    }
+
+    .menu a.active,
+    .menu a:hover,
+    .menu a:focus-visible {
+      background: rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+      outline: none;
+    }
+
+    .menu a .icon {
+      display: inline-flex;
+      width: 32px;
+      height: 32px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.14);
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    main {
+      flex: 1;
+      padding: 48px clamp(24px, 4vw, 64px);
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 2vw + 1rem, 2.75rem);
+    }
+
+    p {
+      margin: 0;
+      color: var(--text-secondary);
+      max-width: 620px;
+      line-height: 1.6;
+    }
+
+    .page-header {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .goal-detail {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .goal-detail__back {
+      align-self: flex-start;
+      background: transparent;
+      border: none;
+      padding: 0;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 160ms ease;
+    }
+
+    .goal-detail__back:hover,
+    .goal-detail__back:focus-visible {
+      color: #0f172a;
+      outline: none;
+    }
+
+    .goal-detail__hero {
+      display: grid;
+      grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
+      gap: 32px;
+      align-items: stretch;
+    }
+
+    .goal-detail__image {
+      border-radius: 28px;
+      overflow: hidden;
+      position: relative;
+      min-height: 280px;
+      background: rgba(15, 28, 46, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .goal-detail__image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .goal-detail__info {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .goal-detail__info h2 {
+      margin: 0;
+      font-size: clamp(2rem, 1vw + 1.5rem, 2.5rem);
+    }
+
+    .goal-detail__meta {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .goal-detail__meta-item {
+      padding: 16px 18px;
+      background: rgba(255, 255, 255, 0.92);
+      border-radius: 18px;
+      border: 1px solid rgba(15, 28, 46, 0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .goal-detail__meta-item span:first-child {
+      font-size: 0.8rem;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: rgba(15, 28, 46, 0.58);
+    }
+
+    .goal-detail__meta-item span:last-child {
+      font-weight: 600;
+      color: #0f172a;
+    }
+
+    .goal-detail__layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+      gap: 32px;
+      align-items: flex-start;
+    }
+
+    .goal-section {
+      background: rgba(255, 255, 255, 0.92);
+      border-radius: 28px;
+      border: 1px solid rgba(15, 28, 46, 0.08);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .goal-section__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .goal-section__header h3 {
+      margin: 0;
+      font-size: 1.3rem;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      background: var(--chip-bg);
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .chip--light {
+      background: rgba(15, 28, 46, 0.08);
+      color: rgba(15, 28, 46, 0.85);
+    }
+
+    .goal-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .goal-list__item {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 20px;
+      padding: 18px 20px;
+      border: 1px solid rgba(15, 28, 46, 0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+    }
+
+    .goal-list__item::after {
+      content: '';
+      position: absolute;
+      left: 24px;
+      right: 24px;
+      bottom: -9px;
+      height: 2px;
+      background: rgba(15, 28, 46, 0.08);
+      border-radius: 999px;
+      opacity: 0;
+      transition: opacity 160ms ease;
+    }
+
+    .goal-list__item.is-drag-over::after {
+      opacity: 1;
+    }
+
+    .goal-list__label {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .goal-list__label span:first-child {
+      font-weight: 600;
+    }
+
+    .goal-list__label span:last-child {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    .goal-milestone__header {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .goal-milestone__toggle {
+      border: none;
+      background: rgba(15, 28, 46, 0.06);
+      color: #0f172a;
+      padding: 8px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .goal-milestone__todos {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .goal-milestone__todo-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .goal-milestone__todo-item {
+      background: rgba(248, 250, 252, 0.9);
+      border-radius: 16px;
+      padding: 14px 16px;
+      border: 1px solid rgba(15, 28, 46, 0.06);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+    }
+
+    .goal-list__todo {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .goal-list__todo label {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      cursor: pointer;
+      font-weight: 500;
+      color: #0f172a;
+    }
+
+    .goal-list__todo label span:last-child {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      font-weight: 400;
+    }
+
+    .goal-list__todo input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: #2563eb;
+    }
+
+    .inline-form {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .inline-form input[type="text"] {
+      flex: 1;
+      min-width: 160px;
+      border-radius: 12px;
+      border: 1px solid rgba(15, 28, 46, 0.12);
+      padding: 10px 12px;
+      font-size: 0.95rem;
+    }
+
+    .inline-form button {
+      border-radius: 12px;
+      border: none;
+      background: #2563eb;
+      color: #ffffff;
+      padding: 10px 18px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .goal-detail__notes {
+      position: sticky;
+      top: 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .goal-notes {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .goal-notes__actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+
+    .goal-notes__search {
+      flex: 1;
+      min-width: 160px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(15, 28, 46, 0.12);
+      font-size: 0.95rem;
+    }
+
+    .goal-notes__add {
+      border-radius: 12px;
+      border: none;
+      background: #2563eb;
+      color: #ffffff;
+      padding: 10px 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 160ms ease;
+    }
+
+    .goal-notes__add:hover,
+    .goal-notes__add:focus-visible {
+      background: #1d4ed8;
+      outline: none;
+    }
+
+    .goal-note {
+      border-radius: 18px;
+      border: 1px solid rgba(15, 28, 46, 0.08);
+      padding: 16px 18px;
+      background: rgba(255, 255, 255, 0.92);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      cursor: pointer;
+      transition: transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    .goal-note:hover,
+    .goal-note:focus-visible {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 32px rgba(15, 28, 46, 0.16);
+      outline: none;
+    }
+
+    .goal-note h4 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .goal-note p {
+      margin: 0;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .empty-state {
+      border-radius: 20px;
+      border: 1px dashed rgba(15, 28, 46, 0.12);
+      padding: 24px;
+      text-align: center;
+      color: var(--text-secondary);
+      font-weight: 500;
+      background: rgba(255, 255, 255, 0.75);
+    }
+
+    .note-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 28, 46, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      z-index: 10;
+    }
+
+    .note-modal[hidden] {
+      display: none;
+    }
+
+    .note-modal__dialog {
+      background: #ffffff;
+      border-radius: 24px;
+      max-width: 480px;
+      width: min(100%, 480px);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+    }
+
+    .note-modal__dialog--form {
+      max-width: 520px;
+    }
+
+    .note-modal__dialog button[type="button"] {
+      align-self: flex-end;
+      border: none;
+      background: transparent;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .note-modal__dialog h3 {
+      margin: 0;
+      font-size: 1.4rem;
+    }
+
+    .note-modal__dialog p {
+      margin: 0;
+      color: var(--text-secondary);
+      white-space: pre-wrap;
+    }
+
+    .stacked-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .stacked-form input,
+    .stacked-form textarea {
+      border-radius: 12px;
+      border: 1px solid rgba(15, 28, 46, 0.12);
+      padding: 10px 12px;
+      font-size: 0.95rem;
+    }
+
+    .stacked-form button[type="submit"] {
+      border-radius: 12px;
+      border: none;
+      background: #2563eb;
+      color: #ffffff;
+      padding: 10px 18px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    @media (max-width: 1080px) {
+      body {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding: 24px;
+      }
+
+      .menu {
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+
+      .goal-detail__hero {
+        grid-template-columns: 1fr;
+      }
+
+      .goal-detail__layout {
+        grid-template-columns: 1fr;
+      }
+
+      .goal-detail__notes {
+        position: static;
+      }
+
+      .goal-section {
+        padding: 18px;
+      }
+
+      .inline-form {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .inline-form button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="logo">
+      <img src="images/logo%20white.png" alt="Easylife logo" />
+    </div>
+    <a class="add-button" href="#">
+      <span class="icon">+</span>
+      Ny modul
+    </a>
+    <nav class="menu" aria-label="Hovedmeny">
+      <a href="index.html"><span class="icon">🏠</span>Dashboard</a>
+      <a class="active" href="mal.html"><span class="icon">🎯</span>Mål</a>
+      <a href="action.html"><span class="icon">📝</span>Action</a>
+      <a href="todo.html"><span class="icon">✅</span>Todo</a>
+      <a href="rutiner.html"><span class="icon">🔁</span>Rutiner</a>
+      <a href="addon.html"><span class="icon">➕</span>Addon</a>
+      <a href="training.html"><span class="icon">💪</span>Training og kostholdsplan</a>
+    </nav>
+  </aside>
+  <main>
+    <section class="goal-detail" id="goal-detail" aria-live="polite" hidden>
+      <button class="goal-detail__back" type="button" id="goal-detail-back">← Tilbake til oversikten</button>
+      <div class="goal-detail__hero">
+        <div class="goal-detail__image">
+          <img id="goal-detail-image" src="" alt="" loading="lazy" />
+        </div>
+        <div class="goal-detail__info">
+          <h2 id="goal-detail-title"></h2>
+          <p id="goal-detail-why"></p>
+          <div class="goal-detail__meta">
+            <div class="goal-detail__meta-item">
+              <span>Deadline</span>
+              <span id="goal-detail-deadline"></span>
+            </div>
+            <div class="goal-detail__meta-item">
+              <span>Kategori</span>
+              <span id="goal-detail-category"></span>
+            </div>
+            <div class="goal-detail__meta-item">
+              <span>Hvorfor det er viktig</span>
+              <span id="goal-detail-important"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="goal-detail__layout">
+        <div class="goal-detail__main">
+          <section class="goal-section" aria-labelledby="goal-milestones-title">
+            <div class="goal-section__header">
+              <h3 id="goal-milestones-title">Milepæler</h3>
+              <span class="chip chip--light">Dra for å sortere</span>
+            </div>
+            <ul class="goal-list goal-milestone-list" id="goal-milestone-list"></ul>
+            <form class="inline-form" id="goal-milestone-form">
+              <input type="text" name="milestone-title" placeholder="Legg til milepæl" required />
+              <input type="text" name="milestone-detail" placeholder="Detaljer (valgfritt)" />
+              <button type="submit">Legg til</button>
+            </form>
+          </section>
+        </div>
+        <aside class="goal-detail__notes">
+          <section class="goal-section" aria-labelledby="goal-notes-title">
+            <div class="goal-section__header">
+              <h3 id="goal-notes-title">Notater</h3>
+              <div class="goal-notes__actions">
+                <input type="search" id="goal-notes-search" class="goal-notes__search" placeholder="Søk i notater" aria-label="Søk i notater" />
+                <button type="button" class="goal-notes__add" id="goal-add-note">Nytt notat</button>
+              </div>
+            </div>
+            <div class="goal-notes" id="goal-notes-list"></div>
+          </section>
+        </aside>
+      </div>
+    </section>
+    <section class="empty-state" id="goal-detail-empty" hidden>
+      Kunne ikke finne dette målet. <a href="mal.html">Gå tilbake til oversikten.</a>
+    </section>
+  </main>
+  <div class="note-modal" id="goal-note-modal" role="dialog" aria-modal="true" aria-hidden="true" hidden>
+    <div class="note-modal__dialog">
+      <button type="button" id="goal-note-close">Lukk</button>
+      <h3 id="goal-note-modal-title"></h3>
+      <p id="goal-note-modal-content"></p>
+    </div>
+  </div>
+  <div class="note-modal" id="goal-note-create-modal" role="dialog" aria-modal="true" aria-hidden="true" hidden>
+    <div class="note-modal__dialog note-modal__dialog--form">
+      <button type="button" id="goal-note-create-close">Lukk</button>
+      <h3>Ny notat</h3>
+      <form class="stacked-form" id="goal-note-create-form">
+        <input type="text" name="note-title" placeholder="Tittel" required />
+        <textarea name="note-content" rows="4" placeholder="Skriv notat" required></textarea>
+        <button type="submit">Lagre notat</button>
+      </form>
+    </div>
+  </div>
+  <script src="goals-data.js"></script>
+  <script>
+    (function () {
+      const baseGoalsData = window.EASYLIFE_GOALS_DATA || [];
+      const cloneGoal = (goal) => JSON.parse(JSON.stringify(goal || {}));
+
+      const goalDetailSection = document.getElementById('goal-detail');
+      const emptyStateSection = document.getElementById('goal-detail-empty');
+      const goalDetailBackButton = document.getElementById('goal-detail-back');
+      const goalDetailImage = document.getElementById('goal-detail-image');
+      const goalDetailTitle = document.getElementById('goal-detail-title');
+      const goalDetailWhy = document.getElementById('goal-detail-why');
+      const goalDetailDeadline = document.getElementById('goal-detail-deadline');
+      const goalDetailCategory = document.getElementById('goal-detail-category');
+      const goalDetailImportant = document.getElementById('goal-detail-important');
+      const milestoneList = document.getElementById('goal-milestone-list');
+      const milestoneForm = document.getElementById('goal-milestone-form');
+      const notesList = document.getElementById('goal-notes-list');
+      const notesSearchInput = document.getElementById('goal-notes-search');
+      const addNoteButton = document.getElementById('goal-add-note');
+      const noteModal = document.getElementById('goal-note-modal');
+      const noteModalTitle = document.getElementById('goal-note-modal-title');
+      const noteModalContent = document.getElementById('goal-note-modal-content');
+      const noteModalClose = document.getElementById('goal-note-close');
+      const noteCreateModal = document.getElementById('goal-note-create-modal');
+      const noteCreateClose = document.getElementById('goal-note-create-close');
+      const noteCreateForm = document.getElementById('goal-note-create-form');
+
+      const currentUrl = new URL(window.location.href);
+      const goalParam = currentUrl.searchParams.get('goal');
+      const parsedGoalIndex = goalParam === null ? NaN : Number.parseInt(goalParam, 10);
+      const hasGoal = Number.isInteger(parsedGoalIndex) && parsedGoalIndex >= 0 && parsedGoalIndex < baseGoalsData.length;
+
+      let currentGoalIndex = hasGoal ? parsedGoalIndex : null;
+      let currentGoal = currentGoalIndex !== null ? cloneGoal(baseGoalsData[currentGoalIndex]) : null;
+      let noteSearchQuery = '';
+      let activeModalCount = 0;
+
+      const lockBodyScroll = () => {
+        activeModalCount += 1;
+        if (activeModalCount === 1) {
+          document.body.style.overflow = 'hidden';
+        }
+      };
+
+      const unlockBodyScroll = () => {
+        activeModalCount = Math.max(0, activeModalCount - 1);
+        if (activeModalCount === 0) {
+          document.body.style.overflow = '';
+        }
+      };
+
+      const formatLongDeadline = (deadline) => {
+        if (!deadline) {
+          return 'Ingen deadline';
+        }
+
+        const date = new Date(deadline);
+        if (Number.isNaN(date.getTime())) {
+          return deadline;
+        }
+
+        return new Intl.DateTimeFormat('nb-NO', {
+          day: '2-digit',
+          month: 'long',
+          year: 'numeric'
+        }).format(date);
+      };
+
+      function ensureGoalCollections(goal) {
+        if (!goal) {
+          return;
+        }
+
+        if (!Array.isArray(goal.milestones)) {
+          goal.milestones = [];
+        }
+
+        if (Array.isArray(goal.todos) && goal.todos.length) {
+          const [firstMilestone] = goal.milestones;
+          if (firstMilestone && Array.isArray(firstMilestone.todos)) {
+            firstMilestone.todos.push(...goal.todos);
+          } else if (firstMilestone) {
+            firstMilestone.todos = [...goal.todos];
+          } else {
+            goal.milestones.push({
+              title: 'Oppgaver',
+              detail: '',
+              completed: false,
+              todos: [...goal.todos]
+            });
+          }
+          goal.todos = [];
+        }
+
+        goal.milestones.forEach((milestone, index) => {
+          if (!milestone || typeof milestone !== 'object') {
+            goal.milestones[index] = {
+              title: '',
+              detail: '',
+              completed: false,
+              todos: [],
+              isExpanded: index === 0
+            };
+            return;
+          }
+
+          if (!Array.isArray(milestone.todos)) {
+            milestone.todos = [];
+          }
+
+          milestone.todos = milestone.todos.map((todo) => ({
+            title: todo?.title || '',
+            detail: todo?.detail || '',
+            completed: Boolean(todo?.completed)
+          }));
+
+          if (typeof milestone.isExpanded !== 'boolean') {
+            milestone.isExpanded = index === 0;
+          }
+        });
+
+        if (!Array.isArray(goal.notes)) {
+          goal.notes = [];
+        }
+      }
+
+      const reorderWithDrag = (items, fromIndex, toIndex, placeBefore) => {
+        const updated = Array.from(items);
+        const [moved] = updated.splice(fromIndex, 1);
+
+        if (placeBefore) {
+          let insertIndex = toIndex;
+          if (fromIndex < toIndex) {
+            insertIndex -= 1;
+          }
+          updated.splice(insertIndex < 0 ? 0 : insertIndex, 0, moved);
+        } else {
+          let insertIndex = toIndex;
+          if (fromIndex > toIndex) {
+            insertIndex += 1;
+          }
+          updated.splice(insertIndex, 0, moved);
+        }
+
+        return updated;
+      };
+
+      function setupDragAndDrop(listElement, items, onReorder) {
+        if (!listElement || !Array.isArray(items) || items.length === 0) {
+          listElement.ondragover = null;
+          listElement.ondrop = null;
+          return;
+        }
+
+        const handleListDragOver = (event) => {
+          event.preventDefault();
+          event.dataTransfer.dropEffect = 'move';
+        };
+
+        const handleListDrop = (event) => {
+          if (event.target.closest('[data-draggable-index]')) {
+            return;
+          }
+
+          event.preventDefault();
+          const sourceIndex = Number.parseInt(event.dataTransfer.getData('text/plain'), 10);
+          if (Number.isNaN(sourceIndex)) {
+            return;
+          }
+
+          const updated = Array.from(items);
+          const [moved] = updated.splice(sourceIndex, 1);
+          updated.push(moved);
+          onReorder(updated);
+        };
+
+        listElement.ondragover = handleListDragOver;
+        listElement.ondrop = handleListDrop;
+
+        Array.from(listElement.children).forEach((child) => {
+          const handleDragStart = (event) => {
+            const index = Number.parseInt(child.dataset.draggableIndex || '-1', 10);
+            if (Number.isNaN(index)) {
+              return;
+            }
+            child.classList.add('is-dragging');
+            event.dataTransfer.effectAllowed = 'move';
+            event.dataTransfer.setData('text/plain', String(index));
+          };
+
+          const handleDragEnd = () => {
+            child.classList.remove('is-dragging');
+            child.classList.remove('is-drag-over');
+            child.style.removeProperty('--drop-indicator');
+          };
+
+          const handleDragOver = (event) => {
+            event.preventDefault();
+            const draggingIndex = Number.parseInt(event.dataTransfer.getData('text/plain'), 10);
+            const currentIndex = Number.parseInt(child.dataset.draggableIndex || '-1', 10);
+            if (Number.isNaN(draggingIndex) || Number.isNaN(currentIndex) || draggingIndex === currentIndex) {
+              return;
+            }
+            const rect = child.getBoundingClientRect();
+            const dropBefore = event.clientY < rect.top + rect.height / 2;
+            child.classList.add('is-drag-over');
+            child.style.setProperty('--drop-indicator', dropBefore ? '0%' : '100%');
+            event.dataTransfer.dropEffect = 'move';
+          };
+
+          const handleDragLeave = () => {
+            child.classList.remove('is-drag-over');
+            child.style.removeProperty('--drop-indicator');
+          };
+
+          const handleDrop = (event) => {
+            event.preventDefault();
+            const sourceIndex = Number.parseInt(event.dataTransfer.getData('text/plain'), 10);
+            const targetIndex = Number.parseInt(child.dataset.draggableIndex || '-1', 10);
+            if (Number.isNaN(sourceIndex) || Number.isNaN(targetIndex) || sourceIndex === targetIndex) {
+              child.classList.remove('is-drag-over');
+              child.style.removeProperty('--drop-indicator');
+              return;
+            }
+
+            const rect = child.getBoundingClientRect();
+            const dropBefore = event.clientY < rect.top + rect.height / 2;
+            const updated = reorderWithDrag(items, sourceIndex, targetIndex, dropBefore);
+            child.classList.remove('is-drag-over');
+            child.style.removeProperty('--drop-indicator');
+            onReorder(updated);
+          };
+
+          child.addEventListener('dragstart', handleDragStart);
+          child.addEventListener('dragend', handleDragEnd);
+          child.addEventListener('dragover', handleDragOver);
+          child.addEventListener('dragleave', handleDragLeave);
+          child.addEventListener('drop', handleDrop);
+        });
+      }
+
+      function renderMilestones(goal) {
+        if (!milestoneList) {
+          return;
+        }
+
+        milestoneList.innerHTML = '';
+        ensureGoalCollections(goal);
+
+        if (!goal.milestones.length) {
+          const emptyItem = document.createElement('li');
+          emptyItem.className = 'empty-state';
+          emptyItem.textContent = 'Legg til milepælene dine her.';
+          milestoneList.appendChild(emptyItem);
+          milestoneList.ondragover = null;
+          milestoneList.ondrop = null;
+          return;
+        }
+
+        goal.milestones.forEach((milestone, index) => {
+          const item = document.createElement('li');
+          item.className = 'goal-list__item goal-milestone';
+          item.draggable = true;
+          item.dataset.draggableIndex = String(index);
+          item.dataset.completed = milestone.completed ? 'true' : 'false';
+
+          if (milestone.progress) {
+            item.dataset.progress = milestone.progress;
+          } else {
+            item.removeAttribute('data-progress');
+          }
+
+          const header = document.createElement('div');
+          header.className = 'goal-milestone__header';
+
+          const label = document.createElement('div');
+          label.className = 'goal-list__label';
+
+          const titleSpan = document.createElement('span');
+          titleSpan.textContent = milestone.title;
+          label.appendChild(titleSpan);
+
+          if (milestone.detail) {
+            const detailSpan = document.createElement('span');
+            detailSpan.textContent = milestone.detail;
+            label.appendChild(detailSpan);
+          }
+
+          header.appendChild(label);
+
+          const toggleButton = document.createElement('button');
+          toggleButton.type = 'button';
+          toggleButton.className = 'goal-milestone__toggle';
+          const isExpanded = Boolean(milestone.isExpanded);
+          toggleButton.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+          toggleButton.textContent = isExpanded ? 'Skjul to-dos' : 'Vis to-dos';
+          toggleButton.addEventListener('click', () => {
+            milestone.isExpanded = !Boolean(milestone.isExpanded);
+            renderMilestones(goal);
+          });
+          header.appendChild(toggleButton);
+
+          item.appendChild(header);
+
+          const todosContainer = document.createElement('div');
+          todosContainer.className = 'goal-milestone__todos';
+          if (!isExpanded) {
+            todosContainer.setAttribute('hidden', '');
+          }
+
+          const todoListElement = document.createElement('ul');
+          todoListElement.className = 'goal-milestone__todo-list';
+          todosContainer.appendChild(todoListElement);
+
+          const todos = Array.isArray(milestone.todos) ? milestone.todos : [];
+
+          if (!todos.length) {
+            const emptyState = document.createElement('div');
+            emptyState.className = 'empty-state';
+            emptyState.textContent = 'Ingen to-dos knyttet til denne milepælen ennå.';
+            todosContainer.appendChild(emptyState);
+          } else {
+            todos.forEach((todo, todoIndex) => {
+              const todoItem = document.createElement('li');
+              todoItem.className = 'goal-list__item goal-milestone__todo-item';
+              todoItem.draggable = true;
+              todoItem.dataset.draggableIndex = String(todoIndex);
+              todoItem.dataset.completed = todo.completed ? 'true' : 'false';
+
+              const todoWrapper = document.createElement('div');
+              todoWrapper.className = 'goal-list__todo';
+
+              const checkbox = document.createElement('input');
+              checkbox.type = 'checkbox';
+              const checkboxId = `goal-${currentGoalIndex ?? 'x'}-milestone-${index}-todo-${todoIndex}`;
+              checkbox.id = checkboxId;
+              checkbox.checked = Boolean(todo.completed);
+              checkbox.addEventListener('click', (event) => {
+                event.stopPropagation();
+              });
+              checkbox.addEventListener('change', () => {
+                todo.completed = checkbox.checked;
+                renderMilestones(goal);
+              });
+
+              const todoLabel = document.createElement('label');
+              todoLabel.setAttribute('for', checkboxId);
+
+              const todoTitleSpan = document.createElement('span');
+              todoTitleSpan.textContent = todo.title;
+              todoLabel.appendChild(todoTitleSpan);
+
+              if (todo.detail) {
+                const todoDetailSpan = document.createElement('span');
+                todoDetailSpan.textContent = todo.detail;
+                todoLabel.appendChild(todoDetailSpan);
+              }
+
+              todoWrapper.appendChild(checkbox);
+              todoWrapper.appendChild(todoLabel);
+              todoItem.appendChild(todoWrapper);
+              todoListElement.appendChild(todoItem);
+            });
+
+            setupDragAndDrop(todoListElement, todos, (updated) => {
+              milestone.todos = updated;
+              renderMilestones(goal);
+            });
+          }
+
+          const todoForm = document.createElement('form');
+          todoForm.className = 'inline-form goal-milestone__todo-form';
+
+          const todoTitleInput = document.createElement('input');
+          todoTitleInput.type = 'text';
+          todoTitleInput.name = 'todo-title';
+          todoTitleInput.placeholder = 'Legg til oppgave';
+          todoTitleInput.required = true;
+
+          const todoDetailInput = document.createElement('input');
+          todoDetailInput.type = 'text';
+          todoDetailInput.name = 'todo-detail';
+          todoDetailInput.placeholder = 'Detaljer (valgfritt)';
+
+          const todoSubmit = document.createElement('button');
+          todoSubmit.type = 'submit';
+          todoSubmit.textContent = 'Legg til';
+
+          todoForm.appendChild(todoTitleInput);
+          todoForm.appendChild(todoDetailInput);
+          todoForm.appendChild(todoSubmit);
+
+          todoForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const titleValue = todoTitleInput.value.trim();
+            const detailValue = todoDetailInput.value.trim();
+
+            if (!titleValue) {
+              return;
+            }
+
+            milestone.todos.push({
+              title: titleValue,
+              detail: detailValue,
+              completed: false
+            });
+            milestone.isExpanded = true;
+
+            todoForm.reset();
+            renderMilestones(goal);
+          });
+
+          todosContainer.appendChild(todoForm);
+          item.appendChild(todosContainer);
+          milestoneList.appendChild(item);
+        });
+
+        setupDragAndDrop(milestoneList, goal.milestones, (updated) => {
+          goal.milestones = updated;
+          renderMilestones(goal);
+        });
+      }
+
+      function renderNotes(goal) {
+        if (!notesList) {
+          return;
+        }
+
+        notesList.innerHTML = '';
+        ensureGoalCollections(goal);
+
+        if (notesSearchInput) {
+          notesSearchInput.value = noteSearchQuery;
+        }
+
+        const query = noteSearchQuery.trim().toLowerCase();
+        const filteredNotes = goal.notes
+          .map((note, index) => ({ note, index }))
+          .filter(({ note }) => {
+            if (!query) {
+              return true;
+            }
+
+            const searchableText = `${note.title || ''} ${note.content || ''}`.toLowerCase();
+            return searchableText.includes(query);
+          });
+
+        if (!filteredNotes.length) {
+          const empty = document.createElement('div');
+          empty.className = 'empty-state';
+          empty.textContent = query
+            ? 'Ingen notater matcher søket ditt.'
+            : 'Ingen notater ennå. Skriv ned viktige tanker eller ressurser her.';
+          notesList.appendChild(empty);
+          return;
+        }
+
+        filteredNotes.forEach(({ note, index }) => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'goal-note';
+          button.dataset.noteIndex = String(index);
+
+          const heading = document.createElement('h4');
+          heading.textContent = note.title;
+          button.appendChild(heading);
+
+          if (note.content) {
+            const preview = document.createElement('p');
+            const trimmedContent = note.content.trim();
+            preview.textContent = trimmedContent.length > 120
+              ? `${trimmedContent.slice(0, 117)}...`
+              : trimmedContent;
+            button.appendChild(preview);
+          }
+
+          button.addEventListener('click', () => {
+            openNoteModal(note);
+          });
+
+          notesList.appendChild(button);
+        });
+      }
+
+      function renderGoalDetail(goal) {
+        if (!goalDetailSection) {
+          return;
+        }
+
+        ensureGoalCollections(goal);
+
+        goalDetailTitle.textContent = goal.title || '';
+        goalDetailWhy.textContent = goal.description || goal.why || '';
+        goalDetailDeadline.textContent = formatLongDeadline(goal.deadline);
+        goalDetailCategory.textContent = goal.category || 'Personlig mål';
+        goalDetailImportant.textContent = goal.important || goal.why || 'Holder meg motivert';
+
+        const imageSource = goal.image || '';
+        if (imageSource) {
+          goalDetailImage.src = imageSource;
+          goalDetailImage.alt = goal.title ? `Illustrasjon for ${goal.title}` : '';
+        } else {
+          goalDetailImage.removeAttribute('src');
+          goalDetailImage.alt = '';
+        }
+
+        renderMilestones(goal);
+        renderNotes(goal);
+      }
+
+      function openNoteModal(note) {
+        if (!noteModal) {
+          return;
+        }
+
+        noteModalTitle.textContent = note.title || 'Notat';
+        noteModalContent.textContent = note.content || '';
+        noteModal.removeAttribute('hidden');
+        noteModal.setAttribute('aria-hidden', 'false');
+        lockBodyScroll();
+        requestAnimationFrame(() => {
+          noteModalClose?.focus();
+        });
+      }
+
+      function closeNoteModal({ restoreFocus = true } = {}) {
+        if (!noteModal) {
+          return;
+        }
+
+        noteModal.setAttribute('hidden', '');
+        noteModal.setAttribute('aria-hidden', 'true');
+        unlockBodyScroll();
+
+        if (restoreFocus) {
+          const firstNoteButton = notesList?.querySelector('.goal-note');
+          firstNoteButton?.focus();
+        }
+      }
+
+      function openNoteCreateModal() {
+        if (!noteCreateModal) {
+          return;
+        }
+
+        noteCreateForm?.reset();
+        noteCreateModal.removeAttribute('hidden');
+        noteCreateModal.setAttribute('aria-hidden', 'false');
+        lockBodyScroll();
+        requestAnimationFrame(() => {
+          const titleField = noteCreateForm?.querySelector('input[name="note-title"]');
+          titleField?.focus();
+        });
+      }
+
+      function closeNoteCreateModal({ restoreFocus = true } = {}) {
+        if (!noteCreateModal) {
+          return;
+        }
+
+        noteCreateModal.setAttribute('hidden', '');
+        noteCreateModal.setAttribute('aria-hidden', 'true');
+        unlockBodyScroll();
+        noteCreateForm?.reset();
+
+        if (restoreFocus) {
+          addNoteButton?.focus();
+        }
+      }
+
+      function showGoalDetail(goal) {
+        if (!goalDetailSection) {
+          return;
+        }
+
+        renderGoalDetail(goal);
+        goalDetailSection.removeAttribute('hidden');
+        emptyStateSection?.setAttribute('hidden', '');
+      }
+
+      function showEmptyState() {
+        goalDetailSection?.setAttribute('hidden', '');
+        emptyStateSection?.removeAttribute('hidden');
+      }
+
+      if (goalDetailBackButton) {
+        goalDetailBackButton.addEventListener('click', () => {
+          if (window.history.length > 1) {
+            window.history.back();
+          } else {
+            window.location.href = 'mal.html';
+          }
+        });
+      }
+
+      if (noteModal) {
+        noteModal.addEventListener('click', (event) => {
+          if (event.target === noteModal) {
+            closeNoteModal();
+          }
+        });
+      }
+
+      if (noteModalClose) {
+        noteModalClose.addEventListener('click', () => closeNoteModal());
+      }
+
+      if (noteCreateModal) {
+        noteCreateModal.addEventListener('click', (event) => {
+          if (event.target === noteCreateModal) {
+            closeNoteCreateModal();
+          }
+        });
+      }
+
+      if (noteCreateClose) {
+        noteCreateClose.addEventListener('click', () => closeNoteCreateModal());
+      }
+
+      if (notesSearchInput) {
+        notesSearchInput.addEventListener('input', () => {
+          noteSearchQuery = notesSearchInput.value;
+          if (currentGoal) {
+            renderNotes(currentGoal);
+          }
+        });
+      }
+
+      if (addNoteButton) {
+        addNoteButton.addEventListener('click', () => openNoteCreateModal());
+      }
+
+      if (noteCreateForm) {
+        noteCreateForm.addEventListener('submit', (event) => {
+          event.preventDefault();
+          if (!currentGoal) {
+            return;
+          }
+
+          const titleValue = noteCreateForm['note-title']?.value.trim();
+          const contentValue = noteCreateForm['note-content']?.value.trim();
+
+          if (!titleValue || !contentValue) {
+            return;
+          }
+
+          currentGoal.notes.unshift({
+            title: titleValue,
+            content: contentValue
+          });
+
+          noteSearchQuery = '';
+          renderNotes(currentGoal);
+          closeNoteCreateModal({ restoreFocus: false });
+          requestAnimationFrame(() => {
+            const [firstNote] = notesList?.querySelectorAll('.goal-note') || [];
+            firstNote?.focus();
+          });
+        });
+      }
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          if (noteCreateModal && !noteCreateModal.hasAttribute('hidden')) {
+            closeNoteCreateModal();
+          } else if (noteModal && !noteModal.hasAttribute('hidden')) {
+            closeNoteModal();
+          }
+        }
+      });
+
+      if (milestoneForm) {
+        milestoneForm.addEventListener('submit', (event) => {
+          event.preventDefault();
+          if (!currentGoal) {
+            return;
+          }
+
+          ensureGoalCollections(currentGoal);
+          const titleField = milestoneForm['milestone-title'];
+          const detailField = milestoneForm['milestone-detail'];
+          const titleValue = titleField?.value.trim();
+          const detailValue = detailField?.value.trim();
+
+          if (!titleValue) {
+            return;
+          }
+
+          currentGoal.milestones.push({
+            title: titleValue,
+            detail: detailValue,
+            completed: false,
+            todos: [],
+            isExpanded: true
+          });
+
+          milestoneForm.reset();
+          renderMilestones(currentGoal);
+        });
+      }
+
+      if (currentGoal) {
+        showGoalDetail(currentGoal);
+      } else {
+        showEmptyState();
+      }
+    })();
+  </script>
+</body>
+</html>
