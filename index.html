@@ -36,10 +36,10 @@
       width: var(--sidebar-width);
       background: var(--sidebar-bg);
       color: rgba(255, 255, 255, 0.92);
-      padding: 32px 24px;
+      padding: 16px 24px 32px;
       display: flex;
       flex-direction: column;
-      gap: 32px;
+      gap: 24px;
       position: relative;
       box-shadow: 12px 0 32px rgba(18, 38, 63, 0.25);
       z-index: 2;
@@ -54,37 +54,6 @@
       width: 160px;
       max-width: 100%;
       height: auto;
-    }
-
-    .add-button {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      background: rgba(255, 255, 255, 0.12);
-      border: none;
-      color: inherit;
-      border-radius: 16px;
-      padding: 12px 20px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: background 160ms ease;
-    }
-
-    .add-button:hover,
-    .add-button:focus-visible {
-      background: rgba(255, 255, 255, 0.22);
-      outline: none;
-    }
-
-    .add-button .icon {
-      display: inline-flex;
-      width: 32px;
-      height: 32px;
-      align-items: center;
-      justify-content: center;
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.18);
-      font-size: 1.2rem;
     }
 
     .menu {
@@ -217,6 +186,7 @@
         justify-content: space-between;
         padding: 20px 24px;
         box-shadow: none;
+        gap: 20px;
       }
 
       .menu {
@@ -240,17 +210,12 @@
     <div class="logo">
       <img src="images/logo%20white.png" alt="Easylife logo" />
     </div>
-    <a class="add-button" href="#">
-      <span class="icon">+</span>
-      Ny modul
-    </a>
     <nav class="menu" aria-label="Hovedmeny">
       <a class="active" href="index.html"><span class="icon">🏠</span>Dashboard</a>
       <a href="mal.html"><span class="icon">🎯</span>Mål</a>
       <a href="action.html"><span class="icon">📝</span>Action</a>
       <a href="todo.html"><span class="icon">✅</span>Todo</a>
       <a href="rutiner.html"><span class="icon">🔁</span>Rutiner</a>
-      <a href="addon.html"><span class="icon">➕</span>Addon</a>
       <a href="training.html"><span class="icon">💪</span>Training og kostholdsplan</a>
     </nav>
   </aside>
@@ -291,11 +256,6 @@
         <h3><span>⚖️</span>Balanser livet</h3>
         <p>Utforsk moduler</p>
         <p>5 fullførte i dag</p>
-      </article>
-      <article class="card">
-        <h3><span>➕</span>Addon</h3>
-        <p>Tilpass løsningen</p>
-        <p>Ny funksjonalitet tilgjengelig</p>
       </article>
     </section>
   </main>
