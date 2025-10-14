@@ -18,14 +18,14 @@ create table if not exists "public"."goals" (
 
 create index if not exists "goals_user_id_created_at_idx" on "public"."goals" ("user_id", "created_at");
 
-comment on table "public"."goals" is "Lagrer mål knyttet til en innlogget bruker, inkludert motivasjon, status og metadata for visning i appen.";
-comment on column "public"."goals"."id" is "Primærnøkkel som identifiserer målet.";
-comment on column "public"."goals"."user_id" is "Referanse til Supabase-brukeren som eier målet.";
-comment on column "public"."goals"."title" is "Kort tittel som beskriver målet.";
-comment on column "public"."goals"."why" is "Brukerens begrunnelse for hvorfor målet er viktig.";
-comment on column "public"."goals"."deadline" is "Valgfri sluttdato for målet.";
-comment on column "public"."goals"."image" is "Data-URL eller ekstern lenke til forsidebildet for målet.";
-comment on column "public"."goals"."status" is "Prosentvis progresjon lagret som tekst (for eksempel '25%').";
-comment on column "public"."goals"."category" is "Valgfri kategori som målet tilhører.";
-comment on column "public"."goals"."important" is "Fritekstfelt som beskriver hvorfor målet er viktigst akkurat nå.";
-comment on column "public"."goals"."created_at" is "Tidspunkt da målet ble opprettet.";
+comment on table "public"."goals" is 'Lagrer mål knyttet til en innlogget bruker, inkludert motivasjon, status og metadata for visning i appen.';
+comment on column "public"."goals"."id" is 'Primærnøkkel som identifiserer målet.';
+comment on column "public"."goals"."user_id" is 'Referanse til Supabase-brukeren som eier målet.';
+comment on column "public"."goals"."title" is 'Kort tittel som beskriver målet.';
+comment on column "public"."goals"."why" is 'Brukerens begrunnelse for hvorfor målet er viktig.';
+comment on column "public"."goals"."deadline" is 'Valgfri sluttdato for målet.';
+comment on column "public"."goals"."image" is 'Data-URL eller ekstern lenke til forsidebildet for målet.';
+comment on column "public"."goals"."status" is 'Prosentvis progresjon lagret som tekst (for eksempel ''25%'').';
+comment on column "public"."goals"."category" is 'Valgfri kategori som målet tilhører.';
+comment on column "public"."goals"."important" is 'Fritekstfelt som beskriver hvorfor målet er viktigst akkurat nå.';
+comment on column "public"."goals"."created_at" is 'Tidspunkt da målet ble opprettet.';
