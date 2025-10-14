@@ -38,7 +38,31 @@ Alle HTML-sider laster `supabase-client.js` slik at klienten er tilgjengelig nå
 - Innloggede brukere får en «Logg ut»-knapp øverst som kaller `supabase.auth.signOut()` og sender brukeren tilbake til innloggingssiden.
 
 ## Datamodell
-Det er foreløpig ingen tabeller definert i databasen. Oppdater `schema/schema.json` for å legge til tabeller.
+
+### goals
+
+Lagrer mål knyttet til en innlogget bruker, inkludert motivasjon, status og metadata for visning i appen.
+
+**Kolonner**
+
+| Kolonne | Type | Nullbar | Standard | Beskrivelse |
+| --- | --- | --- | --- | --- |
+| id | `uuid` | Nei | `gen_random_uuid()` | Primærnøkkel som identifiserer målet. |
+| user_id | `uuid` | Nei | — | Referanse til Supabase-brukeren som eier målet. |
+| title | `text` | Nei | — | Kort tittel som beskriver målet. |
+| why | `text` | Nei | — | Brukerens begrunnelse for hvorfor målet er viktig. |
+| deadline | `date` | Ja | — | Valgfri sluttdato for målet. |
+| image | `text` | Ja | — | Data-URL eller ekstern lenke til forsidebildet for målet. |
+| status | `text` | Nei | `'0%'` | Prosentvis progresjon lagret som tekst (for eksempel '25%'). |
+| category | `text` | Ja | — | Valgfri kategori som målet tilhører. |
+| important | `text` | Ja | — | Fritekstfelt som beskriver hvorfor målet er viktigst akkurat nå. |
+| created_at | `timestamp with time zone` | Nei | `now()` | Tidspunkt da målet ble opprettet. |
+
+- **Primærnøkkel:** `id`
+- **Fremmednøkler:**
+- `user_id` → `auth.users`.`id` (ON DELETE CASCADE)
+- **Indekser:**
+  - `goals_user_id_created_at_idx`: `user_id`, `created_at`
 
 ## Sjekkliste ved endringer
 1. Oppdater tabelloversikten ovenfor.
