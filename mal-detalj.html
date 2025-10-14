@@ -349,9 +349,22 @@
       font-weight: 600;
     }
 
-    .goal-list__label span:last-child {
+    .goal-list__label span:not(:first-child) {
       color: var(--text-secondary);
       font-size: 0.95rem;
+    }
+
+    .goal-milestone__deadline {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .goal-milestone__deadline::before {
+      content: '⏰';
+      font-size: 0.9rem;
     }
 
     .goal-milestone__header {
@@ -407,6 +420,23 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
+    }
+
+    .goal-milestone__todo-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .goal-milestone__todo-content {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .goal-milestone__todo-content .empty-state {
+      margin: 0;
     }
 
     .goal-milestone__todo-list {
@@ -466,7 +496,6 @@
     }
 
     .goal-milestone__todo-add {
-      align-self: flex-start;
       border: none;
       border-radius: 12px;
       background: rgba(37, 99, 235, 0.12);
@@ -479,6 +508,7 @@
       gap: 10px;
       cursor: pointer;
       transition: background 160ms ease, transform 160ms ease;
+      justify-self: end;
     }
 
     .goal-milestone__todo-add span[aria-hidden="true"] {
@@ -499,7 +529,9 @@
 
     .goal-milestone__todo-form {
       display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
       gap: 12px;
+      align-items: center;
       padding: 16px;
       border-radius: 16px;
       border: 1px dashed rgba(37, 99, 235, 0.35);
@@ -518,12 +550,17 @@
     }
 
     .goal-milestone__todo-form button[type="submit"] {
-      justify-self: flex-start;
       border-radius: 12px;
       border: none;
       background: #2563eb;
       color: #ffffff;
-      padding: 10px 18px;
+      padding: 10px 14px;
+      width: 48px;
+      height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
       font-weight: 600;
       cursor: pointer;
     }
@@ -793,6 +830,22 @@
       .goal-section__form button[type="submit"] {
         width: 100%;
       }
+
+      .goal-milestone__todo-form {
+        grid-template-columns: 1fr;
+      }
+
+      .goal-milestone__todo-form button[type="submit"] {
+        width: 100%;
+      }
+
+      .goal-milestone__todo-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .goal-milestone__todo-add {
+        justify-self: flex-start;
+      }
     }
   </style>
 </head>
@@ -894,6 +947,18 @@
       </form>
     </div>
   </div>
+  <div class="note-modal" id="goal-milestone-edit-modal" role="dialog" aria-modal="true" aria-hidden="true" hidden>
+    <div class="note-modal__dialog note-modal__dialog--form">
+      <button type="button" id="goal-milestone-edit-close">Lukk</button>
+      <h3>Rediger milepæl</h3>
+      <form class="stacked-form" id="goal-milestone-edit-form">
+        <input type="text" name="milestone-title" placeholder="Tittel" aria-label="Tittel" required />
+        <textarea name="milestone-detail" rows="3" placeholder="Detaljer" aria-label="Detaljer"></textarea>
+        <input type="date" name="milestone-deadline" aria-label="Deadline" />
+        <button type="submit">Lagre milepæl</button>
+      </form>
+    </div>
+  </div>
   <script src="goals-data.js"></script>
   <script>
     (function () {
@@ -923,6 +988,9 @@
       const noteCreateModal = document.getElementById('goal-note-create-modal');
       const noteCreateClose = document.getElementById('goal-note-create-close');
       const noteCreateForm = document.getElementById('goal-note-create-form');
+      const milestoneEditModal = document.getElementById('goal-milestone-edit-modal');
+      const milestoneEditClose = document.getElementById('goal-milestone-edit-close');
+      const milestoneEditForm = document.getElementById('goal-milestone-edit-form');
 
       const currentUrl = new URL(window.location.href);
       const goalParam = currentUrl.searchParams.get('goal');
@@ -934,6 +1002,7 @@
       let noteSearchQuery = '';
       let activeModalCount = 0;
       let milestoneFormIsOpen = false;
+      let milestoneEditIndex = null;
 
       const lockBodyScroll = () => {
         activeModalCount += 1;
@@ -990,6 +1059,36 @@
         }).format(date);
       };
 
+      const formatShortDeadline = (deadline) => {
+        if (!deadline) {
+          return '';
+        }
+
+        const date = new Date(deadline);
+        if (Number.isNaN(date.getTime())) {
+          return String(deadline);
+        }
+
+        return new Intl.DateTimeFormat('nb-NO', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric'
+        }).format(date);
+      };
+
+      const formatDateForInput = (value) => {
+        if (!value) {
+          return '';
+        }
+
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) {
+          return '';
+        }
+
+        return date.toISOString().slice(0, 10);
+      };
+
       function ensureGoalCollections(goal) {
         if (!goal) {
           return;
@@ -1039,6 +1138,14 @@
             detail: todo?.detail || '',
             completed: Boolean(todo?.completed)
           }));
+
+          if (typeof milestone.deadline !== 'string') {
+            milestone.deadline = milestone.deadline ? String(milestone.deadline) : '';
+          }
+
+          if (typeof milestone.deadline === 'string') {
+            milestone.deadline = milestone.deadline.trim();
+          }
 
           if (typeof milestone.isExpanded !== 'boolean') {
             milestone.isExpanded = index === 0;
@@ -1251,6 +1358,8 @@
           item.dataset.draggableIndex = String(index);
           item.dataset.completed = milestone.completed ? 'true' : 'false';
 
+          const todosContainerId = `goal-milestone-${index}-todos`;
+
           if (milestone.progress) {
             item.dataset.progress = milestone.progress;
           } else {
@@ -1273,6 +1382,14 @@
             label.appendChild(detailSpan);
           }
 
+          const formattedMilestoneDeadline = formatShortDeadline(milestone.deadline);
+          if (formattedMilestoneDeadline) {
+            const deadlineSpan = document.createElement('span');
+            deadlineSpan.className = 'goal-milestone__deadline';
+            deadlineSpan.textContent = `Deadline: ${formattedMilestoneDeadline}`;
+            label.appendChild(deadlineSpan);
+          }
+
           header.appendChild(label);
 
           const actions = document.createElement('div');
@@ -1283,6 +1400,7 @@
           toggleButton.className = 'goal-milestone__toggle';
           const isExpanded = Boolean(milestone.isExpanded);
           toggleButton.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+          toggleButton.setAttribute('aria-controls', todosContainerId);
           toggleButton.textContent = isExpanded ? 'Skjul to-dos' : 'Vis to-dos';
           toggleButton.addEventListener('click', () => {
             toggleMilestoneTodos(goal, index);
@@ -1291,6 +1409,7 @@
           const editButton = document.createElement('button');
           editButton.type = 'button';
           editButton.className = 'goal-milestone__edit';
+          editButton.dataset.milestoneIndex = String(index);
           const trimmedTitle = (milestone.title || '').trim();
           const editLabel = trimmedTitle ? `Rediger milepælen ${trimmedTitle}` : 'Rediger milepælen';
           editButton.setAttribute('aria-label', editLabel);
@@ -1301,6 +1420,9 @@
               <path d="M11.75 5.422 14.58 8.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
           `;
+          editButton.addEventListener('click', () => {
+            openMilestoneEditModal(goal, index);
+          });
 
           actions.appendChild(toggleButton);
           actions.appendChild(editButton);
@@ -1311,13 +1433,19 @@
 
           const todosContainer = document.createElement('div');
           todosContainer.className = 'goal-milestone__todos';
-          if (!isExpanded) {
-            todosContainer.setAttribute('hidden', '');
-          }
+          todosContainer.id = todosContainerId;
+          todosContainer.hidden = !isExpanded;
+
+          const todoLayout = document.createElement('div');
+          todoLayout.className = 'goal-milestone__todo-layout';
+
+          const todoContent = document.createElement('div');
+          todoContent.className = 'goal-milestone__todo-content';
+          todoLayout.appendChild(todoContent);
 
           const todoListElement = document.createElement('ul');
           todoListElement.className = 'goal-milestone__todo-list';
-          todosContainer.appendChild(todoListElement);
+          todoContent.appendChild(todoListElement);
 
           const todos = Array.isArray(milestone.todos) ? milestone.todos : [];
 
@@ -1325,7 +1453,7 @@
             const emptyState = document.createElement('div');
             emptyState.className = 'empty-state';
             emptyState.textContent = 'Ingen to-dos knyttet til denne milepælen ennå.';
-            todosContainer.appendChild(emptyState);
+            todoContent.appendChild(emptyState);
           } else {
             todos.forEach((todo, todoIndex) => {
               const todoItem = document.createElement('li');
@@ -1388,7 +1516,9 @@
             }
             renderMilestones(goal);
           });
-          todosContainer.appendChild(todoAddButton);
+          todoLayout.appendChild(todoAddButton);
+
+          todosContainer.appendChild(todoLayout);
 
           const todoForm = document.createElement('form');
           todoForm.className = 'goal-milestone__todo-form';
@@ -1404,7 +1534,7 @@
 
           const todoSubmit = document.createElement('button');
           todoSubmit.type = 'submit';
-          todoSubmit.textContent = 'Legg til';
+          todoSubmit.innerHTML = '<span aria-hidden="true">+</span><span class="goal-sr-only">Legg til to-do</span>';
 
           todoForm.appendChild(todoTitleInput);
           todoForm.appendChild(todoSubmit);
@@ -1546,6 +1676,69 @@
         renderNotes(goal);
       }
 
+      function openMilestoneEditModal(goal, milestoneIndex) {
+        if (!milestoneEditModal || !milestoneEditForm) {
+          return;
+        }
+
+        ensureGoalCollections(goal);
+        const milestone = goal?.milestones?.[milestoneIndex];
+        if (!milestone) {
+          return;
+        }
+
+        milestoneEditIndex = milestoneIndex;
+
+        const titleField = milestoneEditForm['milestone-title'];
+        const detailField = milestoneEditForm['milestone-detail'];
+        const deadlineField = milestoneEditForm['milestone-deadline'];
+
+        if (titleField) {
+          titleField.value = milestone.title || '';
+        }
+
+        if (detailField) {
+          detailField.value = milestone.detail || '';
+        }
+
+        if (deadlineField) {
+          deadlineField.value = formatDateForInput(milestone.deadline);
+          deadlineField.dataset.originalValue = milestone.deadline || '';
+        }
+
+        milestoneEditModal.removeAttribute('hidden');
+        milestoneEditModal.setAttribute('aria-hidden', 'false');
+        lockBodyScroll();
+
+        requestAnimationFrame(() => {
+          titleField?.focus();
+        });
+      }
+
+      function closeMilestoneEditModal({ restoreFocus = true } = {}) {
+        if (!milestoneEditModal || !milestoneEditForm) {
+          return;
+        }
+
+        const previousIndex = milestoneEditIndex;
+        milestoneEditIndex = null;
+
+        milestoneEditModal.setAttribute('hidden', '');
+        milestoneEditModal.setAttribute('aria-hidden', 'true');
+        const editDeadlineField = milestoneEditForm['milestone-deadline'];
+        if (editDeadlineField) {
+          delete editDeadlineField.dataset.originalValue;
+        }
+        milestoneEditForm.reset();
+        unlockBodyScroll();
+
+        if (restoreFocus && previousIndex !== null && milestoneList) {
+          const selector = `.goal-milestone[data-draggable-index="${previousIndex}"] .goal-milestone__edit`;
+          const editButton = milestoneList.querySelector(selector);
+          editButton?.focus();
+        }
+      }
+
       function openNoteModal(note) {
         if (!noteModal) {
           return;
@@ -1632,6 +1825,18 @@
         });
       }
 
+      if (milestoneEditModal) {
+        milestoneEditModal.addEventListener('click', (event) => {
+          if (event.target === milestoneEditModal) {
+            closeMilestoneEditModal();
+          }
+        });
+      }
+
+      if (milestoneEditClose) {
+        milestoneEditClose.addEventListener('click', () => closeMilestoneEditModal());
+      }
+
       if (noteModal) {
         noteModal.addEventListener('click', (event) => {
           if (event.target === noteModal) {
@@ -1705,9 +1910,62 @@
         });
       }
 
+      if (milestoneEditForm) {
+        milestoneEditForm.addEventListener('submit', (event) => {
+          event.preventDefault();
+          if (!currentGoal || milestoneEditIndex === null) {
+            return;
+          }
+
+          ensureGoalCollections(currentGoal);
+          const milestone = currentGoal.milestones[milestoneEditIndex];
+          if (!milestone) {
+            return;
+          }
+
+          const titleField = milestoneEditForm['milestone-title'];
+          const detailField = milestoneEditForm['milestone-detail'];
+          const deadlineField = milestoneEditForm['milestone-deadline'];
+
+          const titleValue = titleField?.value.trim();
+          const detailValue = detailField?.value.trim();
+          const deadlineValue = deadlineField?.value;
+          const originalDeadline = deadlineField?.dataset?.originalValue || '';
+          const originalWasInvalid = Boolean(originalDeadline) && !formatDateForInput(originalDeadline);
+
+          if (!titleValue) {
+            return;
+          }
+
+          milestone.title = titleValue;
+          milestone.detail = detailValue || '';
+          if (deadlineValue) {
+            milestone.deadline = deadlineValue;
+          } else if (originalWasInvalid) {
+            milestone.deadline = originalDeadline;
+          } else {
+            milestone.deadline = '';
+          }
+          milestone.isExpanded = true;
+
+          const editedIndex = milestoneEditIndex;
+
+          renderMilestones(currentGoal);
+          closeMilestoneEditModal({ restoreFocus: false });
+
+          requestAnimationFrame(() => {
+            const selector = `.goal-milestone[data-draggable-index="${editedIndex}"] .goal-milestone__edit`;
+            const editButton = milestoneList?.querySelector(selector);
+            editButton?.focus();
+          });
+        });
+      }
+
       document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
-          if (noteCreateModal && !noteCreateModal.hasAttribute('hidden')) {
+          if (milestoneEditModal && !milestoneEditModal.hasAttribute('hidden')) {
+            closeMilestoneEditModal();
+          } else if (noteCreateModal && !noteCreateModal.hasAttribute('hidden')) {
             closeNoteCreateModal();
           } else if (noteModal && !noteModal.hasAttribute('hidden')) {
             closeNoteModal();
@@ -1732,11 +1990,12 @@
             return;
           }
 
-          currentGoal.milestones.push({
+          currentGoal.milestones.unshift({
             title: titleValue,
             detail: detailValue,
             completed: false,
             todos: [],
+            deadline: '',
             isExpanded: true,
             isTodoFormOpen: false,
             shouldFocusTodoTitle: false
