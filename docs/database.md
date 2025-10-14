@@ -27,11 +27,7 @@ const { data, error } = await window.supabaseClient.from('dine_tabeller').select
 Alle HTML-sider laster `supabase-client.js` slik at klienten er tilgjengelig når vi begynner å koble visningene til databasen.
 
 ## Datamodell
-Per nå er det ingen tabeller definert i prosjektet. Dokumenter nye tabeller her etter hvert som de opprettes:
-
-| Tabell | Beskrivelse | Viktige felt | Relasjoner |
-| ------ | ----------- | ------------ | ---------- |
-| _Fyll inn_ | | | |
+Det er foreløpig ingen tabeller definert i databasen. Oppdater `schema/schema.json` for å legge til tabeller.
 
 ## Sjekkliste ved endringer
 1. Oppdater tabelloversikten ovenfor.
@@ -41,4 +37,3 @@ Per nå er det ingen tabeller definert i prosjektet. Dokumenter nye tabeller her
 ## Videre arbeid
 - Sett opp miljøvariabler for API-nøkkelen når prosjektet får en bygg-/deploy-pipeline.
 - Opprett tabeller i Supabase og dokumenter dem i seksjonen over.
-
