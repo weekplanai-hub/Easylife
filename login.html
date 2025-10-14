@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Easylife – Logg inn</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --accent: #227bff;
+      --text-primary: #0f1c2e;
+      --text-secondary: rgba(15, 28, 46, 0.7);
+      --surface: rgba(255, 255, 255, 0.88);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(120% 120% at 10% 0%, rgba(201, 226, 255, 0.9) 0%, rgba(228, 241, 255, 0.9) 45%, rgba(196, 215, 238, 0.95) 100%), #f1f5f9;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+      color: var(--text-primary);
+    }
+
+    .login-card {
+      width: min(420px, 100%);
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      background: var(--surface);
+      border-radius: 28px;
+      padding: 40px;
+      box-shadow: 0 20px 45px rgba(31, 48, 80, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(24px);
+    }
+
+    .login-header {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      text-align: center;
+    }
+
+    .login-header h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 600;
+    }
+
+    .login-header p {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: 16px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-weight: 500;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      border: 1px solid rgba(15, 28, 46, 0.12);
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-size: 16px;
+      font-family: inherit;
+      background: rgba(255, 255, 255, 0.94);
+      transition: border 160ms ease, box-shadow 160ms ease;
+    }
+
+    input[type="email"]:focus,
+    input[type="password"]:focus {
+      outline: none;
+      border-color: rgba(34, 123, 255, 0.6);
+      box-shadow: 0 0 0 3px rgba(34, 123, 255, 0.16);
+    }
+
+    button[type="submit"] {
+      margin-top: 12px;
+      border: none;
+      border-radius: 16px;
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 600;
+      font-family: inherit;
+      color: #fff;
+      background: linear-gradient(135deg, #227bff 0%, #4c5bd4 100%);
+      cursor: pointer;
+      transition: transform 160ms ease, box-shadow 160ms ease, filter 160ms ease;
+    }
+
+    button[type="submit"]:hover,
+    button[type="submit"]:focus-visible {
+      outline: none;
+      transform: translateY(-1px);
+      box-shadow: 0 12px 25px rgba(34, 123, 255, 0.25);
+      filter: brightness(1.05);
+    }
+
+    button[type="submit"]:disabled {
+      opacity: 0.6;
+      cursor: wait;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .status-message {
+      min-height: 24px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      text-align: center;
+    }
+
+    .status-message.error {
+      color: #c62828;
+    }
+
+    .status-message.success {
+      color: #1b5e20;
+    }
+
+    .mode-toggle {
+      display: flex;
+      justify-content: center;
+      margin-top: -12px;
+    }
+
+    .mode-toggle button {
+      border: none;
+      background: none;
+      padding: 8px 12px;
+      font: inherit;
+      color: var(--accent);
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 999px;
+      transition: background 160ms ease, color 160ms ease;
+    }
+
+    .mode-toggle button:hover,
+    .mode-toggle button:focus-visible {
+      outline: none;
+      background: rgba(34, 123, 255, 0.08);
+      color: #1a5ad6;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-card" data-auth-card data-mode="login">
+    <header class="login-header">
+      <h1 data-auth-title>Logg inn</h1>
+      <p data-auth-subtitle>Få tilgang til Easylife-dashboardet ditt.</p>
+    </header>
+    <form id="login-form" novalidate>
+      <label for="email">
+        E-post
+        <input id="email" name="email" type="email" autocomplete="email" required placeholder="deg@example.com" />
+      </label>
+      <label for="password">
+        Passord
+        <input id="password" name="password" type="password" autocomplete="current-password" required placeholder="••••••••" />
+      </label>
+      <label id="confirm-password-group" for="confirm-password" hidden>
+        Bekreft passord
+        <input id="confirm-password" name="confirm-password" type="password" autocomplete="new-password" placeholder="••••••••" />
+      </label>
+      <button type="submit" id="login-button">Logg inn</button>
+    </form>
+    <div id="status-message" class="status-message" role="status" aria-live="polite"></div>
+    <div class="mode-toggle">
+      <button type="button" id="toggle-mode">Ny bruker? Opprett konto</button>
+    </div>
+  </div>
+
+  <script type="module">
+    import { supabaseClient } from './supabase-client.js';
+
+    const form = document.getElementById('login-form');
+    const statusMessage = document.getElementById('status-message');
+    const loginButton = document.getElementById('login-button');
+    const toggleButton = document.getElementById('toggle-mode');
+    const title = document.querySelector('[data-auth-title]');
+    const subtitle = document.querySelector('[data-auth-subtitle]');
+    const confirmGroup = document.getElementById('confirm-password-group');
+    const confirmInput = document.getElementById('confirm-password');
+    const authCard = document.querySelector('[data-auth-card]');
+    let mode = 'login';
+
+    async function redirectIfLoggedIn() {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (session) {
+        window.location.replace('index.html');
+      }
+    }
+
+    function setStatus(message, type = '') {
+      statusMessage.textContent = message;
+      statusMessage.className = `status-message${type ? ` ${type}` : ''}`;
+    }
+
+    function setMode(newMode) {
+      if (mode === newMode) {
+        return;
+      }
+
+      mode = newMode;
+      authCard.dataset.mode = newMode;
+      title.textContent = newMode === 'login' ? 'Logg inn' : 'Opprett konto';
+      subtitle.textContent = newMode === 'login'
+        ? 'Få tilgang til Easylife-dashboardet ditt.'
+        : 'Lag en konto for å komme i gang med Easylife.';
+      loginButton.textContent = newMode === 'login' ? 'Logg inn' : 'Opprett konto';
+      toggleButton.textContent = newMode === 'login'
+        ? 'Ny bruker? Opprett konto'
+        : 'Har du allerede konto? Logg inn';
+      form.password.autocomplete = newMode === 'login' ? 'current-password' : 'new-password';
+      confirmGroup.hidden = newMode === 'login';
+      confirmInput.required = newMode === 'signup';
+      form.password.value = '';
+      confirmInput.value = '';
+      loginButton.disabled = false;
+      setStatus('');
+    }
+
+    toggleButton.addEventListener('click', () => {
+      const nextMode = mode === 'login' ? 'signup' : 'login';
+      setMode(nextMode);
+    });
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const submittingStatus = mode === 'login' ? 'Logger inn …' : 'Oppretter konto …';
+      setStatus(submittingStatus);
+      loginButton.disabled = true;
+
+      const email = form.email.value.trim();
+      const password = form.password.value;
+
+      if (mode === 'signup') {
+        const passwordConfirmation = confirmInput.value;
+        if (password !== passwordConfirmation) {
+          setStatus('Passordene samsvarer ikke. Prøv igjen.', 'error');
+          loginButton.disabled = false;
+          return;
+        }
+
+        const { data, error } = await supabaseClient.auth.signUp({ email, password });
+
+        if (error) {
+          setStatus(error.message ?? 'Kunne ikke opprette konto. Prøv igjen.', 'error');
+          loginButton.disabled = false;
+          return;
+        }
+
+        if (data.session) {
+          setStatus('Konto opprettet! Omdirigerer …', 'success');
+          window.location.replace('index.html');
+          return;
+        }
+
+        setMode('login');
+        form.email.value = email;
+        setStatus('Konto opprettet! Sjekk e-posten din for å bekrefte adressen før du logger inn.', 'success');
+        loginButton.disabled = false;
+        return;
+      }
+
+      const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        setStatus(error.message ?? 'Kunne ikke logge inn. Prøv igjen.', 'error');
+        loginButton.disabled = false;
+        return;
+      }
+
+      setStatus('Innlogging vellykket! Omdirigerer …', 'success');
+      window.location.replace('index.html');
+    });
+
+    redirectIfLoggedIn();
+  </script>
+</body>
+</html>

@@ -26,6 +26,12 @@ const { data, error } = await window.supabaseClient.from('dine_tabeller').select
 
 Alle HTML-sider laster `supabase-client.js` slik at klienten er tilgjengelig når vi begynner å koble visningene til databasen.
 
+## Autentisering
+- **Metode:** E-post og passord via Supabase Auth
+- **Flyt:** Brukere logger inn fra `login.html`. Etter vellykket innlogging omdirigeres de automatisk til `index.html`.
+- **Ny konto:** `login.html` lar nye brukere opprette en konto med e-post og passord. Dersom prosjektet krever e-postbekreftelse, vises en melding om å verifisere e-posten før innlogging.
+- **Session-håndtering:** Hvis en aktiv sesjon finnes når `login.html` åpnes, sendes brukeren videre til `index.html` uten å måtte logge inn på nytt.
+
 ## Datamodell
 Det er foreløpig ingen tabeller definert i databasen. Oppdater `schema/schema.json` for å legge til tabeller.
 
