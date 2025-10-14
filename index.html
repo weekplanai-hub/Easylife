@@ -110,39 +110,53 @@
 
     header {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
+      flex-direction: column;
+      gap: 12px;
       color: var(--text-secondary);
-      gap: 16px;
     }
 
-    .user-actions {
+    .top-bar {
       display: flex;
       align-items: center;
       gap: 16px;
+      justify-content: space-between;
+      padding: 12px 20px;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 18px;
+      border: 1px solid rgba(15, 28, 46, 0.08);
+      backdrop-filter: blur(18px);
     }
 
-    .status {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      font-weight: 500;
-    }
-
-    .status .avatar {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #6fa3ff 0%, #4c5bd4 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
+    .welcome-message {
+      margin: 0;
       font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .top-nav {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .top-nav a {
+      padding: 8px 14px;
+      border-radius: 999px;
+      text-decoration: none;
+      color: var(--text-secondary);
+      font-weight: 500;
+      transition: background 160ms ease, color 160ms ease;
+    }
+
+    .top-nav a:hover,
+    .top-nav a:focus-visible {
+      background: rgba(34, 123, 255, 0.12);
+      color: var(--text-primary);
+      outline: none;
     }
 
     .logout-button {
-      padding: 10px 18px;
+      padding: 8px 16px;
       border-radius: 999px;
       border: none;
       background: var(--accent);
@@ -150,6 +164,7 @@
       font-weight: 600;
       cursor: pointer;
       transition: background 160ms ease, transform 160ms ease;
+      white-space: nowrap;
     }
 
     .logout-button:hover,
@@ -255,17 +270,21 @@
     </nav>
   </aside>
   <main>
+    <div class="top-bar">
+      <p class="welcome-message" data-welcome-message>Velkommen</p>
+      <nav class="top-nav" aria-label="Hurtiglenker">
+        <a href="index.html" aria-current="page">Dashboard</a>
+        <a href="mal.html">Mål</a>
+        <a href="mal-detalj.html">Mål-detalj</a>
+        <a href="todo.html">To-do</a>
+        <a href="rutiner.html">Rutiner</a>
+      </nav>
+      <button id="logout-button" class="logout-button" type="button">Logg ut</button>
+    </div>
     <header>
       <div>
         <h1>Custom Dashboard</h1>
         <p>Få oversikt over planene dine.</p>
-      </div>
-      <div class="user-actions">
-        <div class="status">
-          <span>72%</span>
-          <div class="avatar">AS</div>
-        </div>
-        <button id="logout-button" class="logout-button" type="button">Logg ut</button>
       </div>
     </header>
 
@@ -312,6 +331,11 @@
         if (!data?.session) {
           window.location.replace('login.html');
           return;
+        }
+
+        const welcomeMessage = document.querySelector('[data-welcome-message]');
+        if (welcomeMessage && data.session?.user?.email) {
+          welcomeMessage.textContent = `Velkommen, ${data.session.user.email}`;
         }
 
         const logoutButton = document.querySelector('#logout-button');

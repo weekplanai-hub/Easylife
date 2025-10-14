@@ -33,7 +33,7 @@ Alle HTML-sider laster `supabase-client.js` slik at klienten er tilgjengelig nå
 - **Session-håndtering:** Hvis en aktiv sesjon finnes når `login.html` åpnes, sendes brukeren videre til `index.html` uten å måtte logge inn på nytt.
 
 ## Brukersesjon og tilgang
-- Alle applikasjonssidene laster `supabase-client.js` og verifiserer en aktiv Supabase Auth-sesjon ved lasting.
+- Alle hovedsidene (`index.html`, `mal.html`, `mal-detalj.html`, `todo.html` og `rutiner.html`) laster `supabase-client.js` og verifiserer en aktiv Supabase Auth-sesjon ved lasting.
 - Dersom ingen gyldig sesjon finnes, blir brukeren automatisk omdirigert til `login.html`.
 - Innloggede brukere får en «Logg ut»-knapp øverst som kaller `supabase.auth.signOut()` og sender brukeren tilbake til innloggingssiden.
 

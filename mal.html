@@ -2567,5 +2567,27 @@ Mål
     renderGoals();
   </script>
   <script type="module" src="supabase-client.js"></script>
+  <script type="module">
+    import supabaseClient from './supabase-client.js';
+
+    async function enforceSession() {
+      try {
+        const { data, error } = await supabaseClient.auth.getSession();
+
+        if (error) {
+          throw error;
+        }
+
+        if (!data?.session) {
+          window.location.replace('login.html');
+        }
+      } catch (authError) {
+        console.error('Feil ved henting av sesjon', authError);
+        window.location.replace('login.html');
+      }
+    }
+
+    enforceSession();
+  </script>
 </body>
 </html>
