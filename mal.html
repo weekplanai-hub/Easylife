@@ -400,6 +400,54 @@ Mål · Easylife
     .form-actions {
       display: flex;
       justify-content: flex-end;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .form-actions__delete {
+      margin-right: auto;
+    }
+
+    .button {
+      border: none;
+      border-radius: 18px;
+      padding: 12px 20px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+    }
+
+    .button--danger {
+      background: rgba(220, 38, 38, 0.12);
+      color: #b91c1c;
+      border: 1px solid rgba(220, 38, 38, 0.35);
+    }
+
+    .button--danger:hover,
+    .button--danger:focus-visible {
+      background: rgba(220, 38, 38, 0.2);
+      outline: none;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px rgba(185, 28, 28, 0.2);
+    }
+
+    .button[hidden] {
+      display: none;
+    }
+
+    .goals-empty-state {
+      padding: 48px;
+      text-align: center;
+      border-radius: 24px;
+      border: 2px dashed rgba(15, 28, 46, 0.12);
+      background: rgba(255, 255, 255, 0.6);
+      color: var(--text-secondary);
+    }
+
+    .goals-empty-state h3 {
+      margin: 0 0 12px;
+      color: var(--text-primary);
+      font-size: 1.5rem;
     }
 
     .goals-grid {
@@ -1220,7 +1268,10 @@ Mål
             </div>
           </div>
           <div class="form-actions">
-            <button type="submit">Legg til mål</button>
+            <button type="button" id="goal-delete-button" class="button button--danger form-actions__delete" hidden>
+              Slett mål
+            </button>
+            <button type="submit" id="goal-submit-button">Legg til mål</button>
           </div>
         </form>
       </section>
@@ -1302,10 +1353,15 @@ Mål
     </div>
   </div>
   <script src="goals-data.js"></script>
-  <script>
+  <script type="module">
+    import supabaseClient from './supabase-client.js';
     const baseGoalsData = window.EASYLIFE_GOALS_DATA || [];
     const cloneGoal = (goal) => JSON.parse(JSON.stringify(goal || {}));
-    const goals = baseGoalsData.map((goal) => cloneGoal(goal));
+    let goals = baseGoalsData.map((goal) => cloneGoal(goal));
+
+    let currentUserId = null;
+    let isLoadingGoals = false;
+    let isSavingGoal = false;
 
     const fallbackImages = [
       'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=800&q=80',
@@ -1327,7 +1383,8 @@ Mål
     const imageSuggestButton = document.getElementById('goal-image-suggest');
     const imageChooseButton = document.getElementById('goal-image-choose');
     const quickAddTitle = document.getElementById('quick-add-title');
-    const submitButton = quickAddForm.querySelector('button[type="submit"]');
+    const submitButton = document.getElementById('goal-submit-button');
+    const deleteButton = document.getElementById('goal-delete-button');
     const deadlineInput = document.getElementById('goal-deadline');
     const deadlineQuickActions = quickAddForm.querySelectorAll('.deadline-action');
     const whyInput = document.getElementById('goal-why');
@@ -1370,6 +1427,47 @@ Mål
     let noteSearchQuery = '';
     let activeModalCount = 0;
     let shouldRestoreFocusOnPop = false;
+
+    const mapDatabaseGoal = (goal) => ({
+      id: goal?.id ?? null,
+      title: goal?.title ?? '',
+      why: goal?.why ?? '',
+      deadline: goal?.deadline ?? '',
+      status: goal?.status ?? '0%',
+      image: goal?.image ?? '',
+      category: goal?.category ?? '',
+      important: goal?.important ?? '',
+      milestones: Array.isArray(goal?.milestones) ? goal.milestones : [],
+      notes: Array.isArray(goal?.notes) ? goal.notes : [],
+      todos: Array.isArray(goal?.todos) ? goal.todos : []
+    });
+
+    const toGoalPayload = (goal) => {
+      const payload = {
+        title: goal.title,
+        why: goal.why,
+        deadline: goal.deadline || null,
+        image: goal.image || null,
+        status: goal.status ?? '0%',
+        category: goal.category || null,
+        important: goal.important || null
+      };
+
+      return Object.fromEntries(
+        Object.entries(payload).filter(([, value]) => value !== undefined)
+      );
+    };
+
+    const setFormBusy = (busy) => {
+      isSavingGoal = busy;
+      if (submitButton) {
+        submitButton.disabled = busy;
+        submitButton.setAttribute('aria-busy', busy ? 'true' : 'false');
+      }
+      if (deleteButton) {
+        deleteButton.disabled = busy;
+      }
+    };
 
     const setImagePreviewPlaceholder = (message = defaultImagePlaceholder) => {
       if (!imagePreview) {
@@ -2224,11 +2322,32 @@ Mål
     };
 
     const renderGoals = () => {
+      if (!goalsGrid) {
+        return;
+      }
+
+      goalsGrid.innerHTML = '';
+
+      if (isLoadingGoals) {
+        const loadingState = document.createElement('div');
+        loadingState.className = 'goals-empty-state';
+        loadingState.innerHTML = '<h3>Laster mål...</h3><p>Henter de siste målene dine.</p>';
+        goalsGrid.appendChild(loadingState);
+        return;
+      }
+
+      if (!goals.length) {
+        const emptyState = document.createElement('div');
+        emptyState.className = 'goals-empty-state';
+        emptyState.innerHTML = '<h3>Ingen mål enda</h3><p>Bruk «Legg til» for å registrere ditt første mål.</p>';
+        goalsGrid.appendChild(emptyState);
+        return;
+      }
+
       const fragment = document.createDocumentFragment();
       goals.forEach((goal, index) => {
         fragment.appendChild(createGoalCard(goal, index));
       });
-      goalsGrid.innerHTML = '';
       goalsGrid.appendChild(fragment);
     };
 
@@ -2350,7 +2469,16 @@ Mål
       editingGoalIndex = null;
       editingImageSource = '';
       quickAddTitle.textContent = 'Legg til mål';
-      submitButton.textContent = 'Legg til mål';
+      if (submitButton) {
+        submitButton.textContent = 'Legg til mål';
+        submitButton.disabled = false;
+        submitButton.setAttribute('aria-busy', 'false');
+      }
+      if (deleteButton) {
+        deleteButton.hidden = true;
+        deleteButton.disabled = false;
+      }
+      setFormBusy(false);
     }
 
     function prepareFormForEdit(goal, index) {
@@ -2358,7 +2486,15 @@ Mål
       editingGoalIndex = index;
       editingImageSource = goal.image || '';
       quickAddTitle.textContent = 'Rediger mål';
-      submitButton.textContent = 'Oppdater mål';
+      if (submitButton) {
+        submitButton.textContent = 'Oppdater mål';
+        submitButton.disabled = false;
+        submitButton.setAttribute('aria-busy', 'false');
+      }
+      if (deleteButton) {
+        deleteButton.hidden = false;
+        deleteButton.disabled = false;
+      }
       quickAddForm['goal-title'].value = goal.title || '';
       quickAddForm['goal-deadline'].value = goal.deadline || '';
       quickAddForm['goal-why'].value = goal.why || '';
@@ -2496,6 +2632,10 @@ Mål
     quickAddForm.addEventListener('submit', async (event) => {
       event.preventDefault();
 
+      if (isSavingGoal) {
+        return;
+      }
+
       const title = quickAddForm['goal-title'].value.trim();
       const deadline = quickAddForm['goal-deadline'].value;
       const why = quickAddForm['goal-why'].value.trim();
@@ -2504,39 +2644,73 @@ Mål
         return;
       }
 
-      const image = await resolveImageSource(editingImageSource);
+      setFormBusy(true);
 
-      if (editingGoalIndex !== null) {
-        const existingGoal = goals[editingGoalIndex];
-        goals[editingGoalIndex] = {
-          ...existingGoal,
+      try {
+        const image = await resolveImageSource(editingImageSource);
+
+        if (editingGoalIndex !== null) {
+          const existingGoal = goals[editingGoalIndex] ?? {};
+          const updates = {
+            ...existingGoal,
+            title,
+            deadline,
+            why,
+            image
+          };
+
+          let savedGoal = updates;
+
+          if (existingGoal.id && currentUserId) {
+            try {
+              const result = await updateGoalInDatabase(existingGoal.id, updates);
+              if (result) {
+                savedGoal = mapDatabaseGoal(result);
+              }
+            } catch (updateError) {
+              console.error('Feil ved oppdatering av mål i databasen', updateError);
+            }
+          }
+
+          goals[editingGoalIndex] = savedGoal;
+          renderGoals();
+          hideQuickAdd();
+          requestAnimationFrame(() => {
+            toggleAddButton.focus();
+          });
+          return;
+        }
+
+        const draftGoal = {
           title,
           deadline,
           why,
+          status: '0%',
           image
         };
+
+        let savedGoal = draftGoal;
+
+        if (currentUserId) {
+          try {
+            const insertedGoal = await insertGoalIntoDatabase(draftGoal);
+            if (insertedGoal) {
+              savedGoal = mapDatabaseGoal(insertedGoal);
+            }
+          } catch (insertError) {
+            console.error('Feil ved lagring av mål i databasen', insertError);
+          }
+        }
+
+        goals.unshift(savedGoal);
         renderGoals();
         hideQuickAdd();
         requestAnimationFrame(() => {
           toggleAddButton.focus();
         });
-        return;
+      } finally {
+        setFormBusy(false);
       }
-
-      const newGoal = {
-        title,
-        deadline,
-        why,
-        status: '0%',
-        image
-      };
-
-      goals.unshift(newGoal);
-      renderGoals();
-      hideQuickAdd();
-      requestAnimationFrame(() => {
-        toggleAddButton.focus();
-      });
     });
 
     quickAddForm.addEventListener('reset', () => {
@@ -2548,8 +2722,176 @@ Mål
       editingGoalIndex = null;
       editingImageSource = '';
       quickAddTitle.textContent = 'Legg til mål';
-      submitButton.textContent = 'Legg til mål';
+      if (submitButton) {
+        submitButton.textContent = 'Legg til mål';
+        submitButton.disabled = false;
+        submitButton.setAttribute('aria-busy', 'false');
+      }
+      if (deleteButton) {
+        deleteButton.hidden = true;
+        deleteButton.disabled = false;
+      }
+      setFormBusy(false);
     });
+
+    if (deleteButton) {
+      deleteButton.addEventListener('click', async () => {
+        if (editingGoalIndex === null || isSavingGoal) {
+          return;
+        }
+
+        const goal = goals[editingGoalIndex];
+
+        if (!goal) {
+          return;
+        }
+
+        const confirmationMessage = goal.title
+          ? `Er du sikker på at du vil slette «${goal.title}»?`
+          : 'Er du sikker på at du vil slette dette målet?';
+
+        if (!window.confirm(confirmationMessage)) {
+          return;
+        }
+
+        setFormBusy(true);
+
+        try {
+          if (goal.id && currentUserId) {
+            try {
+              await deleteGoalFromDatabase(goal.id);
+            } catch (deleteError) {
+              console.error('Feil ved sletting av mål i databasen', deleteError);
+            }
+          }
+
+          goals.splice(editingGoalIndex, 1);
+          renderGoals();
+          hideQuickAdd();
+          if (currentGoalIndex !== null) {
+            if (currentGoalIndex === editingGoalIndex && typeof closeGoalDetail === 'function') {
+              closeGoalDetail({ restoreFocus: false });
+            } else if (currentGoalIndex > editingGoalIndex) {
+              currentGoalIndex -= 1;
+            }
+          }
+          requestAnimationFrame(() => {
+            toggleAddButton.focus();
+          });
+        } finally {
+          setFormBusy(false);
+        }
+      });
+    }
+
+    async function loadGoalsFromDatabase() {
+      if (!currentUserId) {
+        return;
+      }
+
+      try {
+        isLoadingGoals = true;
+        renderGoals();
+
+        const { data, error } = await supabaseClient
+          .from('goals')
+          .select('id, title, why, deadline, image, status, category, important')
+          .eq('user_id', currentUserId)
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          throw error;
+        }
+
+        goals = Array.isArray(data) ? data.map((goal) => mapDatabaseGoal(goal)) : [];
+      } catch (loadError) {
+        console.error('Feil ved henting av mål fra databasen', loadError);
+      } finally {
+        isLoadingGoals = false;
+        renderGoals();
+      }
+    }
+
+    async function insertGoalIntoDatabase(goal) {
+      if (!currentUserId) {
+        return null;
+      }
+
+      const payload = {
+        ...toGoalPayload(goal),
+        user_id: currentUserId
+      };
+
+      const { data, error } = await supabaseClient
+        .from('goals')
+        .insert(payload)
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      return data;
+    }
+
+    async function updateGoalInDatabase(id, goal) {
+      if (!currentUserId || !id) {
+        return null;
+      }
+
+      const payload = toGoalPayload(goal);
+
+      const { data, error } = await supabaseClient
+        .from('goals')
+        .update(payload)
+        .eq('id', id)
+        .eq('user_id', currentUserId)
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      return data;
+    }
+
+    async function deleteGoalFromDatabase(id) {
+      if (!currentUserId || !id) {
+        return;
+      }
+
+      const { error } = await supabaseClient
+        .from('goals')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', currentUserId);
+
+      if (error) {
+        throw error;
+      }
+    }
+
+    async function enforceSession() {
+      try {
+        const { data, error } = await supabaseClient.auth.getSession();
+
+        if (error) {
+          throw error;
+        }
+
+        if (!data?.session) {
+          window.location.replace('login.html');
+          return;
+        }
+
+        currentUserId = data.session.user?.id ?? null;
+      } catch (authError) {
+        console.error('Feil ved henting av sesjon', authError);
+        window.location.replace('login.html');
+      }
+    }
 
     toggleAddButton.addEventListener('click', () => {
       if (quickAddSection.hasAttribute('hidden')) {
@@ -2565,29 +2907,9 @@ Mål
 
     setSuggestedImageSource('');
     renderGoals();
-  </script>
-  <script type="module" src="supabase-client.js"></script>
-  <script type="module">
-    import supabaseClient from './supabase-client.js';
 
-    async function enforceSession() {
-      try {
-        const { data, error } = await supabaseClient.auth.getSession();
-
-        if (error) {
-          throw error;
-        }
-
-        if (!data?.session) {
-          window.location.replace('login.html');
-        }
-      } catch (authError) {
-        console.error('Feil ved henting av sesjon', authError);
-        window.location.replace('login.html');
-      }
-    }
-
-    enforceSession();
+    await enforceSession();
+    await loadGoalsFromDatabase();
   </script>
 </body>
 </html>
