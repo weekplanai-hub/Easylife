@@ -9,6 +9,7 @@ const schemaPath = path.join(rootDir, 'schema', 'schema.json');
 const outputPath = path.join(rootDir, 'supabase-schema.sql');
 
 const QUOTE = (identifier) => `"${identifier.replace(/"/g, '""')}"`;
+const SQL_STRING = (value) => `'${value.replace(/'/g, "''")}'`;
 
 const loadSchema = async () => {
   const raw = await readFile(schemaPath, 'utf8');
@@ -120,12 +121,12 @@ const renderComments = (table) => {
   const statements = [];
   if (table.description) {
     const tableName = table.schema ? `${QUOTE(table.schema)}.${QUOTE(table.name)}` : `${QUOTE('public')}.${QUOTE(table.name)}`;
-    statements.push(`comment on table ${tableName} is ${JSON.stringify(table.description)};`);
+    statements.push(`comment on table ${tableName} is ${SQL_STRING(table.description)};`);
   }
   for (const column of table.columns) {
     if (column.description) {
       const tableName = table.schema ? `${QUOTE(table.schema)}.${QUOTE(table.name)}` : `${QUOTE('public')}.${QUOTE(table.name)}`;
-      statements.push(`comment on column ${tableName}.${QUOTE(column.name)} is ${JSON.stringify(column.description)};`);
+      statements.push(`comment on column ${tableName}.${QUOTE(column.name)} is ${SQL_STRING(column.description)};`);
     }
   }
   return statements;
