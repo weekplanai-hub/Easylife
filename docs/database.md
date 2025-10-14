@@ -32,6 +32,11 @@ Alle HTML-sider laster `supabase-client.js` slik at klienten er tilgjengelig nå
 - **Ny konto:** `login.html` lar nye brukere opprette en konto med e-post og passord. Dersom prosjektet krever e-postbekreftelse, vises en melding om å verifisere e-posten før innlogging.
 - **Session-håndtering:** Hvis en aktiv sesjon finnes når `login.html` åpnes, sendes brukeren videre til `index.html` uten å måtte logge inn på nytt.
 
+## Brukersesjon og tilgang
+- Alle applikasjonssidene laster `supabase-client.js` og verifiserer en aktiv Supabase Auth-sesjon ved lasting.
+- Dersom ingen gyldig sesjon finnes, blir brukeren automatisk omdirigert til `login.html`.
+- Innloggede brukere får en «Logg ut»-knapp øverst som kaller `supabase.auth.signOut()` og sender brukeren tilbake til innloggingssiden.
+
 ## Datamodell
 Det er foreløpig ingen tabeller definert i databasen. Oppdater `schema/schema.json` for å legge til tabeller.
 

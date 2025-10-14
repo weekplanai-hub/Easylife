@@ -113,6 +113,13 @@
       align-items: center;
       justify-content: space-between;
       color: var(--text-secondary);
+      gap: 16px;
+    }
+
+    .user-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
     }
 
     .status {
@@ -132,6 +139,28 @@
       justify-content: center;
       color: white;
       font-weight: 600;
+    }
+
+    .logout-button {
+      padding: 10px 18px;
+      border-radius: 999px;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 160ms ease, transform 160ms ease;
+    }
+
+    .logout-button:hover,
+    .logout-button:focus-visible {
+      background: #0f5ed2;
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .logout-button:active {
+      transform: translateY(0);
     }
 
     .dashboard {
@@ -231,9 +260,12 @@
         <h1>Custom Dashboard</h1>
         <p>Få oversikt over planene dine.</p>
       </div>
-      <div class="status">
-        <span>72%</span>
-        <div class="avatar">AS</div>
+      <div class="user-actions">
+        <div class="status">
+          <span>72%</span>
+          <div class="avatar">AS</div>
+        </div>
+        <button id="logout-button" class="logout-button" type="button">Logg ut</button>
       </div>
     </header>
 
@@ -266,5 +298,43 @@
     </section>
   </main>
   <script type="module" src="supabase-client.js"></script>
+  <script type="module">
+    import supabaseClient from './supabase-client.js';
+
+    async function enforceSession() {
+      try {
+        const { data, error } = await supabaseClient.auth.getSession();
+
+        if (error) {
+          throw error;
+        }
+
+        if (!data?.session) {
+          window.location.replace('login.html');
+          return;
+        }
+
+        const logoutButton = document.querySelector('#logout-button');
+
+        if (logoutButton) {
+          logoutButton.addEventListener('click', async () => {
+            const { error: signOutError } = await supabaseClient.auth.signOut();
+
+            if (signOutError) {
+              console.error('Kunne ikke logge ut brukeren', signOutError);
+              return;
+            }
+
+            window.location.replace('login.html');
+          });
+        }
+      } catch (authError) {
+        console.error('Feil ved henting av sesjon', authError);
+        window.location.replace('login.html');
+      }
+    }
+
+    enforceSession();
+  </script>
 </body>
 </html>
