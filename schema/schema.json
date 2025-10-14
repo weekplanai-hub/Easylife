@@ -1,3 +1,92 @@
 {
-  "tables": []
+  "tables": [
+    {
+      "name": "goals",
+      "schema": "public",
+      "description": "Lagrer mål knyttet til en innlogget bruker, inkludert motivasjon, status og metadata for visning i appen.",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false,
+          "default": "gen_random_uuid()",
+          "description": "Primærnøkkel som identifiserer målet."
+        },
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "nullable": false,
+          "description": "Referanse til Supabase-brukeren som eier målet."
+        },
+        {
+          "name": "title",
+          "type": "text",
+          "nullable": false,
+          "description": "Kort tittel som beskriver målet."
+        },
+        {
+          "name": "why",
+          "type": "text",
+          "nullable": false,
+          "description": "Brukerens begrunnelse for hvorfor målet er viktig."
+        },
+        {
+          "name": "deadline",
+          "type": "date",
+          "nullable": true,
+          "description": "Valgfri sluttdato for målet."
+        },
+        {
+          "name": "image",
+          "type": "text",
+          "nullable": true,
+          "description": "Data-URL eller ekstern lenke til forsidebildet for målet."
+        },
+        {
+          "name": "status",
+          "type": "text",
+          "nullable": false,
+          "default": "'0%'",
+          "description": "Prosentvis progresjon lagret som tekst (for eksempel '25%')."
+        },
+        {
+          "name": "category",
+          "type": "text",
+          "nullable": true,
+          "description": "Valgfri kategori som målet tilhører."
+        },
+        {
+          "name": "important",
+          "type": "text",
+          "nullable": true,
+          "description": "Fritekstfelt som beskriver hvorfor målet er viktigst akkurat nå."
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()",
+          "description": "Tidspunkt da målet ble opprettet."
+        }
+      ],
+      "primaryKey": ["id"],
+      "foreignKeys": [
+        {
+          "columns": ["user_id"],
+          "references": {
+            "schema": "auth",
+            "table": "users",
+            "columns": ["id"]
+          },
+          "onDelete": "cascade"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "goals_user_id_created_at_idx",
+          "columns": ["user_id", "created_at"]
+        }
+      ]
+    }
+  ]
 }
