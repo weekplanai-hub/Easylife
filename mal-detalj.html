@@ -253,43 +253,51 @@
       flex-wrap: wrap;
     }
 
-    .goal-section__action-button {
+    .goal-icon-button {
       border: none;
-      background: #2563eb;
-      color: #ffffff;
-      padding: 10px 18px;
-      border-radius: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      transition: background 160ms ease, transform 160ms ease;
-    }
-
-    .goal-section__action-button::before {
-      content: "+";
+      background: rgba(15, 28, 46, 0.06);
+      color: #0f172a;
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 22px;
-      height: 22px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.18);
-      font-size: 1.05rem;
-      line-height: 1;
+      cursor: pointer;
+      padding: 0;
+      transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+      position: relative;
     }
 
-    .goal-section__action-button[data-state="open"]::before {
-      content: "×";
-      font-size: 1.1rem;
+    .goal-icon-button svg {
+      width: 18px;
+      height: 18px;
+      pointer-events: none;
     }
 
-    .goal-section__action-button:hover,
-    .goal-section__action-button:focus-visible {
-      background: #1d4ed8;
+    .goal-icon-button:hover,
+    .goal-icon-button:focus-visible {
+      background: rgba(15, 28, 46, 0.12);
+      color: #020617;
       transform: translateY(-1px);
       outline: none;
+    }
+
+    .goal-icon-button[data-state="open"],
+    .goal-icon-button[aria-pressed="true"] {
+      background: rgba(15, 28, 46, 0.16);
+    }
+
+    .goal-icon-button[disabled] {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .goal-section__action-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .goal-section__header h3 {
@@ -390,54 +398,18 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
+      flex-wrap: wrap;
     }
 
-    .goal-milestone__toggle {
-      border: none;
-      background: rgba(15, 28, 46, 0.06);
-      color: #0f172a;
-      padding: 8px 14px;
-      border-radius: 999px;
-      cursor: pointer;
-      font-weight: 500;
-    }
-
-    .goal-milestone__edit {
-      border: none;
-      background: rgba(15, 28, 46, 0.06);
-      color: #0f172a;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: background 160ms ease, color 160ms ease;
-    }
-
-    .goal-milestone__edit:hover,
-    .goal-milestone__edit:focus-visible {
-      background: rgba(15, 28, 46, 0.12);
-      color: #020617;
-      outline: none;
-    }
-
-    .goal-milestone__edit svg {
-      width: 16px;
-      height: 16px;
+    .goal-milestone__edit,
+    .goal-milestone__toggle,
+    .goal-milestone__todo-add {
+      font: inherit;
     }
 
     .goal-milestone__todos {
       display: flex;
       flex-direction: column;
-      gap: 12px;
-    }
-
-    .goal-milestone__todo-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      align-items: flex-start;
       gap: 12px;
     }
 
@@ -479,8 +451,24 @@
     .goal-list__todo {
       display: flex;
       align-items: flex-start;
-      gap: 10px;
+      gap: 12px;
       width: 100%;
+      justify-content: space-between;
+    }
+
+    .goal-list__todo-main {
+      display: inline-flex;
+      align-items: flex-start;
+      gap: 10px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .goal-list__todo-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
     }
 
     .goal-list__todo label {
@@ -505,38 +493,18 @@
       width: 20px;
       height: 20px;
       accent-color: #2563eb;
+      flex-shrink: 0;
     }
 
-    .goal-milestone__todo-add {
-      border: none;
-      border-radius: 12px;
-      background: rgba(37, 99, 235, 0.12);
-      color: #1d4ed8;
-      padding: 10px 14px;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      cursor: pointer;
-      transition: background 160ms ease, transform 160ms ease;
-      justify-self: end;
+    .goal-milestone__todo-delete {
+      color: #b91c1c;
+      background: rgba(185, 28, 28, 0.12);
     }
 
-    .goal-milestone__todo-add span[aria-hidden="true"] {
-      font-size: 1.1rem;
-      line-height: 1;
-    }
-
-    .goal-milestone__todo-add[data-state="open"] {
-      background: rgba(37, 99, 235, 0.22);
-    }
-
-    .goal-milestone__todo-add:hover,
-    .goal-milestone__todo-add:focus-visible {
-      background: rgba(29, 78, 216, 0.24);
-      transform: translateY(-1px);
-      outline: none;
+    .goal-milestone__todo-delete:hover,
+    .goal-milestone__todo-delete:focus-visible {
+      background: rgba(185, 28, 28, 0.2);
+      color: #7f1d1d;
     }
 
     .goal-milestone__todo-form {
@@ -851,12 +819,8 @@
         width: 100%;
       }
 
-      .goal-milestone__todo-layout {
-        grid-template-columns: 1fr;
-      }
-
-      .goal-milestone__todo-add {
-        justify-self: flex-start;
+      .goal-milestone__actions {
+        justify-content: flex-start;
       }
     }
   </style>
@@ -906,11 +870,11 @@
             <div class="goal-section__header">
               <h3 id="goal-milestones-title">Milepæler</h3>
               <div class="goal-section__actions">
-                <button type="button" class="goal-section__action-button" id="goal-milestone-toggle-all" aria-pressed="false">
-                  Skjul alle
+                <button type="button" class="goal-section__action-button goal-icon-button" id="goal-milestone-toggle-all" aria-pressed="false">
+                  <span class="goal-sr-only">Skjul alle milepæl to-dos</span>
                 </button>
-                <button type="button" class="goal-section__action-button" id="goal-milestone-add-button" aria-expanded="false">
-                  Legg til milepæl
+                <button type="button" class="goal-section__action-button goal-icon-button" id="goal-milestone-add-button" aria-expanded="false">
+                  <span class="goal-sr-only">Legg til milepæl</span>
                 </button>
               </div>
             </div>
@@ -977,6 +941,57 @@
     (async function () {
       const baseGoalsData = window.EASYLIFE_GOALS_DATA || [];
       const cloneGoal = (goal) => JSON.parse(JSON.stringify(goal || {}));
+      const ICON_MARKUP = {
+        plus: `
+          <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+            <path d="M10 4.167v11.666M4.167 10h11.666" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        `,
+        close: `
+          <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+            <path d="m5.5 5.5 9 9m0-9-9 9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        `,
+        chevronsDown: `
+          <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+            <path d="m5.25 6.75 4.75 4.75 4.75-4.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="m5.25 11.25 4.75 4.75 4.75-4.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        `,
+        chevronsUp: `
+          <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+            <path d="m5.25 13.25 4.75-4.75 4.75 4.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="m5.25 8.75 4.75-4.75 4.75 4.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        `,
+        pencil: `
+          <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+            <path d="M13.586 3.586a2 2 0 0 1 2.828 2.828l-8.25 8.25-3.664.836.836-3.664 8.25-8.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M11.75 5.422 14.58 8.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        `,
+        x: `
+          <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+            <path d="m6 6 8 8m0-8-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        `
+      };
+
+      const getIconMarkup = (name) => (ICON_MARKUP[name] || '').trim();
+
+      const setButtonIconContent = (button, iconName, srText = '') => {
+        if (!button) {
+          return;
+        }
+
+        button.innerHTML = getIconMarkup(iconName);
+        if (srText) {
+          const srSpan = document.createElement('span');
+          srSpan.className = 'goal-sr-only';
+          srSpan.textContent = srText;
+          button.appendChild(srSpan);
+        }
+      };
       const parseIndexParam = (value) => {
         if (typeof value !== 'string') {
           return Number.NaN;
@@ -1149,6 +1164,8 @@
         if (milestoneFormToggle) {
           milestoneFormToggle.setAttribute('aria-expanded', milestoneFormIsOpen ? 'true' : 'false');
           milestoneFormToggle.dataset.state = milestoneFormIsOpen ? 'open' : 'closed';
+          const srText = milestoneFormIsOpen ? 'Lukk skjema for ny milepæl' : 'Legg til milepæl';
+          setButtonIconContent(milestoneFormToggle, milestoneFormIsOpen ? 'close' : 'plus', srText);
         }
 
         if (milestoneFormIsOpen && focusField && milestoneForm) {
@@ -1451,6 +1468,24 @@
         }
       }
 
+      async function deleteTodoFromDatabase(todo) {
+        if (!currentUserId || !todo?.id) {
+          return;
+        }
+
+        const query = supabaseClient.from('goal_milestone_todos').delete().eq('id', todo.id);
+
+        if (todo.milestoneId) {
+          query.eq('milestone_id', todo.milestoneId);
+        }
+
+        const { error } = await query;
+
+        if (error) {
+          throw error;
+        }
+      }
+
       async function persistMilestoneOrder(goal) {
         if (!currentUserId || !goal?.id) {
           return;
@@ -1615,25 +1650,68 @@
           child.addEventListener('dragover', handleDragOver);
           child.addEventListener('dragleave', handleDragLeave);
           child.addEventListener('drop', handleDrop);
-        });
+      });
+    }
+
+    function reorderTodosAfterCompletion(milestone, todo) {
+      if (!milestone || typeof milestone !== 'object' || !Array.isArray(milestone.todos) || !todo) {
+        return;
       }
 
-      function updateMilestoneToggleAllButton(goal) {
-        if (!milestoneToggleAllButton) {
-          return;
+      const todos = milestone.todos;
+      const currentIndex = todos.indexOf(todo);
+      if (currentIndex === -1) {
+        return;
+      }
+
+      todos.splice(currentIndex, 1);
+
+      if (todo.completed) {
+        let insertIndex = todos.findIndex((item) => item && item.completed);
+        if (insertIndex === -1) {
+          insertIndex = todos.length;
         }
+        todos.splice(insertIndex, 0, todo);
+      } else {
+        const firstCompletedIndex = todos.findIndex((item) => item && item.completed);
+        const insertIndex = firstCompletedIndex === -1 ? todos.length : firstCompletedIndex;
+        todos.splice(insertIndex, 0, todo);
+      }
+
+      todos.forEach((todoItem, index) => {
+        if (todoItem) {
+          todoItem.position = index;
+        }
+      });
+    }
+
+    function updateMilestoneToggleAllButton(goal) {
+      if (!milestoneToggleAllButton) {
+        return;
+      }
 
         const hasMilestones = Array.isArray(goal.milestones) && goal.milestones.length > 0;
         milestoneToggleAllButton.disabled = !hasMilestones;
 
         if (!hasMilestones) {
-          milestoneToggleAllButton.textContent = 'Skjul alle';
           milestoneToggleAllButton.setAttribute('aria-pressed', 'false');
+          milestoneToggleAllButton.dataset.state = 'closed';
+          setButtonIconContent(
+            milestoneToggleAllButton,
+            'chevronsDown',
+            'Ingen milepæler tilgjengelig'
+          );
           return;
         }
 
         const allCollapsed = goal.milestones.every((milestone) => !Boolean(milestone.isExpanded));
-        milestoneToggleAllButton.textContent = allCollapsed ? 'Vis alle' : 'Skjul alle';
+        const srText = allCollapsed ? 'Vis alle milepæl to-dos' : 'Skjul alle milepæl to-dos';
+        milestoneToggleAllButton.dataset.state = allCollapsed ? 'closed' : 'open';
+        setButtonIconContent(
+          milestoneToggleAllButton,
+          allCollapsed ? 'chevronsDown' : 'chevronsUp',
+          srText
+        );
         milestoneToggleAllButton.setAttribute('aria-pressed', allCollapsed ? 'true' : 'false');
       }
 
@@ -1735,37 +1813,64 @@
           const actions = document.createElement('div');
           actions.className = 'goal-milestone__actions';
 
-          const toggleButton = document.createElement('button');
-          toggleButton.type = 'button';
-          toggleButton.className = 'goal-milestone__toggle';
-          const isExpanded = Boolean(milestone.isExpanded);
-          toggleButton.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
-          toggleButton.setAttribute('aria-controls', todosContainerId);
-          toggleButton.textContent = isExpanded ? 'Skjul to-dos' : 'Vis to-dos';
-          toggleButton.addEventListener('click', () => {
-            toggleMilestoneTodos(goal, index);
-          });
-
+          const trimmedTitle = (milestone.title || '').trim();
           const editButton = document.createElement('button');
           editButton.type = 'button';
-          editButton.className = 'goal-milestone__edit';
+          editButton.className = 'goal-icon-button goal-milestone__edit';
           editButton.dataset.milestoneIndex = String(index);
-          const trimmedTitle = (milestone.title || '').trim();
           const editLabel = trimmedTitle ? `Rediger milepælen ${trimmedTitle}` : 'Rediger milepælen';
           editButton.setAttribute('aria-label', editLabel);
           editButton.title = editLabel;
-          editButton.innerHTML = `
-            <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-              <path d="M13.586 3.586a2 2 0 0 1 2.828 2.828l-8.25 8.25-3.664.836.836-3.664 8.25-8.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-              <path d="M11.75 5.422 14.58 8.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-          `;
+          setButtonIconContent(editButton, 'pencil', editLabel);
           editButton.addEventListener('click', () => {
             openMilestoneEditModal(goal, index);
           });
 
-          actions.appendChild(toggleButton);
+          const isExpanded = Boolean(milestone.isExpanded);
+          const toggleButton = document.createElement('button');
+          toggleButton.type = 'button';
+          toggleButton.className = 'goal-icon-button goal-milestone__toggle';
+          toggleButton.dataset.state = isExpanded ? 'open' : 'closed';
+          toggleButton.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+          toggleButton.setAttribute('aria-controls', todosContainerId);
+          const toggleSrText = isExpanded
+            ? trimmedTitle
+              ? `Skjul to-dos for milepælen ${trimmedTitle}`
+              : 'Skjul to-dos for denne milepælen'
+            : trimmedTitle
+              ? `Vis to-dos for milepælen ${trimmedTitle}`
+              : 'Vis to-dos for denne milepælen';
+          setButtonIconContent(toggleButton, isExpanded ? 'chevronsUp' : 'chevronsDown', toggleSrText);
+          toggleButton.addEventListener('click', () => {
+            toggleMilestoneTodos(goal, index);
+          });
+
+          const isTodoFormOpen = Boolean(milestone.isTodoFormOpen);
+          const todoAddButton = document.createElement('button');
+          todoAddButton.type = 'button';
+          todoAddButton.className = 'goal-icon-button goal-milestone__todo-add';
+          todoAddButton.dataset.state = isTodoFormOpen ? 'open' : 'closed';
+          todoAddButton.setAttribute('aria-expanded', isTodoFormOpen ? 'true' : 'false');
+          const addSrText = isTodoFormOpen
+            ? trimmedTitle
+              ? `Lukk skjema for ny to-do i milepælen ${trimmedTitle}`
+              : 'Lukk skjema for ny to-do'
+            : trimmedTitle
+              ? `Legg til ny to-do i milepælen ${trimmedTitle}`
+              : 'Legg til ny to-do';
+          setButtonIconContent(todoAddButton, isTodoFormOpen ? 'close' : 'plus', addSrText);
+          todoAddButton.addEventListener('click', () => {
+            const shouldOpen = !Boolean(milestone.isTodoFormOpen);
+            milestone.isTodoFormOpen = shouldOpen;
+            if (shouldOpen) {
+              milestone.shouldFocusTodoTitle = true;
+            }
+            renderMilestones(goal);
+          });
+
           actions.appendChild(editButton);
+          actions.appendChild(toggleButton);
+          actions.appendChild(todoAddButton);
 
           header.appendChild(actions);
 
@@ -1776,12 +1881,9 @@
           todosContainer.id = todosContainerId;
           todosContainer.hidden = !isExpanded;
 
-          const todoLayout = document.createElement('div');
-          todoLayout.className = 'goal-milestone__todo-layout';
-
           const todoContent = document.createElement('div');
           todoContent.className = 'goal-milestone__todo-content';
-          todoLayout.appendChild(todoContent);
+          todosContainer.appendChild(todoContent);
 
           const todoListElement = document.createElement('ul');
           todoListElement.className = 'goal-milestone__todo-list';
@@ -1805,6 +1907,9 @@
               const todoWrapper = document.createElement('div');
               todoWrapper.className = 'goal-list__todo';
 
+              const todoMain = document.createElement('div');
+              todoMain.className = 'goal-list__todo-main';
+
               const checkbox = document.createElement('input');
               checkbox.type = 'checkbox';
               const checkboxId = `goal-${goalDomIdentifier}-milestone-${index}-todo-${todoIndex}`;
@@ -1816,13 +1921,30 @@
               checkbox.addEventListener('change', async () => {
                 const newValue = checkbox.checked;
                 const previousValue = Boolean(todo.completed);
+                if (newValue === previousValue) {
+                  return;
+                }
+
+                const previousTodos = milestone.todos.slice();
+                const previousPositions = previousTodos.map((todoItem) =>
+                  typeof todoItem.position === 'number' ? todoItem.position : null
+                );
+                const previousCompletionStates = previousTodos.map((todoItem) => Boolean(todoItem.completed));
+
                 todo.completed = newValue;
+                reorderTodosAfterCompletion(milestone, todo);
                 renderMilestones(goal);
                 try {
                   await updateTodoCompletionInDatabase(todo, newValue);
+                  await persistTodoOrder(goal, milestone);
                 } catch (completionError) {
                   console.error('Feil ved oppdatering av to-do', completionError);
                   todo.completed = previousValue;
+                  milestone.todos = previousTodos;
+                  milestone.todos.forEach((todoItem, idx) => {
+                    todoItem.position = previousPositions[idx] ?? idx;
+                    todoItem.completed = previousCompletionStates[idx];
+                  });
                   renderMilestones(goal);
                 }
               });
@@ -1835,8 +1957,56 @@
               todoTitleSpan.textContent = todo.title;
               todoLabel.appendChild(todoTitleSpan);
 
-              todoWrapper.appendChild(checkbox);
-              todoWrapper.appendChild(todoLabel);
+              todoMain.appendChild(checkbox);
+              todoMain.appendChild(todoLabel);
+
+              const todoActions = document.createElement('div');
+              todoActions.className = 'goal-list__todo-actions';
+
+              const deleteButton = document.createElement('button');
+              deleteButton.type = 'button';
+              deleteButton.className = 'goal-icon-button goal-milestone__todo-delete';
+              const todoTitleTrimmed = (todo.title || '').trim();
+              const deleteLabel = todoTitleTrimmed ? `Slett to-do ${todoTitleTrimmed}` : 'Slett to-do';
+              setButtonIconContent(deleteButton, 'x', deleteLabel);
+              deleteButton.addEventListener('click', async (event) => {
+                event.stopPropagation();
+                const previousTodos = milestone.todos.slice();
+                const previousPositions = previousTodos.map((todoItem) =>
+                  typeof todoItem.position === 'number' ? todoItem.position : null
+                );
+                const previousCompletionStates = previousTodos.map((todoItem) => Boolean(todoItem.completed));
+                const currentIndex = milestone.todos.indexOf(todo);
+                if (currentIndex === -1) {
+                  return;
+                }
+
+                milestone.todos.splice(currentIndex, 1);
+                milestone.todos.forEach((todoItem, updatedIndex) => {
+                  todoItem.position = updatedIndex;
+                });
+                renderMilestones(goal);
+
+                try {
+                  if (todo.id) {
+                    await deleteTodoFromDatabase(todo);
+                  }
+                  await persistTodoOrder(goal, milestone);
+                } catch (deleteError) {
+                  console.error('Feil ved sletting av to-do', deleteError);
+                  milestone.todos = previousTodos;
+                  milestone.todos.forEach((todoItem, idx) => {
+                    todoItem.position = previousPositions[idx] ?? idx;
+                    todoItem.completed = previousCompletionStates[idx];
+                  });
+                  renderMilestones(goal);
+                }
+              });
+
+              todoActions.appendChild(deleteButton);
+
+              todoWrapper.appendChild(todoMain);
+              todoWrapper.appendChild(todoActions);
               todoItem.appendChild(todoWrapper);
               todoListElement.appendChild(todoItem);
             });
@@ -1854,28 +2024,6 @@
               }
             });
           }
-
-          const isTodoFormOpen = Boolean(milestone.isTodoFormOpen);
-
-          const todoAddButton = document.createElement('button');
-          todoAddButton.type = 'button';
-          todoAddButton.className = 'goal-milestone__todo-add';
-          todoAddButton.dataset.state = isTodoFormOpen ? 'open' : 'closed';
-          todoAddButton.setAttribute('aria-expanded', isTodoFormOpen ? 'true' : 'false');
-          todoAddButton.innerHTML = `<span aria-hidden="true">${isTodoFormOpen ? '×' : '+'}</span><span class="goal-sr-only">${
-            isTodoFormOpen ? 'Lukk skjema for ny to-do' : 'Legg til to-do for denne milepælen'
-          }</span>`;
-          todoAddButton.addEventListener('click', () => {
-            const shouldOpen = !Boolean(milestone.isTodoFormOpen);
-            milestone.isTodoFormOpen = shouldOpen;
-            if (shouldOpen) {
-              milestone.shouldFocusTodoTitle = true;
-            }
-            renderMilestones(goal);
-          });
-          todoLayout.appendChild(todoAddButton);
-
-          todosContainer.appendChild(todoLayout);
 
           const todoForm = document.createElement('form');
           todoForm.className = 'goal-milestone__todo-form';
