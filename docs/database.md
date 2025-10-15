@@ -78,6 +78,7 @@ Milepæler knyttet til et mål. Brukes til å dele et mål opp i trinn med egen 
 | detail | `text` | Ja | — | Utfyllende detaljer om milepælen. |
 | completed | `boolean` | Nei | `false` | Om milepælen er merket som fullført. |
 | progress | `numeric` | Ja | — | Valgfri prosentvis fremdrift for milepælen. |
+| deadline | `date` | Ja | — | Valgfri deadline for milepælen. |
 | position | `integer` | Nei | `0` | Sorteringsrekkefølge innenfor et mål (lavt tall vises først). |
 | created_at | `timestamp with time zone` | Nei | `now()` | Tidspunkt milepælen ble opprettet. |
 

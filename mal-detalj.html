@@ -966,10 +966,24 @@
     </div>
   </div>
   <script src="goals-data.js"></script>
-  <script>
-    (function () {
+  <script type="module">
+    import supabaseClient from './supabase-client.js';
+
+    (async function () {
       const baseGoalsData = window.EASYLIFE_GOALS_DATA || [];
       const cloneGoal = (goal) => JSON.parse(JSON.stringify(goal || {}));
+      const parseIndexParam = (value) => {
+        if (typeof value !== 'string') {
+          return Number.NaN;
+        }
+
+        const trimmed = value.trim();
+        if (!/^\d+$/.test(trimmed)) {
+          return Number.NaN;
+        }
+
+        return Number.parseInt(trimmed, 10);
+      };
 
       const goalDetailSection = document.getElementById('goal-detail');
       const emptyStateSection = document.getElementById('goal-detail-empty');
@@ -1000,15 +1014,106 @@
 
       const currentUrl = new URL(window.location.href);
       const goalParam = currentUrl.searchParams.get('goal');
-      const parsedGoalIndex = goalParam === null ? NaN : Number.parseInt(goalParam, 10);
-      const hasGoal = Number.isInteger(parsedGoalIndex) && parsedGoalIndex >= 0 && parsedGoalIndex < baseGoalsData.length;
+      const fallbackGoalParam = currentUrl.searchParams.get('goalIndex');
 
-      let currentGoalIndex = hasGoal ? parsedGoalIndex : null;
-      let currentGoal = currentGoalIndex !== null ? cloneGoal(baseGoalsData[currentGoalIndex]) : null;
+      const parsedGoalIndex = parseIndexParam(goalParam);
+      const parsedFallbackIndex = parseIndexParam(fallbackGoalParam);
+
+      const hasLegacyGoalIndex =
+        Number.isInteger(parsedGoalIndex) && parsedGoalIndex >= 0 && parsedGoalIndex < baseGoalsData.length;
+      const hasFallbackGoalIndex =
+        Number.isInteger(parsedFallbackIndex) && parsedFallbackIndex >= 0 && parsedFallbackIndex < baseGoalsData.length;
+
+      let fallbackGoalIndex = hasFallbackGoalIndex ? parsedFallbackIndex : hasLegacyGoalIndex ? parsedGoalIndex : null;
+      const goalIdentifier =
+        typeof goalParam === 'string' && goalParam.trim() && !/^\d+$/.test(goalParam.trim())
+          ? goalParam.trim()
+          : null;
+
+      let currentGoal = null;
+      let currentUserId = null;
       let noteSearchQuery = '';
       let activeModalCount = 0;
       let milestoneFormIsOpen = false;
       let milestoneEditIndex = null;
+
+      const mapDatabaseTodo = (todo, index = 0, { fallbackMilestoneId } = {}) => ({
+        id: todo?.id ?? null,
+        milestoneId: todo?.milestone_id ?? todo?.milestoneId ?? fallbackMilestoneId ?? null,
+        title: todo?.title ?? '',
+        detail: todo?.detail ?? '',
+        completed: Boolean(todo?.completed),
+        position: typeof todo?.position === 'number' ? todo.position : index
+      });
+
+      const mapDatabaseMilestone = (milestone, index = 0, { fallbackGoalId } = {}) => {
+        const mapped = {
+          id: milestone?.id ?? null,
+          goalId: milestone?.goal_id ?? milestone?.goalId ?? fallbackGoalId ?? null,
+          title: milestone?.title ?? '',
+          detail: milestone?.detail ?? '',
+          completed: Boolean(milestone?.completed),
+          progress: milestone?.progress ?? null,
+          deadline: milestone?.deadline ?? '',
+          position: typeof milestone?.position === 'number' ? milestone.position : index,
+          isExpanded: typeof milestone?.isExpanded === 'boolean' ? milestone.isExpanded : index === 0,
+          isTodoFormOpen: Boolean(milestone?.isTodoFormOpen),
+          shouldFocusTodoTitle: Boolean(milestone?.shouldFocusTodoTitle),
+          todos: []
+        };
+
+        const todosSource = Array.isArray(milestone?.goal_milestone_todos)
+          ? milestone.goal_milestone_todos
+          : Array.isArray(milestone?.todos)
+            ? milestone.todos
+            : [];
+
+        mapped.todos = todosSource.map((todo, todoIndex) => {
+          const mappedTodo = mapDatabaseTodo(todo, todoIndex, { fallbackMilestoneId: mapped.id });
+          if (!mappedTodo.milestoneId && mapped.id) {
+            mappedTodo.milestoneId = mapped.id;
+          }
+          return mappedTodo;
+        });
+
+        return mapped;
+      };
+
+      const mapDatabaseGoal = (goal) => {
+        const milestoneSource = Array.isArray(goal?.milestones)
+          ? goal.milestones
+          : Array.isArray(goal?.goal_milestones)
+            ? goal.goal_milestones
+            : [];
+
+        return {
+          id: goal?.id ?? null,
+          title: goal?.title ?? '',
+          why: goal?.why ?? '',
+          deadline: goal?.deadline ?? '',
+          status: goal?.status ?? '0%',
+          image: goal?.image ?? '',
+          category: goal?.category ?? '',
+          important: goal?.important ?? '',
+          milestones: milestoneSource.map((milestone, index) =>
+            mapDatabaseMilestone(milestone, index, { fallbackGoalId: goal?.id ?? null })
+          ),
+          notes: Array.isArray(goal?.notes) ? goal.notes : [],
+          todos: Array.isArray(goal?.todos) ? goal.todos : []
+        };
+      };
+
+      const getGoalDomIdentifier = () => {
+        if (currentGoal?.id) {
+          return currentGoal.id;
+        }
+
+        if (fallbackGoalIndex !== null) {
+          return fallbackGoalIndex;
+        }
+
+        return 'x';
+      };
 
       const lockBodyScroll = () => {
         activeModalCount += 1;
@@ -1139,11 +1244,17 @@
             milestone.todos = [];
           }
 
-          milestone.todos = milestone.todos.map((todo) => ({
-            title: todo?.title || '',
-            detail: todo?.detail || '',
-            completed: Boolean(todo?.completed)
-          }));
+          milestone.todos = milestone.todos.map((todo, todoIndex) => {
+            const mappedTodo = mapDatabaseTodo(todo, todoIndex, { fallbackMilestoneId: milestone.id ?? null });
+            if (typeof mappedTodo.position !== 'number') {
+              mappedTodo.position = todoIndex;
+            }
+            return mappedTodo;
+          });
+
+          if (typeof milestone.position !== 'number') {
+            milestone.position = index;
+          }
 
           if (typeof milestone.deadline !== 'string') {
             milestone.deadline = milestone.deadline ? String(milestone.deadline) : '';
@@ -1168,6 +1279,222 @@
 
         if (!Array.isArray(goal.notes)) {
           goal.notes = [];
+        }
+      }
+
+      async function loadGoalFromDatabase(goalId) {
+        if (!goalId || !currentUserId) {
+          return null;
+        }
+
+        try {
+          const { data, error } = await supabaseClient
+            .from('goals')
+            .select(`
+              id,
+              title,
+              why,
+              deadline,
+              image,
+              status,
+              category,
+              important,
+              goal_milestones (
+                id,
+                goal_id,
+                title,
+                detail,
+                completed,
+                progress,
+                position,
+                deadline,
+                goal_milestone_todos (
+                  id,
+                  milestone_id,
+                  title,
+                  detail,
+                  completed,
+                  position
+                )
+              )
+            `)
+            .eq('user_id', currentUserId)
+            .eq('id', goalId)
+            .order('position', { ascending: true, foreignTable: 'goal_milestones' })
+            .order('position', { ascending: true, foreignTable: 'goal_milestones.goal_milestone_todos' })
+            .maybeSingle();
+
+          if (error) {
+            throw error;
+          }
+
+          if (!data) {
+            return null;
+          }
+
+          return mapDatabaseGoal(data);
+        } catch (loadError) {
+          console.error('Feil ved henting av mål fra databasen', loadError);
+          return null;
+        }
+      }
+
+      async function insertMilestoneIntoDatabase(goal, { title, detail, position, deadline }) {
+        if (!currentUserId || !goal?.id) {
+          return null;
+        }
+
+        const payload = {
+          goal_id: goal.id,
+          title,
+          detail: detail ? detail : null,
+          completed: false,
+          position,
+          deadline: deadline ? deadline : null
+        };
+
+        const { data, error } = await supabaseClient
+          .from('goal_milestones')
+          .insert(payload)
+          .select('id, goal_id, title, detail, completed, progress, position, deadline')
+          .single();
+
+        if (error) {
+          throw error;
+        }
+
+        return data;
+      }
+
+      async function updateMilestoneInDatabase(milestone, updates) {
+        if (!currentUserId || !milestone?.id) {
+          return null;
+        }
+
+        const payload = {
+          title: updates.title,
+          detail: updates.detail ?? null,
+          deadline: updates.deadline ?? null
+        };
+
+        const filtered = Object.fromEntries(
+          Object.entries(payload).filter(([, value]) => value !== undefined)
+        );
+
+        if (!Object.keys(filtered).length) {
+          return null;
+        }
+
+        const { data, error } = await supabaseClient
+          .from('goal_milestones')
+          .update(filtered)
+          .eq('id', milestone.id)
+          .select('id, goal_id, title, detail, completed, progress, position, deadline')
+          .single();
+
+        if (error) {
+          throw error;
+        }
+
+        return data;
+      }
+
+      async function insertTodoIntoDatabase(goal, milestone, { title, detail, position }) {
+        if (!currentUserId || !goal?.id || !milestone?.id) {
+          return null;
+        }
+
+        const payload = {
+          milestone_id: milestone.id,
+          title,
+          detail: detail ? detail : null,
+          completed: false,
+          position
+        };
+
+        const { data, error } = await supabaseClient
+          .from('goal_milestone_todos')
+          .insert(payload)
+          .select('id, milestone_id, title, detail, completed, position')
+          .single();
+
+        if (error) {
+          throw error;
+        }
+
+        return data;
+      }
+
+      async function updateTodoCompletionInDatabase(todo, completed) {
+        if (!currentUserId || !todo?.id) {
+          return;
+        }
+
+        const query = supabaseClient
+          .from('goal_milestone_todos')
+          .update({ completed })
+          .eq('id', todo.id);
+
+        if (todo.milestoneId) {
+          query.eq('milestone_id', todo.milestoneId);
+        }
+
+        const { error } = await query;
+
+        if (error) {
+          throw error;
+        }
+      }
+
+      async function persistMilestoneOrder(goal) {
+        if (!currentUserId || !goal?.id) {
+          return;
+        }
+
+        const updates = goal.milestones
+          .filter((milestone) => milestone?.id)
+          .map((milestone, index) =>
+            supabaseClient
+              .from('goal_milestones')
+              .update({ position: index })
+              .eq('id', milestone.id)
+              .eq('goal_id', goal.id)
+          );
+
+        if (!updates.length) {
+          return;
+        }
+
+        const responses = await Promise.all(updates);
+        const failed = responses.find((response) => response?.error);
+        if (failed?.error) {
+          throw failed.error;
+        }
+      }
+
+      async function persistTodoOrder(goal, milestone) {
+        if (!currentUserId || !goal?.id || !milestone?.id) {
+          return;
+        }
+
+        const updates = milestone.todos
+          .filter((todo) => todo?.id)
+          .map((todo, index) =>
+            supabaseClient
+              .from('goal_milestone_todos')
+              .update({ position: index })
+              .eq('id', todo.id)
+              .eq('milestone_id', milestone.id)
+          );
+
+        if (!updates.length) {
+          return;
+        }
+
+        const responses = await Promise.all(updates);
+        const failed = responses.find((response) => response?.error);
+        if (failed?.error) {
+          throw failed.error;
         }
       }
 
@@ -1345,6 +1672,8 @@
         milestoneList.innerHTML = '';
         ensureGoalCollections(goal);
 
+        const goalDomIdentifier = goal?.id ?? getGoalDomIdentifier();
+
         updateMilestoneToggleAllButton(goal);
 
         if (!goal.milestones.length) {
@@ -1473,15 +1802,24 @@
 
               const checkbox = document.createElement('input');
               checkbox.type = 'checkbox';
-              const checkboxId = `goal-${currentGoalIndex ?? 'x'}-milestone-${index}-todo-${todoIndex}`;
+              const checkboxId = `goal-${goalDomIdentifier}-milestone-${index}-todo-${todoIndex}`;
               checkbox.id = checkboxId;
               checkbox.checked = Boolean(todo.completed);
               checkbox.addEventListener('click', (event) => {
                 event.stopPropagation();
               });
-              checkbox.addEventListener('change', () => {
-                todo.completed = checkbox.checked;
+              checkbox.addEventListener('change', async () => {
+                const newValue = checkbox.checked;
+                const previousValue = Boolean(todo.completed);
+                todo.completed = newValue;
                 renderMilestones(goal);
+                try {
+                  await updateTodoCompletionInDatabase(todo, newValue);
+                } catch (completionError) {
+                  console.error('Feil ved oppdatering av to-do', completionError);
+                  todo.completed = previousValue;
+                  renderMilestones(goal);
+                }
               });
 
               const todoLabel = document.createElement('label');
@@ -1498,9 +1836,17 @@
               todoListElement.appendChild(todoItem);
             });
 
-            setupDragAndDrop(todoListElement, todos, (updated) => {
+            setupDragAndDrop(todoListElement, todos, async (updated) => {
               milestone.todos = updated;
+              milestone.todos.forEach((todoItem, updatedIndex) => {
+                todoItem.position = updatedIndex;
+              });
               renderMilestones(goal);
+              try {
+                await persistTodoOrder(goal, milestone);
+              } catch (orderError) {
+                console.error('Feil ved lagring av rekkefølge for to-dos', orderError);
+              }
             });
           }
 
@@ -1552,23 +1898,49 @@
             milestone.shouldFocusTodoTitle = false;
           }
 
-          todoForm.addEventListener('submit', (event) => {
+          todoForm.addEventListener('submit', async (event) => {
             event.preventDefault();
             const titleValue = todoTitleInput.value.trim();
             if (!titleValue) {
               return;
             }
 
-            milestone.todos.push({
+            const position = Array.isArray(milestone.todos) ? milestone.todos.length : 0;
+            const newTodo = {
               title: titleValue,
-              completed: false
-            });
+              detail: '',
+              completed: false,
+              milestoneId: milestone.id ?? null,
+              id: null,
+              position
+            };
+
+            milestone.todos.push(newTodo);
             milestone.isExpanded = true;
 
             todoForm.reset();
             milestone.isTodoFormOpen = false;
             milestone.shouldFocusTodoTitle = false;
             renderMilestones(goal);
+
+            if (currentGoal?.id && milestone.id) {
+              try {
+                const insertedTodo = await insertTodoIntoDatabase(currentGoal, milestone, {
+                  title: titleValue,
+                  detail: '',
+                  position
+                });
+                if (insertedTodo) {
+                  const mappedTodo = mapDatabaseTodo(insertedTodo, position, { fallbackMilestoneId: milestone.id });
+                  milestone.todos[position] = { ...milestone.todos[position], ...mappedTodo };
+                  renderMilestones(goal);
+                }
+              } catch (todoError) {
+                console.error('Feil ved lagring av to-do', todoError);
+                milestone.todos.splice(position, 1);
+                renderMilestones(goal);
+              }
+            }
           });
 
           todosContainer.appendChild(todoForm);
@@ -1576,9 +1948,17 @@
           milestoneList.appendChild(item);
         });
 
-        setupDragAndDrop(milestoneList, goal.milestones, (updated) => {
+        setupDragAndDrop(milestoneList, goal.milestones, async (updated) => {
           goal.milestones = updated;
+          goal.milestones.forEach((milestoneItem, milestoneIndex) => {
+            milestoneItem.position = milestoneIndex;
+          });
           renderMilestones(goal);
+          try {
+            await persistMilestoneOrder(goal);
+          } catch (orderError) {
+            console.error('Feil ved lagring av rekkefølge for milepæler', orderError);
+          }
         });
       }
 
@@ -1917,7 +2297,7 @@
       }
 
       if (milestoneEditForm) {
-        milestoneEditForm.addEventListener('submit', (event) => {
+        milestoneEditForm.addEventListener('submit', async (event) => {
           event.preventDefault();
           if (!currentGoal || milestoneEditIndex === null) {
             return;
@@ -1928,6 +2308,10 @@
           if (!milestone) {
             return;
           }
+
+          const previousTitle = milestone.title;
+          const previousDetail = milestone.detail;
+          const previousDeadline = milestone.deadline;
 
           const titleField = milestoneEditForm['milestone-title'];
           const detailField = milestoneEditForm['milestone-detail'];
@@ -1959,11 +2343,27 @@
           renderMilestones(currentGoal);
           closeMilestoneEditModal({ restoreFocus: false });
 
-          requestAnimationFrame(() => {
-            const selector = `.goal-milestone[data-draggable-index="${editedIndex}"] .goal-milestone__edit`;
-            const editButton = milestoneList?.querySelector(selector);
-            editButton?.focus();
-          });
+          try {
+            if (milestone.id) {
+              await updateMilestoneInDatabase(milestone, {
+                title: titleValue,
+                detail: detailValue || null,
+                deadline: milestone.deadline ? milestone.deadline : null
+              });
+            }
+          } catch (milestoneError) {
+            console.error('Feil ved oppdatering av milepæl', milestoneError);
+            milestone.title = previousTitle;
+            milestone.detail = previousDetail;
+            milestone.deadline = previousDeadline;
+            renderMilestones(currentGoal);
+          } finally {
+            requestAnimationFrame(() => {
+              const selector = `.goal-milestone[data-draggable-index="${editedIndex}"] .goal-milestone__edit`;
+              const editButton = milestoneList?.querySelector(selector);
+              editButton?.focus();
+            });
+          }
         });
       }
 
@@ -1980,7 +2380,7 @@
       });
 
       if (milestoneForm) {
-        milestoneForm.addEventListener('submit', (event) => {
+        milestoneForm.addEventListener('submit', async (event) => {
           event.preventDefault();
           if (!currentGoal) {
             return;
@@ -1996,15 +2396,41 @@
             return;
           }
 
-          currentGoal.milestones.unshift({
+          const position = Array.isArray(currentGoal.milestones) ? currentGoal.milestones.length : 0;
+          let insertedMilestone = null;
+
+          if (currentGoal.id) {
+            try {
+              insertedMilestone = await insertMilestoneIntoDatabase(currentGoal, {
+                title: titleValue,
+                detail: detailValue,
+                position,
+                deadline: ''
+              });
+            } catch (milestoneError) {
+              console.error('Feil ved lagring av milepæl', milestoneError);
+            }
+          }
+
+          const milestonePayload = insertedMilestone ?? {
+            goal_id: currentGoal.id ?? null,
             title: titleValue,
             detail: detailValue,
             completed: false,
-            todos: [],
             deadline: '',
-            isExpanded: true,
-            isTodoFormOpen: false,
-            shouldFocusTodoTitle: false
+            position
+          };
+
+          const newMilestone = mapDatabaseMilestone(milestonePayload, position, {
+            fallbackGoalId: currentGoal.id ?? null
+          });
+          newMilestone.isExpanded = true;
+          newMilestone.isTodoFormOpen = false;
+          newMilestone.shouldFocusTodoTitle = false;
+
+          currentGoal.milestones.push(newMilestone);
+          currentGoal.milestones.forEach((milestone, index) => {
+            milestone.position = index;
           });
 
           milestoneForm.reset();
@@ -2013,35 +2439,54 @@
         });
       }
 
+      async function initializeGoal() {
+        try {
+          const { data, error } = await supabaseClient.auth.getSession();
+
+          if (error) {
+            throw error;
+          }
+
+          if (!data?.session) {
+            window.location.replace('login.html');
+            return;
+          }
+
+          currentUserId = data.session.user.id;
+        } catch (authError) {
+          console.error('Feil ved henting av sesjon', authError);
+          window.location.replace('login.html');
+          return;
+        }
+
+        if (goalIdentifier) {
+          const loadedGoal = await loadGoalFromDatabase(goalIdentifier);
+          if (loadedGoal) {
+            currentGoal = loadedGoal;
+            fallbackGoalIndex = null;
+          }
+        }
+
+        if (!currentGoal && fallbackGoalIndex !== null) {
+          const fallbackGoal = baseGoalsData[fallbackGoalIndex];
+          if (fallbackGoal) {
+            currentGoal = cloneGoal(fallbackGoal);
+          }
+        }
+
+        if (currentGoal) {
+          ensureGoalCollections(currentGoal);
+        }
+      }
+
+      await initializeGoal();
+
       if (currentGoal) {
         showGoalDetail(currentGoal);
       } else {
         showEmptyState();
       }
     })();
-  </script>
-  <script type="module" src="supabase-client.js"></script>
-  <script type="module">
-    import supabaseClient from './supabase-client.js';
-
-    async function enforceSession() {
-      try {
-        const { data, error } = await supabaseClient.auth.getSession();
-
-        if (error) {
-          throw error;
-        }
-
-        if (!data?.session) {
-          window.location.replace('login.html');
-        }
-      } catch (authError) {
-        console.error('Feil ved henting av sesjon', authError);
-        window.location.replace('login.html');
-      }
-    }
-
-    enforceSession();
   </script>
 </body>
 </html>
