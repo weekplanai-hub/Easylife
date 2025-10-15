@@ -209,6 +209,10 @@
       gap: 6px;
     }
 
+    .goal-summary.goal-detail__meta-item {
+      gap: 14px;
+    }
+
     .goal-detail__meta-item span:first-child {
       font-size: 0.8rem;
       letter-spacing: 0.02em;
@@ -238,14 +242,10 @@
       gap: 20px;
     }
 
-    .goal-summary {
-      gap: 24px;
-    }
-
     .goal-summary__progress {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }
 
     .goal-summary__progress-header {
@@ -262,14 +262,14 @@
     }
 
     .goal-summary__progress-value {
-      font-size: 1.6rem;
+      font-size: 1.35rem;
       font-weight: 700;
       color: #0f172a;
     }
 
     .goal-summary__progress-bar {
       position: relative;
-      height: 10px;
+      height: 6px;
       border-radius: 999px;
       background: rgba(15, 28, 46, 0.08);
       overflow: hidden;
@@ -286,44 +286,44 @@
 
     .goal-summary__progress-description {
       margin: 0;
-      color: var(--text-secondary);
+      color: rgba(15, 28, 46, 0.6);
       font-weight: 500;
+      font-size: 0.85rem;
     }
 
     .goal-summary__grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 8px;
     }
 
     .goal-summary__stat {
-      border: 1px solid rgba(15, 28, 46, 0.08);
-      border-radius: 18px;
-      padding: 16px;
-      background: rgba(248, 250, 252, 0.9);
+      border: none;
+      border-radius: 14px;
+      padding: 8px 0 0;
+      background: transparent;
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      min-height: 100px;
-      justify-content: center;
+      gap: 4px;
+      min-height: auto;
     }
 
     .goal-summary__stat-label {
-      font-size: 0.8rem;
-      letter-spacing: 0.04em;
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
-      color: rgba(15, 28, 46, 0.58);
+      color: rgba(15, 28, 46, 0.55);
     }
 
     .goal-summary__stat-value {
-      font-size: 1.4rem;
+      font-size: 1.1rem;
       font-weight: 700;
       color: #0f172a;
     }
 
     .goal-summary__stat-helper {
-      color: var(--text-secondary);
-      font-size: 0.9rem;
+      color: rgba(15, 28, 46, 0.6);
+      font-size: 0.85rem;
     }
 
     .goal-section__header {
@@ -1079,43 +1079,43 @@
               <span>Hvorfor det er viktig</span>
               <span id="goal-detail-important"></span>
             </div>
+            <section class="goal-detail__meta-item goal-summary" id="goal-summary" aria-live="polite">
+              <div class="goal-summary__progress">
+                <div class="goal-summary__progress-header">
+                  <span class="goal-summary__progress-label" id="goal-summary-progress-label">Total fremdrift</span>
+                  <span class="goal-summary__progress-value" id="goal-summary-progress">0%</span>
+                </div>
+                <div
+                  class="goal-summary__progress-bar"
+                  id="goal-summary-progress-track"
+                  role="progressbar"
+                  aria-labelledby="goal-summary-progress-label"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                  aria-valuenow="0"
+                >
+                  <div class="goal-summary__progress-bar-fill" id="goal-summary-progress-bar"></div>
+                </div>
+                <p class="goal-summary__progress-description" id="goal-summary-progress-description">Ingen to-dos registrert</p>
+              </div>
+              <div class="goal-summary__grid">
+                <div class="goal-summary__stat">
+                  <span class="goal-summary__stat-label">Totalt to-dos</span>
+                  <span class="goal-summary__stat-value" id="goal-summary-todo-total">0</span>
+                  <span class="goal-summary__stat-helper" id="goal-summary-todo-completed">0 fullført</span>
+                </div>
+                <div class="goal-summary__stat">
+                  <span class="goal-summary__stat-label">Milepæler</span>
+                  <span class="goal-summary__stat-value" id="goal-summary-milestone-total">0</span>
+                  <span class="goal-summary__stat-helper" id="goal-summary-milestone-completed">0 fullført</span>
+                </div>
+              </div>
+            </section>
           </div>
         </div>
       </div>
       <div class="goal-detail__layout">
         <div class="goal-detail__main">
-          <section class="goal-section goal-summary" id="goal-summary" aria-live="polite">
-            <div class="goal-summary__progress">
-              <div class="goal-summary__progress-header">
-                <span class="goal-summary__progress-label" id="goal-summary-progress-label">Total fremdrift</span>
-                <span class="goal-summary__progress-value" id="goal-summary-progress">0%</span>
-              </div>
-              <div
-                class="goal-summary__progress-bar"
-                id="goal-summary-progress-track"
-                role="progressbar"
-                aria-labelledby="goal-summary-progress-label"
-                aria-valuemin="0"
-                aria-valuemax="100"
-                aria-valuenow="0"
-              >
-                <div class="goal-summary__progress-bar-fill" id="goal-summary-progress-bar"></div>
-              </div>
-              <p class="goal-summary__progress-description" id="goal-summary-progress-description">Ingen to-dos registrert</p>
-            </div>
-            <div class="goal-summary__grid">
-              <div class="goal-summary__stat">
-                <span class="goal-summary__stat-label">Totalt to-dos</span>
-                <span class="goal-summary__stat-value" id="goal-summary-todo-total">0</span>
-                <span class="goal-summary__stat-helper" id="goal-summary-todo-completed">0 fullført</span>
-              </div>
-              <div class="goal-summary__stat">
-                <span class="goal-summary__stat-label">Milepæler</span>
-                <span class="goal-summary__stat-value" id="goal-summary-milestone-total">0</span>
-                <span class="goal-summary__stat-helper" id="goal-summary-milestone-completed">0 fullført</span>
-              </div>
-            </div>
-          </section>
           <section class="goal-section" aria-labelledby="goal-milestones-title">
             <div class="goal-section__header">
               <h3 class="goal-section__title">
