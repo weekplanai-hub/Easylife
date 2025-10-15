@@ -37,6 +37,7 @@ create table if not exists "public"."goal_milestones" (
   "detail" text,
   "completed" boolean not null default false,
   "progress" numeric,
+  "deadline" date,
   "position" integer not null default 0,
   "created_at" timestamp with time zone not null default now(),
   primary key ("id"),
@@ -52,6 +53,7 @@ comment on column "public"."goal_milestones"."title" is 'Kort beskrivelse av mil
 comment on column "public"."goal_milestones"."detail" is 'Utfyllende detaljer om milepælen.';
 comment on column "public"."goal_milestones"."completed" is 'Om milepælen er fullført.';
 comment on column "public"."goal_milestones"."progress" is 'Valgfri prosentvis fremdrift for milepælen.';
+comment on column "public"."goal_milestones"."deadline" is 'Valgfri deadline for milepælen.';
 comment on column "public"."goal_milestones"."position" is 'Sorteringsrekkefølge for milepælen innen et mål.';
 comment on column "public"."goal_milestones"."created_at" is 'Tidspunkt milepælen ble opprettet.';
 

@@ -132,6 +132,12 @@
           "description": "Valgfri prosentvis fremdrift for milepælen."
         },
         {
+          "name": "deadline",
+          "type": "date",
+          "nullable": true,
+          "description": "Valgfri deadline for milepælen."
+        },
+        {
           "name": "position",
           "type": "integer",
           "nullable": false,

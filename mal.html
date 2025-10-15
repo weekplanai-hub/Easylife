@@ -1478,6 +1478,7 @@ Mål
         detail: milestone?.detail ?? '',
         completed: Boolean(milestone?.completed),
         progress: milestone?.progress ?? null,
+        deadline: milestone?.deadline ?? '',
         position: typeof milestone?.position === 'number' ? milestone.position : index,
         isExpanded: typeof milestone?.isExpanded === 'boolean' ? milestone.isExpanded : index === 0,
         isTodoFormOpen: Boolean(milestone?.isTodoFormOpen),
@@ -2161,8 +2162,17 @@ Mål
         return;
       }
 
+      const goal = goals[index];
+      if (!goal) {
+        return;
+      }
+
       const targetUrl = new URL('mal-detalj.html', window.location.href);
-      targetUrl.searchParams.set('goal', String(index));
+      const identifier = goal.id ? String(goal.id) : String(index);
+      targetUrl.searchParams.set('goal', identifier);
+      if (!goal.id) {
+        targetUrl.searchParams.set('goalIndex', String(index));
+      }
       window.location.href = targetUrl.toString();
     }
 
