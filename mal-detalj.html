@@ -254,7 +254,7 @@
     }
 
     .goal-icon-button {
-      border: 1px solid rgba(15, 28, 46, 0.12);
+      border: 1px solid #ffffff;
       background: #ffffff;
       color: #0f172a;
       width: 38px;
@@ -395,7 +395,7 @@
       display: flex;
       justify-content: space-between;
       gap: 16px;
-      align-items: center;
+      align-items: flex-start;
       flex-wrap: wrap;
     }
 
@@ -455,9 +455,11 @@
 
     .goal-milestone__actions {
       display: inline-flex;
-      align-items: center;
+      align-items: flex-start;
+      justify-content: flex-end;
       gap: 8px;
       flex-wrap: wrap;
+      margin-left: auto;
     }
 
     .goal-milestone__edit,
@@ -2184,7 +2186,7 @@
               return;
             }
 
-            const position = Array.isArray(milestone.todos) ? milestone.todos.length : 0;
+            const position = 0;
             const newTodo = {
               title: titleValue,
               detail: '',
@@ -2194,7 +2196,10 @@
               position
             };
 
-            milestone.todos.push(newTodo);
+            milestone.todos.unshift(newTodo);
+            milestone.todos.forEach((todoItem, updatedIndex) => {
+              todoItem.position = updatedIndex;
+            });
             milestone.isExpanded = true;
 
             todoForm.reset();
@@ -2211,18 +2216,29 @@
                 });
                 if (insertedTodo) {
                   const mappedTodo = mapDatabaseTodo(insertedTodo, position, { fallbackMilestoneId: milestone.id });
-                  milestone.todos[position] = { ...milestone.todos[position], ...mappedTodo };
+                  milestone.todos[0] = { ...milestone.todos[0], ...mappedTodo };
+                  milestone.todos.forEach((todoItem, updatedIndex) => {
+                    todoItem.position = updatedIndex;
+                  });
                   renderMilestones(goal);
+                }
+                try {
+                  await persistTodoOrder(goal, milestone);
+                } catch (orderError) {
+                  console.error('Feil ved lagring av rekkefølge for to-dos', orderError);
                 }
               } catch (todoError) {
                 console.error('Feil ved lagring av to-do', todoError);
-                milestone.todos.splice(position, 1);
+                milestone.todos.shift();
+                milestone.todos.forEach((todoItem, updatedIndex) => {
+                  todoItem.position = updatedIndex;
+                });
                 renderMilestones(goal);
               }
             }
           });
 
-          todosContainer.appendChild(todoForm);
+          todosContainer.insertBefore(todoForm, todosContainer.firstChild);
           item.appendChild(todosContainer);
           milestoneList.appendChild(item);
         });
@@ -2675,7 +2691,7 @@
             return;
           }
 
-          const position = Array.isArray(currentGoal.milestones) ? currentGoal.milestones.length : 0;
+          const position = 0;
           let insertedMilestone = null;
 
           if (currentGoal.id) {
@@ -2707,7 +2723,7 @@
           newMilestone.isTodoFormOpen = false;
           newMilestone.shouldFocusTodoTitle = false;
 
-          currentGoal.milestones.push(newMilestone);
+          currentGoal.milestones.unshift(newMilestone);
           currentGoal.milestones.forEach((milestone, index) => {
             milestone.position = index;
           });
@@ -2715,6 +2731,14 @@
           milestoneForm.reset();
           setMilestoneFormVisibility(false);
           renderMilestones(currentGoal);
+
+          if (currentGoal.id) {
+            try {
+              await persistMilestoneOrder(currentGoal);
+            } catch (orderError) {
+              console.error('Feil ved lagring av rekkefølge for milepæler', orderError);
+            }
+          }
         });
       }
 
