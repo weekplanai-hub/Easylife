@@ -64,6 +64,51 @@ Lagrer mål knyttet til en innlogget bruker, inkludert motivasjon, status og met
 - **Indekser:**
   - `goals_user_id_created_at_idx`: `user_id`, `created_at`
 
+### goal_milestones
+
+Milepæler knyttet til et mål. Brukes til å dele et mål opp i trinn med egen fremdrift, status og sorteringsrekkefølge.
+
+**Kolonner**
+
+| Kolonne | Type | Nullbar | Standard | Beskrivelse |
+| --- | --- | --- | --- | --- |
+| id | `uuid` | Nei | `gen_random_uuid()` | Primærnøkkel for milepælen. |
+| goal_id | `uuid` | Nei | — | Referanse til målet milepælen tilhører. |
+| title | `text` | Nei | — | Kort beskrivelse av milepælen. |
+| detail | `text` | Ja | — | Utfyllende detaljer om milepælen. |
+| completed | `boolean` | Nei | `false` | Om milepælen er merket som fullført. |
+| progress | `numeric` | Ja | — | Valgfri prosentvis fremdrift for milepælen. |
+| position | `integer` | Nei | `0` | Sorteringsrekkefølge innenfor et mål (lavt tall vises først). |
+| created_at | `timestamp with time zone` | Nei | `now()` | Tidspunkt milepælen ble opprettet. |
+
+- **Primærnøkkel:** `id`
+- **Fremmednøkler:**
+  - `goal_id` → `goals.id` (ON DELETE CASCADE)
+- **Indekser:**
+  - `goal_milestones_goal_id_position_idx`: `goal_id`, `position`
+
+### goal_milestone_todos
+
+Oppgaver som hører til en milepæl. Gir et ekstra detaljnivå for hva som må gjøres for å fullføre milepælen.
+
+**Kolonner**
+
+| Kolonne | Type | Nullbar | Standard | Beskrivelse |
+| --- | --- | --- | --- | --- |
+| id | `uuid` | Nei | `gen_random_uuid()` | Primærnøkkel for to-do-elementet. |
+| milestone_id | `uuid` | Nei | — | Referanse til milepælen oppgaven er knyttet til. |
+| title | `text` | Nei | — | Kort beskrivelse av oppgaven. |
+| detail | `text` | Ja | — | Valgfri detaljtekst for oppgaven. |
+| completed | `boolean` | Nei | `false` | Om oppgaven er markert som ferdig. |
+| position | `integer` | Nei | `0` | Sorteringsrekkefølge innenfor milepælen. |
+| created_at | `timestamp with time zone` | Nei | `now()` | Tidspunkt oppgaven ble registrert. |
+
+- **Primærnøkkel:** `id`
+- **Fremmednøkler:**
+  - `milestone_id` → `goal_milestones.id` (ON DELETE CASCADE)
+- **Indekser:**
+  - `goal_milestone_todos_milestone_id_position_idx`: `milestone_id`, `position`
+
 ## Sjekkliste ved endringer
 1. Oppdater tabelloversikten ovenfor.
 2. Dokumenter eventuelle triggere, policies eller funksjoner som påvirker datatilgang.
