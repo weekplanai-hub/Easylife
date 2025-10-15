@@ -734,6 +734,28 @@ Mål · Easylife
       font-size: 1.2rem;
     }
 
+    .goal-summary {
+      display: grid;
+      gap: 10px;
+      padding: 18px 20px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(15, 28, 46, 0.08);
+      box-shadow: 0 16px 32px rgba(15, 23, 42, 0.08);
+    }
+
+    .goal-summary__title {
+      margin: 0;
+      font-weight: 600;
+      font-size: 1.05rem;
+    }
+
+    .goal-summary__why {
+      margin: 0;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
     .inline-form {
       display: flex;
       gap: 12px;
@@ -1306,6 +1328,15 @@ Mål
       </div>
       <div class="goal-detail__layout">
         <div class="goal-detail__main">
+          <section class="goal-section" aria-labelledby="goal-summary-title">
+            <div class="goal-section__header">
+              <h3 id="goal-summary-title">Selve målet</h3>
+            </div>
+            <div class="goal-summary">
+              <p class="goal-summary__title" id="goal-summary-title-text"></p>
+              <p class="goal-summary__why" id="goal-summary-why"></p>
+            </div>
+          </section>
           <section class="goal-section" aria-labelledby="goal-milestones-title">
             <div class="goal-section__header">
               <h3 id="goal-milestones-title">Milepæler</h3>
@@ -1396,6 +1427,8 @@ Mål
     const goalDetailDeadline = document.getElementById('goal-detail-deadline');
     const goalDetailCategory = document.getElementById('goal-detail-category');
     const goalDetailImportant = document.getElementById('goal-detail-important');
+    const goalSummaryTitleText = document.getElementById('goal-summary-title-text');
+    const goalSummaryWhy = document.getElementById('goal-summary-why');
     const milestoneList = document.getElementById('goal-milestone-list');
     const notesList = document.getElementById('goal-notes-list');
     const milestoneForm = document.getElementById('goal-milestone-form');
@@ -1428,19 +1461,68 @@ Mål
     let activeModalCount = 0;
     let shouldRestoreFocusOnPop = false;
 
-    const mapDatabaseGoal = (goal) => ({
-      id: goal?.id ?? null,
-      title: goal?.title ?? '',
-      why: goal?.why ?? '',
-      deadline: goal?.deadline ?? '',
-      status: goal?.status ?? '0%',
-      image: goal?.image ?? '',
-      category: goal?.category ?? '',
-      important: goal?.important ?? '',
-      milestones: Array.isArray(goal?.milestones) ? goal.milestones : [],
-      notes: Array.isArray(goal?.notes) ? goal.notes : [],
-      todos: Array.isArray(goal?.todos) ? goal.todos : []
+    const mapDatabaseTodo = (todo, index = 0, { fallbackMilestoneId } = {}) => ({
+      id: todo?.id ?? null,
+      milestoneId: todo?.milestone_id ?? todo?.milestoneId ?? fallbackMilestoneId ?? null,
+      title: todo?.title ?? '',
+      detail: todo?.detail ?? '',
+      completed: Boolean(todo?.completed),
+      position: typeof todo?.position === 'number' ? todo.position : index
     });
+
+    const mapDatabaseMilestone = (milestone, index = 0, { fallbackGoalId } = {}) => {
+      const mapped = {
+        id: milestone?.id ?? null,
+        goalId: milestone?.goal_id ?? milestone?.goalId ?? fallbackGoalId ?? null,
+        title: milestone?.title ?? '',
+        detail: milestone?.detail ?? '',
+        completed: Boolean(milestone?.completed),
+        progress: milestone?.progress ?? null,
+        position: typeof milestone?.position === 'number' ? milestone.position : index,
+        isExpanded: typeof milestone?.isExpanded === 'boolean' ? milestone.isExpanded : index === 0,
+        isTodoFormOpen: Boolean(milestone?.isTodoFormOpen),
+        shouldFocusTodoTitle: Boolean(milestone?.shouldFocusTodoTitle),
+        todos: []
+      };
+
+      const todosSource = Array.isArray(milestone?.goal_milestone_todos)
+        ? milestone.goal_milestone_todos
+        : Array.isArray(milestone?.todos)
+          ? milestone.todos
+          : [];
+
+      mapped.todos = todosSource.map((todo, todoIndex) => {
+        const mappedTodo = mapDatabaseTodo(todo, todoIndex, { fallbackMilestoneId: mapped.id });
+        if (!mappedTodo.milestoneId && mapped.id) {
+          mappedTodo.milestoneId = mapped.id;
+        }
+        return mappedTodo;
+      });
+
+      return mapped;
+    };
+
+    const mapDatabaseGoal = (goal) => {
+      const milestoneSource = Array.isArray(goal?.milestones)
+        ? goal.milestones
+        : Array.isArray(goal?.goal_milestones)
+          ? goal.goal_milestones
+          : [];
+
+      return {
+        id: goal?.id ?? null,
+        title: goal?.title ?? '',
+        why: goal?.why ?? '',
+        deadline: goal?.deadline ?? '',
+        status: goal?.status ?? '0%',
+        image: goal?.image ?? '',
+        category: goal?.category ?? '',
+        important: goal?.important ?? '',
+        milestones: milestoneSource.map((milestone, index) => mapDatabaseMilestone(milestone, index, { fallbackGoalId: goal?.id ?? null })),
+        notes: Array.isArray(goal?.notes) ? goal.notes : [],
+        todos: Array.isArray(goal?.todos) ? goal.todos : []
+      };
+    };
 
     const toGoalPayload = (goal) => {
       const payload = {
@@ -1551,6 +1633,7 @@ Mål
       if (!Array.isArray(goal.milestones)) {
         goal.milestones = [];
       }
+
       if (Array.isArray(goal.todos) && goal.todos.length) {
         const [firstMilestone] = goal.milestones;
         if (firstMilestone && Array.isArray(firstMilestone.todos)) {
@@ -1568,31 +1651,34 @@ Mål
         goal.todos = [];
       }
 
-      goal.milestones.forEach((milestone, index) => {
-        if (!milestone || typeof milestone !== 'object') {
-          goal.milestones[index] = {
-            title: '',
-            detail: '',
-            completed: false,
-            todos: [],
-            isExpanded: index === 0
-          };
-          return;
+      goal.milestones = goal.milestones.map((milestone, index) => {
+        const mapped = mapDatabaseMilestone(milestone, index, { fallbackGoalId: goal.id ?? null });
+
+        if (typeof milestone?.isExpanded === 'boolean') {
+          mapped.isExpanded = milestone.isExpanded;
+        }
+        if (typeof milestone?.isTodoFormOpen === 'boolean') {
+          mapped.isTodoFormOpen = milestone.isTodoFormOpen;
+        }
+        if (typeof milestone?.shouldFocusTodoTitle === 'boolean') {
+          mapped.shouldFocusTodoTitle = milestone.shouldFocusTodoTitle;
+        }
+        if (mapped.goalId == null && goal.id) {
+          mapped.goalId = goal.id;
         }
 
-        if (!Array.isArray(milestone.todos)) {
-          milestone.todos = [];
-        }
+        mapped.todos = mapped.todos.map((todo, todoIndex) => {
+          const normalized = mapDatabaseTodo(todo, todoIndex, { fallbackMilestoneId: mapped.id });
+          if (!normalized.milestoneId && mapped.id) {
+            normalized.milestoneId = mapped.id;
+          }
+          if (typeof normalized.position !== 'number') {
+            normalized.position = todoIndex;
+          }
+          return normalized;
+        });
 
-        milestone.todos = milestone.todos.map((todo) => ({
-          title: todo?.title || '',
-          detail: todo?.detail || '',
-          completed: Boolean(todo?.completed)
-        }));
-
-        if (typeof milestone.isExpanded !== 'boolean') {
-          milestone.isExpanded = index === 0;
-        }
+        return mapped;
       });
 
       if (!Array.isArray(goal.notes)) {
@@ -1815,8 +1901,14 @@ Mål
               event.stopPropagation();
             });
             checkbox.addEventListener('change', () => {
-              todo.completed = checkbox.checked;
+              const completed = checkbox.checked;
+              todo.completed = completed;
               renderMilestones(goal);
+              if (todo.id) {
+                updateTodoCompletionInDatabase(todo, completed).catch((error) => {
+                  console.error('Feil ved oppdatering av to-do-status', error);
+                });
+              }
             });
 
             const todoLabel = document.createElement('label');
@@ -1838,9 +1930,20 @@ Mål
             todoListElement.appendChild(todoItem);
           });
 
-          setupDragAndDrop(todoListElement, todos, (updated) => {
+          setupDragAndDrop(todoListElement, todos, async (updated) => {
             milestone.todos = updated;
+            milestone.todos.forEach((todoItem, todoIndex) => {
+              todoItem.position = todoIndex;
+            });
             renderMilestones(goal);
+
+            if (goal.id && milestone.id) {
+              try {
+                await persistTodoOrder(goal, milestone);
+              } catch (orderError) {
+                console.error('Feil ved lagring av to-do-rekkefølge', orderError);
+              }
+            }
           });
         }
 
@@ -1866,7 +1969,7 @@ Mål
         todoForm.appendChild(todoDetailInput);
         todoForm.appendChild(todoSubmit);
 
-        todoForm.addEventListener('submit', (event) => {
+        todoForm.addEventListener('submit', async (event) => {
           event.preventDefault();
           const titleValue = todoTitleInput.value.trim();
           const detailValue = todoDetailInput.value.trim();
@@ -1875,11 +1978,32 @@ Mål
             return;
           }
 
-          milestone.todos.push({
+          const nextPosition = Array.isArray(milestone.todos) ? milestone.todos.length : 0;
+          let insertedTodo = null;
+
+          if (goal.id && milestone.id) {
+            try {
+              insertedTodo = await insertTodoIntoDatabase(goal, milestone, {
+                title: titleValue,
+                detail: detailValue,
+                position: nextPosition
+              });
+            } catch (todoError) {
+              console.error('Feil ved lagring av to-do i databasen', todoError);
+            }
+          }
+
+          const todoPayload = insertedTodo ?? {
             title: titleValue,
             detail: detailValue,
-            completed: false
-          });
+            completed: false,
+            position: nextPosition
+          };
+
+          const newTodo = mapDatabaseTodo(todoPayload, nextPosition, { fallbackMilestoneId: milestone.id ?? null });
+          newTodo.completed = false;
+
+          milestone.todos.push(newTodo);
           milestone.isExpanded = true;
 
           todoForm.reset();
@@ -1891,9 +2015,20 @@ Mål
         milestoneList.appendChild(item);
       });
 
-      setupDragAndDrop(milestoneList, goal.milestones, (updated) => {
+      setupDragAndDrop(milestoneList, goal.milestones, async (updated) => {
         goal.milestones = updated;
+        goal.milestones.forEach((milestoneItem, milestoneIndex) => {
+          milestoneItem.position = milestoneIndex;
+        });
         renderMilestones(goal);
+
+        if (goal.id) {
+          try {
+            await persistMilestoneOrder(goal);
+          } catch (orderError) {
+            console.error('Feil ved lagring av milepælrekkefølge', orderError);
+          }
+        }
       });
     }
 
@@ -1970,6 +2105,12 @@ Mål
       goalDetailDeadline.textContent = formatLongDeadline(goal.deadline);
       goalDetailCategory.textContent = goal.category || 'Personlig mål';
       goalDetailImportant.textContent = goal.important || goal.why || 'Holder meg motivert';
+      if (goalSummaryTitleText) {
+        goalSummaryTitleText.textContent = goal.title || 'Mål uten tittel';
+      }
+      if (goalSummaryWhy) {
+        goalSummaryWhy.textContent = goal.description || goal.why || 'Ingen beskrivelse ennå.';
+      }
 
       const imageSource = goal.image || fallbackImages[0];
       goalDetailImage.src = imageSource;
@@ -2168,7 +2309,7 @@ Mål
     });
 
     if (milestoneForm) {
-      milestoneForm.addEventListener('submit', (event) => {
+      milestoneForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         if (currentGoalIndex === null) {
           return;
@@ -2185,13 +2326,34 @@ Mål
           return;
         }
 
-        goal.milestones.push({
+        const position = Array.isArray(goal.milestones) ? goal.milestones.length : 0;
+        let insertedMilestone = null;
+
+        if (goal.id) {
+          try {
+            insertedMilestone = await insertMilestoneIntoDatabase(goal, {
+              title: titleValue,
+              detail: detailValue,
+              position
+            });
+          } catch (milestoneError) {
+            console.error('Feil ved lagring av milepæl i databasen', milestoneError);
+          }
+        }
+
+        const milestonePayload = insertedMilestone ?? {
+          goal_id: goal.id ?? null,
           title: titleValue,
           detail: detailValue,
           completed: false,
           todos: [],
-          isExpanded: true
-        });
+          position
+        };
+
+        const newMilestone = mapDatabaseMilestone(milestonePayload, position, { fallbackGoalId: goal.id ?? null });
+        newMilestone.isExpanded = true;
+
+        goal.milestones.push(newMilestone);
 
         milestoneForm.reset();
         renderMilestones(goal);
@@ -2666,12 +2828,14 @@ Mål
               const result = await updateGoalInDatabase(existingGoal.id, updates);
               if (result) {
                 savedGoal = mapDatabaseGoal(result);
+                ensureGoalCollections(savedGoal);
               }
             } catch (updateError) {
               console.error('Feil ved oppdatering av mål i databasen', updateError);
             }
           }
 
+          ensureGoalCollections(savedGoal);
           goals[editingGoalIndex] = savedGoal;
           renderGoals();
           hideQuickAdd();
@@ -2696,12 +2860,14 @@ Mål
             const insertedGoal = await insertGoalIntoDatabase(draftGoal);
             if (insertedGoal) {
               savedGoal = mapDatabaseGoal(insertedGoal);
+              ensureGoalCollections(savedGoal);
             }
           } catch (insertError) {
             console.error('Feil ved lagring av mål i databasen', insertError);
           }
         }
 
+        ensureGoalCollections(savedGoal);
         goals.unshift(savedGoal);
         renderGoals();
         hideQuickAdd();
@@ -2795,15 +2961,44 @@ Mål
 
         const { data, error } = await supabaseClient
           .from('goals')
-          .select('id, title, why, deadline, image, status, category, important')
+          .select(`
+            id,
+            title,
+            why,
+            deadline,
+            image,
+            status,
+            category,
+            important,
+            goal_milestones (
+              id,
+              goal_id,
+              title,
+              detail,
+              completed,
+              progress,
+              position,
+              goal_milestone_todos (
+                id,
+                milestone_id,
+                title,
+                detail,
+                completed,
+                position
+              )
+            )
+          `)
           .eq('user_id', currentUserId)
-          .order('created_at', { ascending: false });
+          .order('created_at', { ascending: false })
+          .order('position', { ascending: true, foreignTable: 'goal_milestones' })
+          .order('position', { ascending: true, foreignTable: 'goal_milestones.goal_milestone_todos' });
 
         if (error) {
           throw error;
         }
 
         goals = Array.isArray(data) ? data.map((goal) => mapDatabaseGoal(goal)) : [];
+        goals.forEach((goal) => ensureGoalCollections(goal));
       } catch (loadError) {
         console.error('Feil ved henting av mål fra databasen', loadError);
       } finally {
@@ -2870,6 +3065,131 @@ Mål
 
       if (error) {
         throw error;
+      }
+    }
+
+    async function insertMilestoneIntoDatabase(goal, { title, detail, position }) {
+      if (!currentUserId || !goal?.id) {
+        return null;
+      }
+
+      const payload = {
+        goal_id: goal.id,
+        title,
+        detail: detail ? detail : null,
+        completed: false,
+        position
+      };
+
+      const { data, error } = await supabaseClient
+        .from('goal_milestones')
+        .insert(payload)
+        .select('id, goal_id, title, detail, completed, progress, position')
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      return data;
+    }
+
+    async function insertTodoIntoDatabase(goal, milestone, { title, detail, position }) {
+      if (!currentUserId || !goal?.id || !milestone?.id) {
+        return null;
+      }
+
+      const payload = {
+        milestone_id: milestone.id,
+        title,
+        detail: detail ? detail : null,
+        completed: false,
+        position
+      };
+
+      const { data, error } = await supabaseClient
+        .from('goal_milestone_todos')
+        .insert(payload)
+        .select('id, milestone_id, title, detail, completed, position')
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      return data;
+    }
+
+    async function updateTodoCompletionInDatabase(todo, completed) {
+      if (!currentUserId || !todo?.id) {
+        return;
+      }
+
+      const query = supabaseClient
+        .from('goal_milestone_todos')
+        .update({ completed })
+        .eq('id', todo.id);
+
+      if (todo.milestoneId) {
+        query.eq('milestone_id', todo.milestoneId);
+      }
+
+      const { error } = await query;
+
+      if (error) {
+        throw error;
+      }
+    }
+
+    async function persistMilestoneOrder(goal) {
+      if (!currentUserId || !goal?.id) {
+        return;
+      }
+
+      const updates = goal.milestones
+        .filter((milestone) => milestone?.id)
+        .map((milestone, index) =>
+          supabaseClient
+            .from('goal_milestones')
+            .update({ position: index })
+            .eq('id', milestone.id)
+            .eq('goal_id', goal.id)
+        );
+
+      if (!updates.length) {
+        return;
+      }
+
+      const responses = await Promise.all(updates);
+      const failed = responses.find((response) => response?.error);
+      if (failed?.error) {
+        throw failed.error;
+      }
+    }
+
+    async function persistTodoOrder(goal, milestone) {
+      if (!currentUserId || !goal?.id || !milestone?.id) {
+        return;
+      }
+
+      const updates = milestone.todos
+        .filter((todo) => todo?.id)
+        .map((todo, index) =>
+          supabaseClient
+            .from('goal_milestone_todos')
+            .update({ position: index })
+            .eq('id', todo.id)
+            .eq('milestone_id', milestone.id)
+        );
+
+      if (!updates.length) {
+        return;
+      }
+
+      const responses = await Promise.all(updates);
+      const failed = responses.find((response) => response?.error);
+      if (failed?.error) {
+        throw failed.error;
       }
     }
 

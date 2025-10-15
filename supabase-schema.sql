@@ -29,3 +29,51 @@ comment on column "public"."goals"."status" is 'Prosentvis progresjon lagret som
 comment on column "public"."goals"."category" is 'Valgfri kategori som målet tilhører.';
 comment on column "public"."goals"."important" is 'Fritekstfelt som beskriver hvorfor målet er viktigst akkurat nå.';
 comment on column "public"."goals"."created_at" is 'Tidspunkt da målet ble opprettet.';
+
+create table if not exists "public"."goal_milestones" (
+  "id" uuid not null default gen_random_uuid(),
+  "goal_id" uuid not null,
+  "title" text not null,
+  "detail" text,
+  "completed" boolean not null default false,
+  "progress" numeric,
+  "position" integer not null default 0,
+  "created_at" timestamp with time zone not null default now(),
+  primary key ("id"),
+  foreign key ("goal_id") references "public"."goals" ("id") on delete cascade
+);
+
+create index if not exists "goal_milestones_goal_id_position_idx" on "public"."goal_milestones" ("goal_id", "position");
+
+comment on table "public"."goal_milestones" is 'Milepæler knyttet til et mål, med rekkefølge og status for fremdrift.';
+comment on column "public"."goal_milestones"."id" is 'Primærnøkkel for milepælen.';
+comment on column "public"."goal_milestones"."goal_id" is 'Referanse til målet milepælen tilhører.';
+comment on column "public"."goal_milestones"."title" is 'Kort beskrivelse av milepælen.';
+comment on column "public"."goal_milestones"."detail" is 'Utfyllende detaljer om milepælen.';
+comment on column "public"."goal_milestones"."completed" is 'Om milepælen er fullført.';
+comment on column "public"."goal_milestones"."progress" is 'Valgfri prosentvis fremdrift for milepælen.';
+comment on column "public"."goal_milestones"."position" is 'Sorteringsrekkefølge for milepælen innen et mål.';
+comment on column "public"."goal_milestones"."created_at" is 'Tidspunkt milepælen ble opprettet.';
+
+create table if not exists "public"."goal_milestone_todos" (
+  "id" uuid not null default gen_random_uuid(),
+  "milestone_id" uuid not null,
+  "title" text not null,
+  "detail" text,
+  "completed" boolean not null default false,
+  "position" integer not null default 0,
+  "created_at" timestamp with time zone not null default now(),
+  primary key ("id"),
+  foreign key ("milestone_id") references "public"."goal_milestones" ("id") on delete cascade
+);
+
+create index if not exists "goal_milestone_todos_milestone_id_position_idx" on "public"."goal_milestone_todos" ("milestone_id", "position");
+
+comment on table "public"."goal_milestone_todos" is 'Oppgaver knyttet til en milepæl for et mål.';
+comment on column "public"."goal_milestone_todos"."id" is 'Primærnøkkel for to-do-elementet.';
+comment on column "public"."goal_milestone_todos"."milestone_id" is 'Referanse til milepælen oppgaven tilhører.';
+comment on column "public"."goal_milestone_todos"."title" is 'Kort beskrivelse av oppgaven.';
+comment on column "public"."goal_milestone_todos"."detail" is 'Valgfri detaljtekst for oppgaven.';
+comment on column "public"."goal_milestone_todos"."completed" is 'Om oppgaven er markert som ferdig.';
+comment on column "public"."goal_milestone_todos"."position" is 'Sorteringsrekkefølge for oppgaven innen milepælen.';
+comment on column "public"."goal_milestone_todos"."created_at" is 'Tidspunkt oppgaven ble registrert.';

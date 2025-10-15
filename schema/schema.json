@@ -87,6 +87,154 @@
           "columns": ["user_id", "created_at"]
         }
       ]
+    },
+    {
+      "name": "goal_milestones",
+      "schema": "public",
+      "description": "Milepæler knyttet til et mål, med rekkefølge og status for fremdrift.",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false,
+          "default": "gen_random_uuid()",
+          "description": "Primærnøkkel for milepælen."
+        },
+        {
+          "name": "goal_id",
+          "type": "uuid",
+          "nullable": false,
+          "description": "Referanse til målet milepælen tilhører."
+        },
+        {
+          "name": "title",
+          "type": "text",
+          "nullable": false,
+          "description": "Kort beskrivelse av milepælen."
+        },
+        {
+          "name": "detail",
+          "type": "text",
+          "nullable": true,
+          "description": "Utfyllende detaljer om milepælen."
+        },
+        {
+          "name": "completed",
+          "type": "boolean",
+          "nullable": false,
+          "default": "false",
+          "description": "Om milepælen er fullført."
+        },
+        {
+          "name": "progress",
+          "type": "numeric",
+          "nullable": true,
+          "description": "Valgfri prosentvis fremdrift for milepælen."
+        },
+        {
+          "name": "position",
+          "type": "integer",
+          "nullable": false,
+          "default": "0",
+          "description": "Sorteringsrekkefølge for milepælen innen et mål."
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()",
+          "description": "Tidspunkt milepælen ble opprettet."
+        }
+      ],
+      "primaryKey": ["id"],
+      "foreignKeys": [
+        {
+          "columns": ["goal_id"],
+          "references": {
+            "schema": "public",
+            "table": "goals",
+            "columns": ["id"]
+          },
+          "onDelete": "cascade"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "goal_milestones_goal_id_position_idx",
+          "columns": ["goal_id", "position"]
+        }
+      ]
+    },
+    {
+      "name": "goal_milestone_todos",
+      "schema": "public",
+      "description": "Oppgaver knyttet til en milepæl for et mål.",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false,
+          "default": "gen_random_uuid()",
+          "description": "Primærnøkkel for to-do-elementet."
+        },
+        {
+          "name": "milestone_id",
+          "type": "uuid",
+          "nullable": false,
+          "description": "Referanse til milepælen oppgaven tilhører."
+        },
+        {
+          "name": "title",
+          "type": "text",
+          "nullable": false,
+          "description": "Kort beskrivelse av oppgaven."
+        },
+        {
+          "name": "detail",
+          "type": "text",
+          "nullable": true,
+          "description": "Valgfri detaljtekst for oppgaven."
+        },
+        {
+          "name": "completed",
+          "type": "boolean",
+          "nullable": false,
+          "default": "false",
+          "description": "Om oppgaven er markert som ferdig."
+        },
+        {
+          "name": "position",
+          "type": "integer",
+          "nullable": false,
+          "default": "0",
+          "description": "Sorteringsrekkefølge for oppgaven innen milepælen."
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()",
+          "description": "Tidspunkt oppgaven ble registrert."
+        }
+      ],
+      "primaryKey": ["id"],
+      "foreignKeys": [
+        {
+          "columns": ["milestone_id"],
+          "references": {
+            "schema": "public",
+            "table": "goal_milestones",
+            "columns": ["id"]
+          },
+          "onDelete": "cascade"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "goal_milestone_todos_milestone_id_position_idx",
+          "columns": ["milestone_id", "position"]
+        }
+      ]
     }
   ]
 }
