@@ -238,12 +238,147 @@
       gap: 20px;
     }
 
+    .goal-summary {
+      gap: 24px;
+    }
+
+    .goal-summary__progress {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .goal-summary__progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .goal-summary__progress-label {
+      font-weight: 600;
+      color: rgba(15, 28, 46, 0.7);
+    }
+
+    .goal-summary__progress-value {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .goal-summary__progress-bar {
+      position: relative;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(15, 28, 46, 0.08);
+      overflow: hidden;
+    }
+
+    .goal-summary__progress-bar-fill {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, #6366f1 0%, #22d3ee 100%);
+      transform-origin: left center;
+      transform: scaleX(0);
+      transition: transform 220ms ease;
+    }
+
+    .goal-summary__progress-description {
+      margin: 0;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .goal-summary__grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+    }
+
+    .goal-summary__stat {
+      border: 1px solid rgba(15, 28, 46, 0.08);
+      border-radius: 18px;
+      padding: 16px;
+      background: rgba(248, 250, 252, 0.9);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-height: 100px;
+      justify-content: center;
+    }
+
+    .goal-summary__stat-label {
+      font-size: 0.8rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: rgba(15, 28, 46, 0.58);
+    }
+
+    .goal-summary__stat-value {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .goal-summary__stat-helper {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
     .goal-section__header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 16px;
       flex-wrap: wrap;
+    }
+
+    .goal-section__title {
+      margin: 0;
+    }
+
+    .goal-section__title-button {
+      border: none;
+      background: none;
+      padding: 0;
+      font: inherit;
+      color: inherit;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .goal-section__title-button:focus-visible {
+      outline: 3px solid rgba(99, 102, 241, 0.4);
+      outline-offset: 4px;
+      border-radius: 12px;
+    }
+
+    .goal-section__title-button[disabled] {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .goal-section__title-text {
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+
+    .goal-section__title-icon {
+      display: inline-flex;
+      width: 20px;
+      height: 20px;
+      align-items: center;
+      justify-content: center;
+      color: rgba(15, 28, 46, 0.65);
+      transition: transform 160ms ease;
+    }
+
+    .goal-section__title-button[data-state="open"] .goal-section__title-icon {
+      transform: rotate(180deg);
     }
 
     .goal-section__actions {
@@ -257,8 +392,8 @@
       border: 1px solid #ffffff;
       background: #ffffff;
       color: #0f172a;
-      width: 38px;
-      height: 38px;
+      width: 34px;
+      height: 34px;
       border-radius: 12px;
       display: inline-flex;
       align-items: center;
@@ -302,11 +437,6 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-    }
-
-    .goal-section__header h3 {
-      margin: 0;
-      font-size: 1.3rem;
     }
 
     .chip {
@@ -801,7 +931,7 @@
       max-width: 520px;
     }
 
-    .note-modal__dialog button[type="button"] {
+    .note-modal__dialog button[type="button"]:not(.goal-icon-button) {
       align-self: flex-end;
       border: none;
       background: transparent;
@@ -812,6 +942,17 @@
     .note-modal__dialog h3 {
       margin: 0;
       font-size: 1.4rem;
+    }
+
+    .note-modal__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .note-modal__header .goal-icon-button {
+      flex-shrink: 0;
     }
 
     .note-modal__dialog p {
@@ -943,13 +1084,48 @@
       </div>
       <div class="goal-detail__layout">
         <div class="goal-detail__main">
+          <section class="goal-section goal-summary" id="goal-summary" aria-live="polite">
+            <div class="goal-summary__progress">
+              <div class="goal-summary__progress-header">
+                <span class="goal-summary__progress-label" id="goal-summary-progress-label">Total fremdrift</span>
+                <span class="goal-summary__progress-value" id="goal-summary-progress">0%</span>
+              </div>
+              <div
+                class="goal-summary__progress-bar"
+                id="goal-summary-progress-track"
+                role="progressbar"
+                aria-labelledby="goal-summary-progress-label"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-valuenow="0"
+              >
+                <div class="goal-summary__progress-bar-fill" id="goal-summary-progress-bar"></div>
+              </div>
+              <p class="goal-summary__progress-description" id="goal-summary-progress-description">Ingen to-dos registrert</p>
+            </div>
+            <div class="goal-summary__grid">
+              <div class="goal-summary__stat">
+                <span class="goal-summary__stat-label">Totalt to-dos</span>
+                <span class="goal-summary__stat-value" id="goal-summary-todo-total">0</span>
+                <span class="goal-summary__stat-helper" id="goal-summary-todo-completed">0 fullført</span>
+              </div>
+              <div class="goal-summary__stat">
+                <span class="goal-summary__stat-label">Milepæler</span>
+                <span class="goal-summary__stat-value" id="goal-summary-milestone-total">0</span>
+                <span class="goal-summary__stat-helper" id="goal-summary-milestone-completed">0 fullført</span>
+              </div>
+            </div>
+          </section>
           <section class="goal-section" aria-labelledby="goal-milestones-title">
             <div class="goal-section__header">
-              <h3 id="goal-milestones-title">Milepæler</h3>
-              <div class="goal-section__actions">
-                <button type="button" class="goal-section__action-button goal-icon-button" id="goal-milestone-toggle-all" aria-pressed="false">
-                  <span class="goal-sr-only">Skjul alle milepæl to-dos</span>
+              <h3 class="goal-section__title">
+                <button type="button" class="goal-section__title-button" id="goal-milestones-title" data-state="closed" aria-expanded="false">
+                  <span class="goal-section__title-text">Milepæler</span>
+                  <span class="goal-section__title-icon" aria-hidden="true"></span>
+                  <span class="goal-sr-only">Vis alle milepæler</span>
                 </button>
+              </h3>
+              <div class="goal-section__actions">
                 <button type="button" class="goal-section__action-button goal-icon-button" id="goal-milestone-add-button" aria-expanded="false">
                   <span class="goal-sr-only">Legg til milepæl</span>
                 </button>
@@ -1002,7 +1178,12 @@
   <div class="note-modal" id="goal-milestone-edit-modal" role="dialog" aria-modal="true" aria-hidden="true" hidden>
     <div class="note-modal__dialog note-modal__dialog--form">
       <button type="button" id="goal-milestone-edit-close">Lukk</button>
-      <h3>Rediger milepæl</h3>
+      <div class="note-modal__header">
+        <h3 id="goal-milestone-edit-title">Rediger milepæl</h3>
+        <button type="button" class="goal-icon-button" id="goal-milestone-delete-button">
+          <span class="goal-sr-only">Slett milepælen</span>
+        </button>
+      </div>
       <form class="stacked-form" id="goal-milestone-edit-form">
         <input type="text" name="milestone-title" placeholder="Tittel" aria-label="Tittel" required />
         <textarea name="milestone-detail" rows="3" placeholder="Detaljer" aria-label="Detaljer"></textarea>
@@ -1092,7 +1273,7 @@
       const goalDetailCategory = document.getElementById('goal-detail-category');
       const goalDetailImportant = document.getElementById('goal-detail-important');
       const milestoneList = document.getElementById('goal-milestone-list');
-      const milestoneToggleAllButton = document.getElementById('goal-milestone-toggle-all');
+      const milestoneHeadingButton = document.getElementById('goal-milestones-title');
       const milestoneFormToggle = document.getElementById('goal-milestone-add-button');
       const milestoneForm = document.getElementById('goal-milestone-form');
       const notesList = document.getElementById('goal-notes-list');
@@ -1108,6 +1289,21 @@
       const milestoneEditModal = document.getElementById('goal-milestone-edit-modal');
       const milestoneEditClose = document.getElementById('goal-milestone-edit-close');
       const milestoneEditForm = document.getElementById('goal-milestone-edit-form');
+      const milestoneDeleteButton = document.getElementById('goal-milestone-delete-button');
+      const goalSummarySection = document.getElementById('goal-summary');
+      const goalSummaryProgressValue = document.getElementById('goal-summary-progress');
+      const goalSummaryProgressTrack = document.getElementById('goal-summary-progress-track');
+      const goalSummaryProgressBar = document.getElementById('goal-summary-progress-bar');
+      const goalSummaryProgressDescription = document.getElementById('goal-summary-progress-description');
+      const goalSummaryTodoTotal = document.getElementById('goal-summary-todo-total');
+      const goalSummaryTodoCompleted = document.getElementById('goal-summary-todo-completed');
+      const goalSummaryMilestoneTotal = document.getElementById('goal-summary-milestone-total');
+      const goalSummaryMilestoneCompleted = document.getElementById('goal-summary-milestone-completed');
+
+      if (milestoneDeleteButton) {
+        setButtonIconContent(milestoneDeleteButton, 'x', 'Slett milepælen');
+        milestoneDeleteButton.disabled = true;
+      }
 
       const currentUrl = new URL(window.location.href);
       const goalParam = currentUrl.searchParams.get('goal');
@@ -1563,6 +1759,20 @@
         }
       }
 
+      async function deleteMilestoneFromDatabase(milestone) {
+        if (!currentUserId || !milestone?.id) {
+          return;
+        }
+
+        await supabaseClient.from('goal_milestone_todos').delete().eq('milestone_id', milestone.id);
+
+        const { error } = await supabaseClient.from('goal_milestones').delete().eq('id', milestone.id);
+
+        if (error) {
+          throw error;
+        }
+      }
+
       async function persistMilestoneOrder(goal) {
         if (!currentUserId || !goal?.id) {
           return;
@@ -1762,35 +1972,98 @@
       });
     }
 
-    function updateMilestoneToggleAllButton(goal) {
-      if (!milestoneToggleAllButton) {
+    function updateMilestoneHeadingButton(goal) {
+      if (!milestoneHeadingButton) {
         return;
       }
 
-        const hasMilestones = Array.isArray(goal.milestones) && goal.milestones.length > 0;
-        milestoneToggleAllButton.disabled = !hasMilestones;
+      const headingLabel = 'Milepæler';
+      const hasMilestones = Array.isArray(goal?.milestones) && goal.milestones.length > 0;
 
-        if (!hasMilestones) {
-          milestoneToggleAllButton.setAttribute('aria-pressed', 'false');
-          milestoneToggleAllButton.dataset.state = 'closed';
-          setButtonIconContent(
-            milestoneToggleAllButton,
-            'chevronsDown',
-            'Ingen milepæler tilgjengelig'
-          );
-          return;
-        }
-
-        const allCollapsed = goal.milestones.every((milestone) => !Boolean(milestone.isExpanded));
-        const srText = allCollapsed ? 'Vis alle milepæl to-dos' : 'Skjul alle milepæl to-dos';
-        milestoneToggleAllButton.dataset.state = allCollapsed ? 'closed' : 'open';
-        setButtonIconContent(
-          milestoneToggleAllButton,
-          allCollapsed ? 'chevronsDown' : 'chevronsUp',
-          srText
-        );
-        milestoneToggleAllButton.setAttribute('aria-pressed', allCollapsed ? 'true' : 'false');
+      if (!hasMilestones) {
+        milestoneHeadingButton.disabled = true;
+        milestoneHeadingButton.dataset.state = 'closed';
+        milestoneHeadingButton.setAttribute('aria-expanded', 'false');
+        milestoneHeadingButton.innerHTML = `
+          <span class="goal-section__title-text">${headingLabel}</span>
+          <span class="goal-section__title-icon" aria-hidden="true">${getIconMarkup('chevronsDown')}</span>
+          <span class="goal-sr-only">Ingen milepæler tilgjengelig</span>
+        `;
+        return;
       }
+
+      const allCollapsed = goal.milestones.every((milestone) => !Boolean(milestone?.isExpanded));
+      const srText = allCollapsed ? 'Vis alle milepæler' : 'Skjul alle milepæler';
+      const iconName = allCollapsed ? 'chevronsDown' : 'chevronsUp';
+      milestoneHeadingButton.disabled = false;
+      milestoneHeadingButton.dataset.state = allCollapsed ? 'closed' : 'open';
+      milestoneHeadingButton.setAttribute('aria-expanded', allCollapsed ? 'false' : 'true');
+      milestoneHeadingButton.innerHTML = `
+        <span class="goal-section__title-text">${headingLabel}</span>
+        <span class="goal-section__title-icon" aria-hidden="true">${getIconMarkup(iconName)}</span>
+        <span class="goal-sr-only">${srText}</span>
+      `;
+    }
+
+    function updateGoalSummary(goal) {
+      if (!goalSummarySection) {
+        return;
+      }
+
+      ensureGoalCollections(goal);
+
+      const milestones = Array.isArray(goal?.milestones) ? goal.milestones : [];
+      const todos = milestones.reduce((accumulator, milestone) => {
+        if (Array.isArray(milestone?.todos)) {
+          accumulator.push(...milestone.todos);
+        }
+        return accumulator;
+      }, []);
+
+      const totalTodos = todos.length;
+      const completedTodos = todos.filter((todo) => Boolean(todo?.completed)).length;
+      const totalMilestones = milestones.length;
+      const completedMilestones = milestones.filter((milestone) => Boolean(milestone?.completed)).length;
+
+      const progress = totalTodos > 0 ? Math.round((completedTodos / totalTodos) * 100) : 0;
+      const progressFraction = Math.max(0, Math.min(1, totalTodos > 0 ? completedTodos / totalTodos : 0));
+
+      if (goalSummaryProgressValue) {
+        goalSummaryProgressValue.textContent = `${progress}%`;
+      }
+
+      if (goalSummaryProgressBar) {
+        goalSummaryProgressBar.style.transform = `scaleX(${progressFraction})`;
+      }
+
+      if (goalSummaryProgressTrack) {
+        goalSummaryProgressTrack.setAttribute('aria-valuenow', String(progress));
+      }
+
+      if (goalSummaryProgressDescription) {
+        goalSummaryProgressDescription.textContent = totalTodos
+          ? `${completedTodos} av ${totalTodos} to-dos fullført`
+          : 'Ingen to-dos registrert';
+      }
+
+      if (goalSummaryTodoTotal) {
+        goalSummaryTodoTotal.textContent = String(totalTodos);
+      }
+
+      if (goalSummaryTodoCompleted) {
+        goalSummaryTodoCompleted.textContent = `${completedTodos} fullført`;
+      }
+
+      if (goalSummaryMilestoneTotal) {
+        goalSummaryMilestoneTotal.textContent = String(totalMilestones);
+      }
+
+      if (goalSummaryMilestoneCompleted) {
+        goalSummaryMilestoneCompleted.textContent = `${completedMilestones} fullført`;
+      }
+
+      goalSummarySection.removeAttribute('hidden');
+    }
 
       function toggleMilestoneTodos(goal, milestoneIndex) {
         if (!goal || !Array.isArray(goal.milestones)) {
@@ -1871,21 +2144,22 @@
       }
 
       function renderMilestones(goal) {
-        if (!milestoneList) {
-          return;
-        }
+      if (!milestoneList) {
+        return;
+      }
 
-        milestoneList.innerHTML = '';
-        ensureGoalCollections(goal);
+      milestoneList.innerHTML = '';
+      ensureGoalCollections(goal);
 
-        const goalDomIdentifier = goal?.id ?? getGoalDomIdentifier();
+      const goalDomIdentifier = goal?.id ?? getGoalDomIdentifier();
 
-        updateMilestoneToggleAllButton(goal);
+      updateMilestoneHeadingButton(goal);
+      updateGoalSummary(goal);
 
-        if (!goal.milestones.length) {
-          const emptyItem = document.createElement('li');
-          emptyItem.className = 'empty-state';
-          emptyItem.textContent = 'Legg til milepælene dine her.';
+      if (!goal.milestones.length) {
+        const emptyItem = document.createElement('li');
+        emptyItem.className = 'empty-state';
+        emptyItem.textContent = 'Legg til milepælene dine her.';
           milestoneList.appendChild(emptyItem);
           milestoneList.ondragover = null;
           milestoneList.ondrop = null;
@@ -2257,15 +2531,67 @@
         });
       }
 
-      if (milestoneToggleAllButton) {
-        milestoneToggleAllButton.addEventListener('click', () => {
+      if (milestoneHeadingButton) {
+        milestoneHeadingButton.addEventListener('click', () => {
           if (!currentGoal) {
             return;
           }
 
           ensureGoalCollections(currentGoal);
-          const allCollapsed = currentGoal.milestones.every((milestone) => !Boolean(milestone.isExpanded));
+          const allCollapsed = currentGoal.milestones.every((milestone) => !Boolean(milestone?.isExpanded));
           setAllMilestoneTodos(currentGoal, allCollapsed);
+        });
+      }
+
+      if (milestoneDeleteButton) {
+        milestoneDeleteButton.addEventListener('click', async () => {
+          if (milestoneEditIndex === null || !currentGoal) {
+            return;
+          }
+
+          ensureGoalCollections(currentGoal);
+          const targetIndex = milestoneEditIndex;
+          const milestone = currentGoal.milestones?.[targetIndex];
+          if (!milestone) {
+            return;
+          }
+
+          const trimmedTitle = (milestone.title || '').trim();
+          const confirmMessage = trimmedTitle
+            ? `Er du sikker på at du vil slette milepælen "${trimmedTitle}"?`
+            : 'Er du sikker på at du vil slette milepælen?';
+
+          if (!window.confirm(confirmMessage)) {
+            return;
+          }
+
+          closeMilestoneEditModal({ restoreFocus: false });
+
+          const previousMilestones = currentGoal.milestones.slice();
+          const previousPositions = previousMilestones.map((milestoneItem, index) =>
+            typeof milestoneItem?.position === 'number' ? milestoneItem.position : index
+          );
+
+          const [removedMilestone] = currentGoal.milestones.splice(targetIndex, 1);
+          currentGoal.milestones.forEach((milestoneItem, index) => {
+            milestoneItem.position = index;
+          });
+
+          renderMilestones(currentGoal);
+
+          try {
+            if (removedMilestone?.id) {
+              await deleteMilestoneFromDatabase(removedMilestone);
+            }
+            await persistMilestoneOrder(currentGoal);
+          } catch (deleteError) {
+            console.error('Feil ved sletting av milepæl', deleteError);
+            currentGoal.milestones = previousMilestones;
+            currentGoal.milestones.forEach((milestoneItem, index) => {
+              milestoneItem.position = previousPositions[index] ?? index;
+            });
+            renderMilestones(currentGoal);
+          }
         });
       }
 
@@ -2387,6 +2713,16 @@
           deadlineField.dataset.originalValue = milestone.deadline || '';
         }
 
+        if (milestoneDeleteButton) {
+          const trimmedTitle = (milestone.title || '').trim();
+          const deleteLabel = trimmedTitle
+            ? `Slett milepælen ${trimmedTitle}`
+            : 'Slett milepælen';
+          setButtonIconContent(milestoneDeleteButton, 'x', deleteLabel);
+          milestoneDeleteButton.dataset.milestoneIndex = String(milestoneIndex);
+          milestoneDeleteButton.disabled = false;
+        }
+
         milestoneEditModal.removeAttribute('hidden');
         milestoneEditModal.setAttribute('aria-hidden', 'false');
         lockBodyScroll();
@@ -2411,6 +2747,11 @@
           delete editDeadlineField.dataset.originalValue;
         }
         milestoneEditForm.reset();
+        if (milestoneDeleteButton) {
+          delete milestoneDeleteButton.dataset.milestoneIndex;
+          milestoneDeleteButton.disabled = true;
+          setButtonIconContent(milestoneDeleteButton, 'x', 'Slett milepælen');
+        }
         unlockBodyScroll();
 
         if (restoreFocus && previousIndex !== null && milestoneList) {
