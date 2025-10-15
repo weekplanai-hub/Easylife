@@ -254,8 +254,8 @@
     }
 
     .goal-icon-button {
-      border: none;
-      background: rgba(15, 28, 46, 0.06);
+      border: 1px solid rgba(15, 28, 46, 0.12);
+      background: #ffffff;
       color: #0f172a;
       width: 38px;
       height: 38px;
@@ -265,7 +265,7 @@
       justify-content: center;
       cursor: pointer;
       padding: 0;
-      transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+      transition: background 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease;
       position: relative;
     }
 
@@ -277,15 +277,19 @@
 
     .goal-icon-button:hover,
     .goal-icon-button:focus-visible {
-      background: rgba(15, 28, 46, 0.12);
+      background: rgba(148, 163, 184, 0.14);
+      border-color: rgba(15, 28, 46, 0.18);
       color: #020617;
       transform: translateY(-1px);
       outline: none;
+      box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.18);
     }
 
     .goal-icon-button[data-state="open"],
     .goal-icon-button[aria-pressed="true"] {
-      background: rgba(15, 28, 46, 0.16);
+      background: rgba(148, 163, 184, 0.18);
+      border-color: rgba(15, 28, 46, 0.22);
+      box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.18);
     }
 
     .goal-icon-button[disabled] {
@@ -390,8 +394,63 @@
     .goal-milestone__header {
       display: flex;
       justify-content: space-between;
-      gap: 12px;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .goal-milestone__info {
+      display: flex;
       align-items: flex-start;
+      gap: 18px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .goal-milestone__status {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      min-width: 56px;
+    }
+
+    .goal-milestone__status-ring {
+      --goal-status-color: #6366f1;
+      --goal-status-background: rgba(148, 163, 184, 0.25);
+      --goal-status-degree: 0deg;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: conic-gradient(var(--goal-status-color) var(--goal-status-degree), var(--goal-status-background) 0deg);
+      display: grid;
+      place-items: center;
+      position: relative;
+      color: #1f2937;
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+
+    .goal-milestone__status-ring::after {
+      content: '';
+      position: absolute;
+      inset: 6px;
+      background: #ffffff;
+      border-radius: 50%;
+    }
+
+    .goal-milestone__status-count {
+      position: relative;
+      z-index: 1;
+    }
+
+    .goal-milestone__status-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: rgba(15, 28, 46, 0.6);
+      font-weight: 600;
     }
 
     .goal-milestone__actions {
@@ -435,7 +494,7 @@
     .goal-milestone__todo-item {
       background: rgba(248, 250, 252, 0.9);
       border-radius: 12px;
-      padding: 10px 12px;
+      padding: 6px 12px;
       border: 1px solid rgba(148, 163, 184, 0.35);
       display: flex;
       align-items: center;
@@ -467,7 +526,7 @@
     .goal-list__todo-actions {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
       flex-shrink: 0;
     }
 
@@ -497,14 +556,30 @@
     }
 
     .goal-milestone__todo-delete {
+      border: none;
+      background: transparent;
       color: #b91c1c;
-      background: rgba(185, 28, 28, 0.12);
+      padding: 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: color 160ms ease;
+    }
+
+    .goal-milestone__todo-delete svg {
+      width: 18px;
+      height: 18px;
     }
 
     .goal-milestone__todo-delete:hover,
     .goal-milestone__todo-delete:focus-visible {
-      background: rgba(185, 28, 28, 0.2);
       color: #7f1d1d;
+    }
+
+    .goal-milestone__todo-delete:focus-visible {
+      outline: 2px solid rgba(185, 28, 28, 0.4);
+      border-radius: 6px;
     }
 
     .goal-milestone__todo-form {
@@ -1076,7 +1151,7 @@
           progress: milestone?.progress ?? null,
           deadline: milestone?.deadline ?? '',
           position: typeof milestone?.position === 'number' ? milestone.position : index,
-          isExpanded: typeof milestone?.isExpanded === 'boolean' ? milestone.isExpanded : index === 0,
+          isExpanded: typeof milestone?.isExpanded === 'boolean' ? milestone.isExpanded : false,
           isTodoFormOpen: Boolean(milestone?.isTodoFormOpen),
           shouldFocusTodoTitle: Boolean(milestone?.shouldFocusTodoTitle),
           todos: []
@@ -1255,7 +1330,7 @@
               detail: '',
               completed: false,
               todos: [],
-              isExpanded: index === 0,
+              isExpanded: false,
               isTodoFormOpen: false,
               shouldFocusTodoTitle: false
             };
@@ -1287,7 +1362,7 @@
           }
 
           if (typeof milestone.isExpanded !== 'boolean') {
-            milestone.isExpanded = index === 0;
+            milestone.isExpanded = false;
           }
 
           if (typeof milestone.isTodoFormOpen !== 'boolean') {
@@ -1747,6 +1822,52 @@
         renderMilestones(goal);
       }
 
+      function createMilestoneStatusIndicator(todos) {
+        const todosArray = Array.isArray(todos) ? todos : [];
+        const totalCount = todosArray.length;
+        const completedCount = todosArray.filter((todo) => Boolean(todo?.completed)).length;
+        const statusDescription = totalCount
+          ? `${completedCount} av ${totalCount} to-dos fullført`
+          : 'Ingen to-dos registrert';
+
+        const indicator = document.createElement('div');
+        indicator.className = 'goal-milestone__status';
+        indicator.title = statusDescription;
+
+        const ring = document.createElement('div');
+        ring.className = 'goal-milestone__status-ring';
+        let progressDegrees = 0;
+        if (totalCount > 0) {
+          const progressFraction = completedCount / totalCount;
+          progressDegrees = Math.max(0, Math.min(359.9, progressFraction * 360));
+          if (completedCount === totalCount) {
+            ring.style.setProperty('--goal-status-color', '#16a34a');
+          }
+        }
+        ring.style.setProperty('--goal-status-degree', `${progressDegrees}deg`);
+
+        const countSpan = document.createElement('span');
+        countSpan.className = 'goal-milestone__status-count';
+        countSpan.textContent = `${completedCount}/${totalCount || 0}`;
+        countSpan.setAttribute('aria-hidden', 'true');
+        ring.appendChild(countSpan);
+
+        const srText = document.createElement('span');
+        srText.className = 'goal-sr-only';
+        srText.textContent = statusDescription;
+        indicator.appendChild(srText);
+
+        indicator.appendChild(ring);
+
+        const label = document.createElement('span');
+        label.className = 'goal-milestone__status-label';
+        label.textContent = 'fullført';
+        label.setAttribute('aria-hidden', 'true');
+        indicator.appendChild(label);
+
+        return indicator;
+      }
+
       function renderMilestones(goal) {
         if (!milestoneList) {
           return;
@@ -1777,6 +1898,7 @@
           item.dataset.completed = milestone.completed ? 'true' : 'false';
 
           const todosContainerId = `goal-milestone-${index}-todos`;
+          const todos = Array.isArray(milestone.todos) ? milestone.todos : [];
 
           if (milestone.progress) {
             item.dataset.progress = milestone.progress;
@@ -1808,7 +1930,13 @@
             label.appendChild(deadlineSpan);
           }
 
-          header.appendChild(label);
+          const info = document.createElement('div');
+          info.className = 'goal-milestone__info';
+          const statusIndicator = createMilestoneStatusIndicator(todos);
+          info.appendChild(statusIndicator);
+          info.appendChild(label);
+
+          header.appendChild(info);
 
           const actions = document.createElement('div');
           actions.className = 'goal-milestone__actions';
@@ -1889,8 +2017,6 @@
           todoListElement.className = 'goal-milestone__todo-list';
           todoContent.appendChild(todoListElement);
 
-          const todos = Array.isArray(milestone.todos) ? milestone.todos : [];
-
           if (!todos.length) {
             const emptyState = document.createElement('div');
             emptyState.className = 'empty-state';
@@ -1965,7 +2091,7 @@
 
               const deleteButton = document.createElement('button');
               deleteButton.type = 'button';
-              deleteButton.className = 'goal-icon-button goal-milestone__todo-delete';
+              deleteButton.className = 'goal-milestone__todo-delete';
               const todoTitleTrimmed = (todo.title || '').trim();
               const deleteLabel = todoTitleTrimmed ? `Slett to-do ${todoTitleTrimmed}` : 'Slett to-do';
               setButtonIconContent(deleteButton, 'x', deleteLabel);
