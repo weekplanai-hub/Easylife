@@ -502,13 +502,13 @@
       display: flex;
       justify-content: space-between;
       gap: 16px;
-      align-items: flex-start;
+      align-items: center;
       flex-wrap: wrap;
     }
 
     .goal-milestone__info {
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       gap: 18px;
       flex: 1;
       min-width: 0;
@@ -562,7 +562,7 @@
 
     .goal-milestone__actions {
       display: inline-flex;
-      align-items: flex-start;
+      align-items: center;
       justify-content: flex-end;
       gap: 8px;
       flex-wrap: wrap;
@@ -940,10 +940,18 @@
 
     .note-modal__header {
       display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
+      align-items: center;
       gap: 12px;
       flex-wrap: wrap;
+    }
+
+    .note-modal__header h3 {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .note-modal__delete {
+      flex-shrink: 0;
     }
 
     .note-modal__actions {
@@ -1289,12 +1297,12 @@
                 </button>
               </div>
             </div>
-            <ul class="goal-list goal-milestone-list" id="goal-milestone-list"></ul>
             <form class="goal-section__form" id="goal-milestone-form" hidden>
               <input type="text" name="milestone-title" placeholder="Legg til milepæl" required />
               <input type="text" name="milestone-detail" placeholder="Detaljer (valgfritt)" />
               <button type="submit">Legg til</button>
             </form>
+            <ul class="goal-list goal-milestone-list" id="goal-milestone-list"></ul>
           </section>
         </div>
         <aside class="goal-detail__notes">
@@ -1319,10 +1327,10 @@
     <div class="note-modal__dialog">
       <button type="button" id="goal-note-close">Lukk</button>
       <div class="note-modal__header">
+        <button type="button" class="goal-icon-button note-modal__delete" id="goal-note-delete"></button>
         <h3 id="goal-note-modal-title"></h3>
         <div class="note-modal__actions">
           <button type="button" class="goal-icon-button" id="goal-note-edit"></button>
-          <button type="button" class="goal-icon-button" id="goal-note-delete"></button>
         </div>
       </div>
       <div class="note-modal__content" id="goal-note-modal-content"></div>
@@ -2924,6 +2932,7 @@
             milestone.isTodoFormOpen = shouldOpen;
             if (shouldOpen) {
               milestone.shouldFocusTodoTitle = true;
+              milestone.isExpanded = true;
             }
             renderMilestones(goal);
           });
