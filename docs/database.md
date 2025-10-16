@@ -88,6 +88,28 @@ Milepæler knyttet til et mål. Brukes til å dele et mål opp i trinn med egen 
 - **Indekser:**
   - `goal_milestones_goal_id_position_idx`: `goal_id`, `position`
 
+### goal_notes
+
+Riktekstnotater som hører til et mål. Innholdet lagres både som sanert HTML for visning og som ren tekst for søk.
+
+**Kolonner**
+
+| Kolonne | Type | Nullbar | Standard | Beskrivelse |
+| --- | --- | --- | --- | --- |
+| id | `uuid` | Nei | `gen_random_uuid()` | Primærnøkkel for notatet. |
+| goal_id | `uuid` | Nei | — | Referanse til målet notatet tilhører. |
+| title | `text` | Nei | — | Kort tittel for notatet. |
+| content_html | `text` | Nei | — | Sanert HTML som viser formateringen (fet, kursiv, lister, overskrifter, lenker). |
+| content_plain | `text` | Nei | — | Ren tekst brukt for søk og fallback. |
+| created_at | `timestamp with time zone` | Nei | `now()` | Tidspunkt notatet ble opprettet. |
+| updated_at | `timestamp with time zone` | Nei | `now()` | Tidspunkt notatet sist ble oppdatert. |
+
+- **Primærnøkkel:** `id`
+- **Fremmednøkler:**
+  - `goal_id` → `goals.id` (ON DELETE CASCADE)
+- **Indekser:**
+  - `goal_notes_goal_id_created_at_idx`: `goal_id`, `created_at`
+
 ### goal_milestone_todos
 
 Oppgaver som hører til en milepæl. Gir et ekstra detaljnivå for hva som må gjøres for å fullføre milepælen.
