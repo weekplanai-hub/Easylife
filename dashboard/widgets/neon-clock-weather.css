@@ -5,19 +5,19 @@
   --neon-widget-text: #e6edf7;
   --neon-widget-accent: #4de4ff;
   --neon-widget-accent-2: #2fd4ff;
-  --neon-widget-ring-size: 240px;
-  --neon-widget-glow: 0 0 28px rgba(77, 228, 255, 0.65);
-  --neon-widget-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+  --neon-widget-ring-size: 200px;
+  --neon-widget-glow: 0 0 22px rgba(77, 228, 255, 0.6);
+  --neon-widget-shadow: 0 10px 34px rgba(0, 0, 0, 0.5);
 }
 
 [data-neon-widget] {
   position: relative;
   display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 24px;
-  width: min(96vw, 820px);
-  padding: 24px;
-  border-radius: 22px;
+  grid-template-columns: minmax(0, 220px) minmax(0, 1fr);
+  gap: 20px;
+  width: min(92vw, 640px);
+  padding: 20px;
+  border-radius: 20px;
   border: 1px solid var(--neon-widget-border);
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01)),
     var(--neon-widget-card);
@@ -39,17 +39,17 @@
     radial-gradient(50% 50% at 10% 85%, rgba(47, 212, 255, 0.1), transparent 60%);
 }
 
+
 [data-neon-widget] .clock-wrap {
   position: relative;
-  width: 280px;
-  height: 280px;
+  width: 220px;
+  height: 220px;
   display: grid;
   place-items: center;
 }
 
 [data-neon-widget] .ring {
   --progress: 0deg;
-  --second-rotation: 0deg;
   position: relative;
   display: grid;
   place-items: center;
@@ -86,39 +86,11 @@
   background:
     conic-gradient(
       from -90deg,
-      rgba(77, 228, 255, 0.36) 0deg 2deg,
+      rgba(77, 228, 255, 0.28) 0deg 2deg,
       transparent 2deg 6deg
     );
   mask: radial-gradient(circle at center, transparent 64%, black 64%, black 70%, transparent 70%);
   opacity: 0.5;
-}
-
-[data-neon-widget] .second-hand {
-  --second-rotation: 0deg;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 4px;
-  height: calc(var(--neon-widget-ring-size) / 2 - 26px);
-  border-radius: 999px;
-  background: linear-gradient(180deg, rgba(77, 228, 255, 0) 0%, rgba(77, 228, 255, 0.8) 40%, rgba(47, 212, 255, 1) 100%);
-  transform-origin: center calc(100% - 12px);
-  transform: translate(-50%, -50%) rotate(var(--second-rotation));
-  filter: drop-shadow(0 0 12px rgba(77, 228, 255, 0.7));
-  will-change: transform;
-}
-
-[data-neon-widget] .second-hand::after {
-  content: "";
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: var(--neon-widget-accent-2);
-  transform: translateX(-50%);
-  box-shadow: 0 0 18px rgba(77, 228, 255, 0.6);
 }
 
 [data-neon-widget] .time {
@@ -128,16 +100,10 @@
 }
 
 [data-neon-widget] .time .hhmm {
-  font-size: 48px;
+  font-size: 42px;
   font-weight: 700;
   letter-spacing: 0.5px;
   text-shadow: var(--neon-widget-glow);
-}
-
-[data-neon-widget] .time .sec {
-  margin-top: 2px;
-  font-size: 14px;
-  opacity: 0.8;
 }
 
 [data-neon-widget] .info {
@@ -223,13 +189,13 @@
   }
 
   [data-neon-widget] .clock-wrap {
-    width: 240px;
-    height: 240px;
+    width: 220px;
+    height: 220px;
     margin: 0 auto;
   }
 
   :root {
-    --neon-widget-ring-size: 210px;
+    --neon-widget-ring-size: 190px;
   }
 
   [data-neon-widget] .time .hhmm {

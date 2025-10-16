@@ -159,9 +159,7 @@ export function initNeonClockWidget(root = document) {
   if (!widget) return;
 
   const ring = widget.querySelector('[data-ring]');
-  const secondHand = widget.querySelector('[data-second-hand]');
   const hhmm = widget.querySelector('[data-hhmm]');
-  const sec = widget.querySelector('[data-sec]');
   const greeting = widget.querySelector('[data-greeting]');
   const message = widget.querySelector('[data-message]');
   const date = widget.querySelector('[data-date]');
@@ -183,18 +181,13 @@ export function initNeonClockWidget(root = document) {
     const hours = now.getHours();
     const minutes = now.getMinutes();
     const seconds = now.getSeconds();
-    const fractionalSeconds = seconds + now.getMilliseconds() / 1000;
-    const rotation = (fractionalSeconds / 60) * 360;
+    const milliseconds = now.getMilliseconds();
+    const rotation = ((minutes + (seconds + milliseconds / 1000) / 60) / 60) * 360;
 
     if (ring) {
       ring.style.setProperty('--progress', `${rotation}deg`);
-      ring.style.setProperty('--second-rotation', `${rotation}deg`);
-    }
-    if (secondHand) {
-      secondHand.style.setProperty('--second-rotation', `${rotation}deg`);
     }
     if (hhmm) hhmm.textContent = `${pad(hours)}:${pad(minutes)}`;
-    if (sec) sec.textContent = `${pad(seconds)} sek`;
 
     if (minutes !== lastMinute && date) {
       lastMinute = minutes;
@@ -213,9 +206,10 @@ export function initNeonClockWidget(root = document) {
       if (message) message.textContent = msg;
     }
 
-    requestAnimationFrame(render);
+    const delay = 1000 - milliseconds;
+    setTimeout(render, delay === 0 ? 1000 : delay);
   }
 
-  requestAnimationFrame(render);
+  render();
   fetchWeather(weatherElements);
 }

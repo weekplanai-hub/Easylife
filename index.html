@@ -34,14 +34,91 @@
       color: var(--page-text);
       display: flex;
       justify-content: center;
-      padding: clamp(20px, 5vw, 48px) clamp(16px, 4vw, 48px);
+      align-items: stretch;
+      padding: clamp(20px, 5vw, 48px);
+    }
+
+    .app-layout {
+      width: min(1200px, 100%);
+      display: flex;
+      gap: clamp(24px, 4vw, 48px);
+      align-items: flex-start;
+    }
+
+    .sidebar {
+      width: clamp(220px, 22vw, 260px);
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      padding: 24px;
+      background: var(--bar-bg);
+      border: 1px solid var(--bar-border);
+      border-radius: 24px;
+      box-shadow: var(--bar-shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .logo img {
+      display: block;
+      width: 160px;
+      max-width: 100%;
+      height: auto;
+    }
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .menu a {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 16px;
+      border-radius: 16px;
+      color: rgba(230, 237, 247, 0.78);
+      text-decoration: none;
+      font-weight: 500;
+      transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+    }
+
+    .menu a .icon {
+      display: inline-flex;
+      width: 32px;
+      height: 32px;
+      border-radius: 12px;
+      align-items: center;
+      justify-content: center;
+      background: rgba(10, 16, 28, 0.7);
+    }
+
+    .menu a .icon img {
+      width: 20px;
+      height: 20px;
+      object-fit: contain;
+    }
+
+    .menu a:hover,
+    .menu a:focus-visible,
+    .menu a.active {
+      background: rgba(77, 228, 255, 0.16);
+      color: var(--page-text);
+      transform: translateX(2px);
+      outline: none;
     }
 
     .page-shell {
-      width: min(1120px, 100%);
+      flex: 1;
+      width: min(820px, 100%);
       display: flex;
       flex-direction: column;
       gap: clamp(24px, 5vw, 40px);
+      align-items: center;
+    }
+
+    .page-shell > * {
+      width: min(100%, 680px);
     }
 
     .top-bar {
@@ -91,17 +168,51 @@
     .dashboard {
       display: flex;
       flex-direction: column;
-      gap: 28px;
-      width: 100%;
+      align-items: center;
+      gap: 24px;
+      width: min(100%, 680px);
     }
 
     .widget-grid {
       display: grid;
-      gap: 28px;
-      justify-items: center;
+      gap: 24px;
+      justify-content: center;
+      width: 100%;
+      max-width: 640px;
+      margin: 0 auto;
     }
 
     @media (max-width: 720px) {
+      body {
+        padding: 20px;
+      }
+
+      .app-layout {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .sidebar {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+      }
+
+      .menu {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .menu a {
+        flex: 1 1 140px;
+      }
+
+      .page-shell {
+        align-items: stretch;
+      }
+
       .top-bar {
         flex-direction: column;
         align-items: flex-start;
@@ -119,51 +230,64 @@
   </style>
 </head>
 <body>
-  <div class="page-shell">
-    <header class="top-bar">
-      <p class="welcome-message" data-welcome-message>Velkommen</p>
-      <button id="logout-button" class="logout-button" type="button">Logg ut</button>
-    </header>
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="logo">
+        <img src="images/logo%20white.png" alt="Easylife logo" />
+      </div>
+      <nav class="menu" aria-label="Hovedmeny">
+        <a class="active" href="index.html"><span class="icon"><img src="images/Icon_home2.png" alt="Hjem" /></span>Dashboard</a>
+        <a href="mal.html"><span class="icon"><img src="images/Icon_goal2.png" alt="Mål" /></span>Mål</a>
+        <a href="todo.html"><span class="icon"><img src="images/Icon_todo2.png" alt="Todo" /></span>Todo</a>
+        <a href="rutiner.html"><span class="icon"><img src="images/Icon_routine2.png" alt="Rutiner" /></span>Rutiner</a>
+        <a href="training.html"><span class="icon"><img src="images/Icon_train2.png" alt="Trening" /></span>Training og kostholdsplan</a>
+      </nav>
+    </aside>
 
-    <main class="dashboard" aria-label="Dashboard">
-      <section class="widget-grid" aria-label="Forsideelementer">
-        <article class="neon-clock-weather" data-neon-widget role="group" aria-label="Klokke og vær">
-          <div class="clock-wrap">
-            <div class="ring" data-ring>
-              <div class="second-hand" data-second-hand></div>
-              <div class="time" aria-live="polite">
-                <div class="hhmm" data-hhmm>12:52</div>
-                <div class="sec" data-sec>sek</div>
+    <div class="page-shell">
+      <header class="top-bar">
+        <p class="welcome-message" data-welcome-message>Velkommen</p>
+        <button id="logout-button" class="logout-button" type="button">Logg ut</button>
+      </header>
+
+      <main class="dashboard" aria-label="Dashboard">
+        <section class="widget-grid" aria-label="Forsideelementer">
+          <article class="neon-clock-weather" data-neon-widget role="group" aria-label="Klokke og vær">
+            <div class="clock-wrap">
+              <div class="ring" data-ring>
+                <div class="time" aria-live="polite">
+                  <div class="hhmm" data-hhmm>12:52</div>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="info">
-            <p class="greeting" data-greeting>God kveld ✨</p>
-            <p class="subtle" data-date>torsdag 11. juli 2013</p>
+            <div class="info">
+              <p class="greeting" data-greeting>God kveld ✨</p>
+              <p class="subtle" data-date>torsdag 11. juli 2013</p>
 
-            <div>
-              <span class="pill" data-message>Fokusmodus: La oss knuse målene i dag</span>
-            </div>
-
-            <div class="weather" aria-live="polite">
-              <div class="icon" data-weather-icon>☁️</div>
               <div>
-                <div class="temp" data-weather-temp>--°</div>
-                <div class="meta" data-weather-meta>Henter vær...</div>
+                <span class="pill" data-message>Fokusmodus: La oss knuse målene i dag</span>
               </div>
-              <div class="meta" data-weather-place>–</div>
-            </div>
 
-            <div class="grid">
-              <div class="stat" data-weather-wind>Vind: –</div>
-              <div class="stat" data-weather-feels>Føles som: –</div>
-              <div class="stat" data-weather-uv>UV: –</div>
+              <div class="weather" aria-live="polite">
+                <div class="icon" data-weather-icon>☁️</div>
+                <div>
+                  <div class="temp" data-weather-temp>--°</div>
+                  <div class="meta" data-weather-meta>Henter vær...</div>
+                </div>
+                <div class="meta" data-weather-place>–</div>
+              </div>
+
+              <div class="grid">
+                <div class="stat" data-weather-wind>Vind: –</div>
+                <div class="stat" data-weather-feels>Føles som: –</div>
+                <div class="stat" data-weather-uv>UV: –</div>
+              </div>
             </div>
-          </div>
-        </article>
-      </section>
-    </main>
+          </article>
+        </section>
+      </main>
+    </div>
   </div>
 
   <script type="module">
