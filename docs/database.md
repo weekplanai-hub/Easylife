@@ -110,6 +110,12 @@ Riktekstnotater som hører til et mål. Innholdet lagres både som sanert HTML f
 - **Indekser:**
   - `goal_notes_goal_id_created_at_idx`: `goal_id`, `created_at`
 
+**Bruk i appen**
+
+- `mal-detalj.html` henter, oppretter, oppdaterer og sletter notater via Supabase-tabellen.
+- Når et notat lagres saneres HTML-innholdet i klienten, og ren tekst lagres sammen med en fallback som bruker overskriftstekst
+  dersom vanlig brødtekst mangler. Dette gjør at notater som kun består av overskrifter også kan lagres og søkes opp.
+
 ### goal_milestone_todos
 
 Oppgaver som hører til en milepæl. Gir et ekstra detaljnivå for hva som må gjøres for å fullføre milepælen.

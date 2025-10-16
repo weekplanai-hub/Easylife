@@ -1899,12 +1899,37 @@
         return mapped;
       };
 
+      const mapDatabaseNote = (note, { fallbackGoalId } = {}) =>
+        normalizeGoalNote({
+          id: note?.id ?? null,
+          goalId: note?.goal_id ?? note?.goalId ?? fallbackGoalId ?? null,
+          title: note?.title ?? '',
+          content: note?.content_html ?? note?.content ?? '',
+          plainText: note?.content_plain ?? note?.plainText ?? '',
+          createdAt: note?.created_at ?? note?.createdAt ?? null,
+          updatedAt: note?.updated_at ?? note?.updatedAt ?? null
+        });
+
       const mapDatabaseGoal = (goal) => {
         const milestoneSource = Array.isArray(goal?.milestones)
           ? goal.milestones
           : Array.isArray(goal?.goal_milestones)
             ? goal.goal_milestones
             : [];
+
+        const noteSource = Array.isArray(goal?.goal_notes)
+          ? goal.goal_notes
+          : Array.isArray(goal?.notes)
+            ? goal.notes
+            : [];
+
+        const mappedNotes = noteSource
+          .map((note) => mapDatabaseNote(note, { fallbackGoalId: goal?.id ?? null }))
+          .sort((a, b) => {
+            const aTime = a?.createdAt ? new Date(a.createdAt).getTime() : 0;
+            const bTime = b?.createdAt ? new Date(b.createdAt).getTime() : 0;
+            return bTime - aTime;
+          });
 
         return {
           id: goal?.id ?? null,
@@ -1918,7 +1943,7 @@
           milestones: milestoneSource.map((milestone, index) =>
             mapDatabaseMilestone(milestone, index, { fallbackGoalId: goal?.id ?? null })
           ),
-          notes: Array.isArray(goal?.notes) ? goal.notes : [],
+          notes: mappedNotes,
           todos: Array.isArray(goal?.todos) ? goal.todos : []
         };
       };
@@ -2155,12 +2180,22 @@
                   completed,
                   position
                 )
+              ),
+              goal_notes (
+                id,
+                goal_id,
+                title,
+                content_html,
+                content_plain,
+                created_at,
+                updated_at
               )
             `)
             .eq('user_id', currentUserId)
             .eq('id', goalId)
             .order('position', { ascending: true, foreignTable: 'goal_milestones' })
             .order('position', { ascending: true, foreignTable: 'goal_milestones.goal_milestone_todos' })
+            .order('created_at', { ascending: false, foreignTable: 'goal_notes' })
             .maybeSingle();
 
           if (error) {
@@ -2237,6 +2272,94 @@
         }
 
         return data;
+      }
+
+      async function insertNoteIntoDatabase(goal, { title, contentHtml, contentPlain }) {
+        if (!currentUserId || !goal?.id) {
+          return null;
+        }
+
+        const payload = {
+          goal_id: goal.id,
+          title,
+          content_html: contentHtml,
+          content_plain: contentPlain ?? ''
+        };
+
+        const { data, error } = await supabaseClient
+          .from('goal_notes')
+          .insert(payload)
+          .select('id, goal_id, title, content_html, content_plain, created_at, updated_at')
+          .single();
+
+        if (error) {
+          throw error;
+        }
+
+        return data;
+      }
+
+      async function updateNoteInDatabase(note, updates) {
+        if (!currentUserId || !note?.id) {
+          return null;
+        }
+
+        const payload = {
+          title: typeof updates.title === 'string' ? updates.title : undefined,
+          content_html: typeof updates.contentHtml === 'string' ? updates.contentHtml : undefined,
+          content_plain: typeof updates.contentPlain === 'string' ? updates.contentPlain : undefined
+        };
+
+        const filtered = Object.fromEntries(
+          Object.entries(payload).filter(([, value]) => value !== undefined)
+        );
+
+        if (!Object.keys(filtered).length) {
+          return null;
+        }
+
+        const goalId = note.goalId ?? note.goal_id ?? null;
+
+        const query = supabaseClient
+          .from('goal_notes')
+          .update(filtered)
+          .eq('id', note.id);
+
+        if (goalId) {
+          query.eq('goal_id', goalId);
+        }
+
+        const { data, error } = await query
+          .select('id, goal_id, title, content_html, content_plain, created_at, updated_at')
+          .single();
+
+        if (error) {
+          throw error;
+        }
+
+        return data;
+      }
+
+      async function deleteNoteFromDatabase(note) {
+        if (!currentUserId || !note?.id) {
+          return;
+        }
+
+        const query = supabaseClient
+          .from('goal_notes')
+          .delete()
+          .eq('id', note.id);
+
+        const goalId = note.goalId ?? note.goal_id ?? null;
+        if (goalId) {
+          query.eq('goal_id', goalId);
+        }
+
+        const { error } = await query;
+
+        if (error) {
+          throw error;
+        }
       }
 
       async function insertTodoIntoDatabase(goal, milestone, { title, detail, position }) {
@@ -3229,7 +3352,7 @@
         });
       }
 
-      function deleteGoalNote(noteIndex) {
+      async function deleteGoalNote(noteIndex) {
         if (!currentGoal) {
           return false;
         }
@@ -3239,17 +3362,22 @@
           return false;
         }
 
-        const shouldDelete = window.confirm('Er du sikker på at du vil slette dette notatet?');
-        if (!shouldDelete) {
-          return false;
-        }
-
         ensureGoalCollections(currentGoal);
         if (parsedIndex >= currentGoal.notes.length) {
           return false;
         }
 
-        currentGoal.notes.splice(parsedIndex, 1);
+        const targetNote = currentGoal.notes[parsedIndex];
+        const trimmedTitle = (targetNote?.title || '').trim();
+        const confirmMessage = trimmedTitle
+          ? `Er du sikker på at du vil slette notatet "${trimmedTitle}"?`
+          : 'Er du sikker på at du vil slette dette notatet?';
+
+        if (!window.confirm(confirmMessage)) {
+          return false;
+        }
+
+        const [removedNote] = currentGoal.notes.splice(parsedIndex, 1);
         renderNotes(currentGoal);
 
         requestAnimationFrame(() => {
@@ -3261,7 +3389,23 @@
           }
         });
 
-        return true;
+        try {
+          if (removedNote?.id) {
+            await deleteNoteFromDatabase(removedNote);
+          }
+          return true;
+        } catch (noteError) {
+          console.error('Feil ved sletting av notat', noteError);
+          currentGoal.notes.splice(parsedIndex, 0, removedNote);
+          renderNotes(currentGoal);
+          window.alert('Kunne ikke slette notatet. Prøv igjen.');
+          requestAnimationFrame(() => {
+            const selector = `.goal-note[data-note-index="${parsedIndex}"] .goal-note__open`;
+            const fallbackTarget = notesList?.querySelector(selector) || notesList?.querySelector('.goal-note__open');
+            fallbackTarget?.focus();
+          });
+          return false;
+        }
       }
 
       function renderGoalDetail(goal) {
@@ -3603,14 +3747,14 @@
       }
 
       if (noteModalDeleteButton) {
-        noteModalDeleteButton.addEventListener('click', () => {
+        noteModalDeleteButton.addEventListener('click', async () => {
           const noteIndexValue = noteModalDeleteButton.dataset.noteIndex ?? '';
           const parsedIndex = Number.parseInt(noteIndexValue, 10);
           if (!Number.isInteger(parsedIndex)) {
             return;
           }
 
-          const deleted = deleteGoalNote(parsedIndex);
+          const deleted = await deleteGoalNote(parsedIndex);
           if (deleted) {
             closeNoteModal({ restoreFocus: false });
           }
@@ -3701,7 +3845,7 @@
       }
 
       if (noteCreateForm) {
-        noteCreateForm.addEventListener('submit', (event) => {
+        noteCreateForm.addEventListener('submit', async (event) => {
           event.preventDefault();
           if (!currentGoal) {
             return;
@@ -3712,9 +3856,24 @@
           const titleField = noteCreateForm['note-title'];
           const titleValue = titleField?.value.trim() || '';
           const contentHtml = getNoteEditorHtml();
-          const plainText = extractPlainTextFromHtml(contentHtml);
 
-          if (!titleValue || !plainText) {
+          const headingTexts = (() => {
+            if (!contentHtml) {
+              return [];
+            }
+            const temp = document.createElement('div');
+            temp.innerHTML = contentHtml;
+            return Array.from(temp.querySelectorAll('h2, h3, h4'))
+              .map((heading) => (heading.textContent || '').trim())
+              .filter(Boolean);
+          })();
+
+          let plainText = extractPlainTextFromHtml(contentHtml);
+          if (!plainText && headingTexts.length) {
+            plainText = headingTexts.join(' ');
+          }
+
+          if (!titleValue || (!plainText && !headingTexts.length)) {
             return;
           }
 
@@ -3723,45 +3882,141 @@
             hiddenContentField.value = contentHtml;
           }
 
+          const notePayload = {
+            title: titleValue,
+            content: contentHtml,
+            plainText
+          };
+
           if (noteEditIndex !== null) {
-            const existingNote = currentGoal.notes[noteEditIndex];
+            const editIndex = noteEditIndex;
+            const existingNote = currentGoal.notes[editIndex];
             if (!existingNote) {
               return;
             }
 
+            const previousNote = { ...existingNote };
             const updatedNote = normalizeGoalNote({
               ...existingNote,
-              title: titleValue,
-              content: contentHtml,
-              plainText
+              ...notePayload
             });
 
-            currentGoal.notes[noteEditIndex] = updatedNote;
+            currentGoal.notes[editIndex] = updatedNote;
             renderNotes(currentGoal);
             closeNoteCreateModal({ restoreFocus: false });
-            requestAnimationFrame(() => {
-              const selector = `.goal-note[data-note-index="${noteEditIndex}"] .goal-note__open`;
+
+            const focusEditedButton = () => {
+              const selector = `.goal-note[data-note-index="${editIndex}"] .goal-note__open`;
               const editedButton = notesList?.querySelector(selector);
               editedButton?.focus();
-            });
+            };
+
+            requestAnimationFrame(focusEditedButton);
+
+            try {
+              if (existingNote.id) {
+                const savedNote = await updateNoteInDatabase(existingNote, {
+                  title: updatedNote.title,
+                  contentHtml: updatedNote.content,
+                  contentPlain: updatedNote.plainText
+                });
+                if (savedNote) {
+                  currentGoal.notes[editIndex] = mapDatabaseNote(savedNote, {
+                    fallbackGoalId: currentGoal.id ?? existingNote.goalId ?? null
+                  });
+                  renderNotes(currentGoal);
+                  requestAnimationFrame(focusEditedButton);
+                }
+              } else if (currentGoal.id) {
+                const insertedNote = await insertNoteIntoDatabase(currentGoal, {
+                  title: updatedNote.title,
+                  contentHtml: updatedNote.content,
+                  contentPlain: updatedNote.plainText
+                });
+                if (insertedNote) {
+                  currentGoal.notes[editIndex] = mapDatabaseNote(insertedNote, {
+                    fallbackGoalId: currentGoal.id
+                  });
+                  renderNotes(currentGoal);
+                  requestAnimationFrame(focusEditedButton);
+                }
+              }
+            } catch (noteError) {
+              console.error('Feil ved oppdatering av notat', noteError);
+              currentGoal.notes[editIndex] = previousNote;
+              renderNotes(currentGoal);
+              window.alert('Kunne ikke oppdatere notatet. Prøv igjen.');
+              requestAnimationFrame(focusEditedButton);
+            }
+
             return;
           }
 
-          const newNote = normalizeGoalNote({
-            title: titleValue,
-            content: contentHtml,
-            plainText
-          });
-
+          const newNote = normalizeGoalNote(notePayload);
+          const placeholderId = `temp-note-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+          newNote.__localId = placeholderId;
+          const previousNotes = currentGoal.notes.slice();
+          const previousSearchQuery = noteSearchQuery;
           currentGoal.notes.unshift(newNote);
 
           noteSearchQuery = '';
           renderNotes(currentGoal);
           closeNoteCreateModal({ restoreFocus: false });
-          requestAnimationFrame(() => {
+
+          const focusFirstNote = () => {
             const [firstNote] = notesList?.querySelectorAll('.goal-note__open') || [];
-            firstNote?.focus();
-          });
+            if (firstNote) {
+              firstNote.focus();
+            } else {
+              addNoteButton?.focus();
+            }
+          };
+
+          requestAnimationFrame(focusFirstNote);
+
+          try {
+            if (currentGoal.id) {
+              const insertedNote = await insertNoteIntoDatabase(currentGoal, {
+                title: newNote.title,
+                contentHtml: newNote.content,
+                contentPlain: newNote.plainText
+              });
+
+              if (insertedNote) {
+                const normalizedInserted = mapDatabaseNote(insertedNote, {
+                  fallbackGoalId: currentGoal.id
+                });
+
+                const placeholderIndex = currentGoal.notes.findIndex(
+                  (note) => note.__localId && note.__localId === placeholderId
+                );
+                if (placeholderIndex !== -1) {
+                  currentGoal.notes[placeholderIndex] = {
+                    ...currentGoal.notes[placeholderIndex],
+                    ...normalizedInserted
+                  };
+                  delete currentGoal.notes[placeholderIndex].__localId;
+                } else {
+                  currentGoal.notes = currentGoal.notes.filter(
+                    (note) => note.__localId !== placeholderId
+                  );
+                  currentGoal.notes.unshift(normalizedInserted);
+                }
+
+                renderNotes(currentGoal);
+                requestAnimationFrame(focusFirstNote);
+              }
+            }
+          } catch (noteError) {
+            console.error('Feil ved lagring av notat', noteError);
+            currentGoal.notes = previousNotes;
+            noteSearchQuery = previousSearchQuery;
+            renderNotes(currentGoal);
+            window.alert('Kunne ikke lagre notatet. Prøv igjen.');
+            requestAnimationFrame(() => {
+              addNoteButton?.focus();
+            });
+          }
         });
       }
 
