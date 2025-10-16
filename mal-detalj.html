@@ -291,39 +291,11 @@
       font-size: 0.85rem;
     }
 
-    .goal-summary__grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 8px;
-    }
-
-    .goal-summary__stat {
-      border: none;
-      border-radius: 14px;
-      padding: 8px 0 0;
-      background: transparent;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      min-height: auto;
-    }
-
-    .goal-summary__stat-label {
-      font-size: 0.72rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: rgba(15, 28, 46, 0.55);
-    }
-
-    .goal-summary__stat-value {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #0f172a;
-    }
-
-    .goal-summary__stat-helper {
-      color: rgba(15, 28, 46, 0.6);
-      font-size: 0.85rem;
+    .goal-summary__milestones {
+      margin: 12px 0 0;
+      font-weight: 600;
+      color: rgba(15, 28, 46, 0.7);
+      font-size: 0.95rem;
     }
 
     .goal-section__header {
@@ -474,6 +446,11 @@
       flex-direction: column;
       gap: 12px;
       position: relative;
+    }
+
+    .goal-milestone[data-completed="true"] {
+      background: rgba(34, 197, 94, 0.16);
+      border-color: rgba(22, 163, 74, 0.35);
     }
 
     .goal-list__item::after {
@@ -985,6 +962,24 @@
       cursor: pointer;
     }
 
+    .goal-milestone__complete-button {
+      border-radius: 12px;
+      border: 1px solid rgba(15, 28, 46, 0.2);
+      background: rgba(15, 28, 46, 0.05);
+      color: var(--text-primary);
+      padding: 10px 18px;
+      font-weight: 600;
+      cursor: pointer;
+      align-self: flex-start;
+      transition: background 160ms ease, border-color 160ms ease, color 160ms ease;
+    }
+
+    .goal-milestone__complete-button[aria-pressed="true"] {
+      background: rgba(34, 197, 94, 0.16);
+      border-color: rgba(22, 163, 74, 0.35);
+      color: #166534;
+    }
+
     @media (max-width: 1080px) {
       body {
         flex-direction: column;
@@ -1098,18 +1093,7 @@
                 </div>
                 <p class="goal-summary__progress-description" id="goal-summary-progress-description">Ingen to-dos registrert</p>
               </div>
-              <div class="goal-summary__grid">
-                <div class="goal-summary__stat">
-                  <span class="goal-summary__stat-label">Totalt to-dos</span>
-                  <span class="goal-summary__stat-value" id="goal-summary-todo-total">0</span>
-                  <span class="goal-summary__stat-helper" id="goal-summary-todo-completed">0 fullført</span>
-                </div>
-                <div class="goal-summary__stat">
-                  <span class="goal-summary__stat-label">Milepæler</span>
-                  <span class="goal-summary__stat-value" id="goal-summary-milestone-total">0</span>
-                  <span class="goal-summary__stat-helper" id="goal-summary-milestone-completed">0 fullført</span>
-                </div>
-              </div>
+              <p class="goal-summary__milestones" id="goal-summary-milestone-status">Milepæler 0/0 fullført</p>
             </section>
           </div>
         </div>
@@ -1188,6 +1172,15 @@
         <input type="text" name="milestone-title" placeholder="Tittel" aria-label="Tittel" required />
         <textarea name="milestone-detail" rows="3" placeholder="Detaljer" aria-label="Detaljer"></textarea>
         <input type="date" name="milestone-deadline" aria-label="Deadline" />
+        <button
+          type="button"
+          class="goal-milestone__complete-button"
+          id="goal-milestone-complete-button"
+          aria-pressed="false"
+          disabled
+        >
+          Fullført
+        </button>
         <button type="submit">Lagre milepæl</button>
       </form>
     </div>
@@ -1290,15 +1283,13 @@
       const milestoneEditClose = document.getElementById('goal-milestone-edit-close');
       const milestoneEditForm = document.getElementById('goal-milestone-edit-form');
       const milestoneDeleteButton = document.getElementById('goal-milestone-delete-button');
+      const milestoneCompleteButton = document.getElementById('goal-milestone-complete-button');
       const goalSummarySection = document.getElementById('goal-summary');
       const goalSummaryProgressValue = document.getElementById('goal-summary-progress');
       const goalSummaryProgressTrack = document.getElementById('goal-summary-progress-track');
       const goalSummaryProgressBar = document.getElementById('goal-summary-progress-bar');
       const goalSummaryProgressDescription = document.getElementById('goal-summary-progress-description');
-      const goalSummaryTodoTotal = document.getElementById('goal-summary-todo-total');
-      const goalSummaryTodoCompleted = document.getElementById('goal-summary-todo-completed');
-      const goalSummaryMilestoneTotal = document.getElementById('goal-summary-milestone-total');
-      const goalSummaryMilestoneCompleted = document.getElementById('goal-summary-milestone-completed');
+      const goalSummaryMilestoneStatus = document.getElementById('goal-summary-milestone-status');
 
       if (milestoneDeleteButton) {
         setButtonIconContent(milestoneDeleteButton, 'x', 'Slett milepælen');
@@ -1445,6 +1436,21 @@
           requestAnimationFrame(() => {
             milestoneForm['milestone-title']?.focus();
           });
+        }
+      };
+
+      const updateMilestoneCompleteButtonState = ({ completed, disabled } = {}) => {
+        if (!milestoneCompleteButton) {
+          return;
+        }
+
+        if (typeof completed === 'boolean') {
+          milestoneCompleteButton.setAttribute('aria-pressed', completed ? 'true' : 'false');
+          milestoneCompleteButton.dataset.completed = completed ? 'true' : 'false';
+        }
+
+        if (typeof disabled === 'boolean') {
+          milestoneCompleteButton.disabled = disabled;
         }
       };
 
@@ -1669,7 +1675,8 @@
         const payload = {
           title: updates.title,
           detail: updates.detail ?? null,
-          deadline: updates.deadline ?? null
+          deadline: updates.deadline ?? null,
+          completed: typeof updates.completed === 'boolean' ? updates.completed : undefined
         };
 
         const filtered = Object.fromEntries(
@@ -2046,20 +2053,8 @@
           : 'Ingen to-dos registrert';
       }
 
-      if (goalSummaryTodoTotal) {
-        goalSummaryTodoTotal.textContent = String(totalTodos);
-      }
-
-      if (goalSummaryTodoCompleted) {
-        goalSummaryTodoCompleted.textContent = `${completedTodos} fullført`;
-      }
-
-      if (goalSummaryMilestoneTotal) {
-        goalSummaryMilestoneTotal.textContent = String(totalMilestones);
-      }
-
-      if (goalSummaryMilestoneCompleted) {
-        goalSummaryMilestoneCompleted.textContent = `${completedMilestones} fullført`;
+      if (goalSummaryMilestoneStatus) {
+        goalSummaryMilestoneStatus.textContent = `Milepæler ${completedMilestones}/${totalMilestones} fullført`;
       }
 
       goalSummarySection.removeAttribute('hidden');
@@ -2595,6 +2590,38 @@
         });
       }
 
+      if (milestoneCompleteButton) {
+        milestoneCompleteButton.addEventListener('click', async () => {
+          if (milestoneEditIndex === null || !currentGoal || milestoneCompleteButton.disabled) {
+            return;
+          }
+
+          ensureGoalCollections(currentGoal);
+          const milestone = currentGoal.milestones?.[milestoneEditIndex];
+          if (!milestone) {
+            return;
+          }
+
+          const previousState = Boolean(milestone.completed);
+          const nextState = !previousState;
+
+          milestone.completed = nextState;
+          updateMilestoneCompleteButtonState({ completed: nextState });
+          renderMilestones(currentGoal);
+
+          try {
+            if (milestone.id) {
+              await updateMilestoneInDatabase(milestone, { completed: nextState });
+            }
+          } catch (milestoneError) {
+            console.error('Feil ved oppdatering av milepæl', milestoneError);
+            milestone.completed = previousState;
+            updateMilestoneCompleteButtonState({ completed: previousState });
+            renderMilestones(currentGoal);
+          }
+        });
+      }
+
       function renderNotes(goal) {
         if (!notesList) {
           return;
@@ -2723,6 +2750,11 @@
           milestoneDeleteButton.disabled = false;
         }
 
+        updateMilestoneCompleteButtonState({
+          completed: Boolean(milestone.completed),
+          disabled: false
+        });
+
         milestoneEditModal.removeAttribute('hidden');
         milestoneEditModal.setAttribute('aria-hidden', 'false');
         lockBodyScroll();
@@ -2752,6 +2784,7 @@
           milestoneDeleteButton.disabled = true;
           setButtonIconContent(milestoneDeleteButton, 'x', 'Slett milepælen');
         }
+        updateMilestoneCompleteButtonState({ completed: false, disabled: true });
         unlockBodyScroll();
 
         if (restoreFocus && previousIndex !== null && milestoneList) {
