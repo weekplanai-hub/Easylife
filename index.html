@@ -4,19 +4,22 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Easylife Dashboard</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="dashboard/widgets/neon-clock-weather.css" />
   <style>
     :root {
-      color-scheme: light;
-      --sidebar-bg: linear-gradient(180deg, #101828 0%, #020617 100%);
-      --sidebar-width: 260px;
-      --card-bg: rgba(255, 255, 255, 0.1);
-      --card-hover-bg: rgba(255, 255, 255, 0.18);
-      --text-primary: #0f1c2e;
-      --text-secondary: rgba(15, 28, 46, 0.7);
-      --accent: #227bff;
+      color-scheme: dark;
+      --page-bg: #060912;
+      --page-gradient-a: radial-gradient(1200px 700px at 70% -10%, rgba(77, 228, 255, 0.08), transparent 55%);
+      --page-gradient-b: radial-gradient(800px 600px at -10% 120%, rgba(77, 228, 255, 0.06), transparent 60%);
+      --page-text: #e6edf7;
+      --page-muted: #7e8ca8;
+      --bar-bg: rgba(15, 21, 36, 0.72);
+      --bar-border: rgba(77, 228, 255, 0.2);
+      --bar-shadow: 0 18px 36px rgba(0, 0, 0, 0.35);
+      --accent: #4de4ff;
     }
 
     * {
@@ -25,152 +28,59 @@
 
     body {
       margin: 0;
-      font-family: 'Inter', sans-serif;
-      background: radial-gradient(120% 120% at 10% 0%, rgba(201, 226, 255, 0.9) 0%, rgba(228, 241, 255, 0.9) 45%, rgba(196, 215, 238, 0.95) 100%), #f1f5f9;
-      color: var(--text-primary);
       min-height: 100vh;
+      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: var(--page-gradient-a), var(--page-gradient-b), var(--page-bg);
+      color: var(--page-text);
       display: flex;
-    }
-
-    .sidebar {
-      width: var(--sidebar-width);
-      background: var(--sidebar-bg);
-      color: rgba(255, 255, 255, 0.92);
-      padding: 16px 24px 32px;
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-      position: relative;
-      box-shadow: 12px 0 32px rgba(18, 38, 63, 0.25);
-      z-index: 2;
-    }
-
-    .logo {
-      display: block;
-    }
-
-    .logo img {
-      display: block;
-      width: 160px;
-      max-width: 100%;
-      height: auto;
-    }
-
-    .menu {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .menu a {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 12px 16px;
-      border-radius: 14px;
-      color: rgba(255, 255, 255, 0.8);
-      text-decoration: none;
-      font-weight: 500;
-      transition: background 160ms ease, color 160ms ease;
-    }
-
-    .menu a.active,
-    .menu a:hover,
-    .menu a:focus-visible {
-      background: rgba(255, 255, 255, 0.18);
-      color: #ffffff;
-      outline: none;
-    }
-
-    .menu a .icon {
-      display: inline-flex;
-      width: 32px;
-      height: 32px;
-      border-radius: 12px;
-      align-items: center;
       justify-content: center;
-      background: #000;
+      padding: clamp(20px, 5vw, 48px) clamp(16px, 4vw, 48px);
     }
 
-    .menu a .icon img {
-      max-width: 20px;
-      max-height: 20px;
-      width: 20px;
-      height: 20px;
-      object-fit: contain;
-    }
-
-    main {
-      flex: 1;
-      padding: 40px 48px;
+    .page-shell {
+      width: min(1120px, 100%);
       display: flex;
       flex-direction: column;
-      gap: 32px;
-    }
-
-    header {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      color: var(--text-secondary);
+      gap: clamp(24px, 5vw, 40px);
     }
 
     .top-bar {
       display: flex;
       align-items: center;
-      gap: 16px;
       justify-content: space-between;
-      padding: 12px 20px;
-      background: rgba(255, 255, 255, 0.7);
-      border-radius: 18px;
-      border: 1px solid rgba(15, 28, 46, 0.08);
+      gap: 16px;
+      padding: 18px 24px;
+      background: var(--bar-bg);
+      border: 1px solid var(--bar-border);
+      border-radius: 20px;
+      box-shadow: var(--bar-shadow);
       backdrop-filter: blur(18px);
     }
 
     .welcome-message {
       margin: 0;
+      font-size: clamp(1rem, 2vw, 1.25rem);
       font-weight: 600;
-      color: var(--text-primary);
-    }
-
-    .top-nav {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-    }
-
-    .top-nav a {
-      padding: 8px 14px;
-      border-radius: 999px;
-      text-decoration: none;
-      color: var(--text-secondary);
-      font-weight: 500;
-      transition: background 160ms ease, color 160ms ease;
-    }
-
-    .top-nav a:hover,
-    .top-nav a:focus-visible {
-      background: rgba(34, 123, 255, 0.12);
-      color: var(--text-primary);
-      outline: none;
+      color: var(--page-text);
     }
 
     .logout-button {
-      padding: 8px 16px;
+      padding: 10px 20px;
       border-radius: 999px;
       border: none;
-      background: var(--accent);
-      color: #fff;
       font-weight: 600;
+      font-size: 0.95rem;
+      color: #020617;
+      background: var(--page-text);
       cursor: pointer;
-      transition: background 160ms ease, transform 160ms ease;
-      white-space: nowrap;
+      transition: transform 160ms ease, box-shadow 160ms ease;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.25);
     }
 
     .logout-button:hover,
     .logout-button:focus-visible {
-      background: #0f5ed2;
       transform: translateY(-1px);
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.35);
       outline: none;
     }
 
@@ -179,146 +89,86 @@
     }
 
     .dashboard {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 24px;
-    }
-
-    .card {
-      background: var(--card-bg);
-      border-radius: 24px;
-      padding: 24px;
-      backdrop-filter: blur(24px);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      box-shadow: 0 20px 45px rgba(31, 48, 80, 0.15);
-      transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease;
-    }
-
-    .card:hover {
-      transform: translateY(-4px);
-      background: var(--card-hover-bg);
-      box-shadow: 0 24px 50px rgba(31, 48, 80, 0.24);
-    }
-
-    .card h3 {
-      margin: 0;
-      font-size: 1.2rem;
       display: flex;
-      align-items: center;
-      gap: 12px;
+      flex-direction: column;
+      gap: 28px;
+      width: 100%;
     }
 
-    .card h3 span {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 36px;
-      height: 36px;
-      border-radius: 12px;
-      background: rgba(34, 123, 255, 0.15);
-      color: var(--accent);
+    .widget-grid {
+      display: grid;
+      gap: 28px;
+      justify-items: center;
     }
 
-    .card p {
-      margin: 12px 0 0;
-      color: var(--text-secondary);
-      font-size: 0.95rem;
-    }
-
-    @media (max-width: 960px) {
-      body {
+    @media (max-width: 720px) {
+      .top-bar {
         flex-direction: column;
+        align-items: flex-start;
       }
 
-      .sidebar {
-        width: auto;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-        padding: 20px 24px;
-        box-shadow: none;
+      .logout-button {
+        align-self: stretch;
+        text-align: center;
+      }
+
+      .widget-grid {
         gap: 20px;
-      }
-
-      .menu {
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: 12px;
-      }
-
-      .menu a {
-        padding: 10px 14px;
-      }
-
-      main {
-        padding: 24px;
       }
     }
   </style>
 </head>
 <body>
-  <aside class="sidebar">
-    <div class="logo">
-      <img src="images/logo%20white.png" alt="Easylife logo" />
-    </div>
-    <nav class="menu" aria-label="Hovedmeny">
-      <a class="active" href="index.html"><span class="icon"><img src="images/Icon_home2.png" alt="Hjem" /></span>Dashboard</a>
-      <a href="mal.html"><span class="icon"><img src="images/Icon_goal2.png" alt="Mål" /></span>Mål</a>
-      <a href="todo.html"><span class="icon"><img src="images/Icon_todo2.png" alt="Todo" /></span>Todo</a>
-      <a href="rutiner.html"><span class="icon"><img src="images/Icon_routine2.png" alt="Rutiner" /></span>Rutiner</a>
-      <a href="training.html"><span class="icon"><img src="images/Icon_train2.png" alt="Trening" /></span>Training og kostholdsplan</a>
-    </nav>
-  </aside>
-  <main>
-    <div class="top-bar">
+  <div class="page-shell">
+    <header class="top-bar">
       <p class="welcome-message" data-welcome-message>Velkommen</p>
-      <nav class="top-nav" aria-label="Hurtiglenker">
-        <a href="index.html" aria-current="page">Dashboard</a>
-        <a href="mal.html">Mål</a>
-        <a href="mal-detalj.html">Mål-detalj</a>
-        <a href="todo.html">To-do</a>
-        <a href="rutiner.html">Rutiner</a>
-      </nav>
       <button id="logout-button" class="logout-button" type="button">Logg ut</button>
-    </div>
-    <header>
-      <div>
-        <h1>Custom Dashboard</h1>
-        <p>Få oversikt over planene dine.</p>
-      </div>
     </header>
 
-    <section class="dashboard">
-      <article class="card">
-        <h3><span>🎯</span>Mål</h3>
-        <p>Sett deg mål</p>
-        <p>4 aktive mål</p>
-      </article>
-      <article class="card">
-        <h3><span>📝</span>Action</h3>
-        <p>Lag en plan</p>
-        <p>Noter oppfølgingstiltak</p>
-      </article>
-      <article class="card">
-        <h3><span>✅</span>Todo</h3>
-        <p>Håndter gjøremål</p>
-        <p>8 åpne todoer</p>
-      </article>
-      <article class="card">
-        <h3><span>🔁</span>Rutiner</h3>
-        <p>Opprett vaner</p>
-        <p>5 fullførte rutiner</p>
-      </article>
-      <article class="card">
-        <h3><span>⚖️</span>Balanser livet</h3>
-        <p>Utforsk moduler</p>
-        <p>5 fullførte i dag</p>
-      </article>
-    </section>
-  </main>
-  <script type="module" src="supabase-client.js"></script>
+    <main class="dashboard" aria-label="Dashboard">
+      <section class="widget-grid" aria-label="Forsideelementer">
+        <article class="neon-clock-weather" data-neon-widget role="group" aria-label="Klokke og vær">
+          <div class="clock-wrap">
+            <div class="ring" data-ring>
+              <div class="second-hand" data-second-hand></div>
+              <div class="time" aria-live="polite">
+                <div class="hhmm" data-hhmm>12:52</div>
+                <div class="sec" data-sec>sek</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="info">
+            <p class="greeting" data-greeting>God kveld ✨</p>
+            <p class="subtle" data-date>torsdag 11. juli 2013</p>
+
+            <div>
+              <span class="pill" data-message>Fokusmodus: La oss knuse målene i dag</span>
+            </div>
+
+            <div class="weather" aria-live="polite">
+              <div class="icon" data-weather-icon>☁️</div>
+              <div>
+                <div class="temp" data-weather-temp>--°</div>
+                <div class="meta" data-weather-meta>Henter vær...</div>
+              </div>
+              <div class="meta" data-weather-place>–</div>
+            </div>
+
+            <div class="grid">
+              <div class="stat" data-weather-wind>Vind: –</div>
+              <div class="stat" data-weather-feels>Føles som: –</div>
+              <div class="stat" data-weather-uv>UV: –</div>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+
   <script type="module">
     import supabaseClient from './supabase-client.js';
+    import { initNeonClockWidget } from './dashboard/widgets/neon-clock-weather.js';
 
     async function enforceSession() {
       try {
@@ -339,7 +189,6 @@
         }
 
         const logoutButton = document.querySelector('#logout-button');
-
         if (logoutButton) {
           logoutButton.addEventListener('click', async () => {
             const { error: signOutError } = await supabaseClient.auth.signOut();
@@ -358,6 +207,7 @@
       }
     }
 
+    initNeonClockWidget();
     enforceSession();
   </script>
 </body>
