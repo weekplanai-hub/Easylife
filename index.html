@@ -3,59 +3,58 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Easylife Dashboard</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="dashboard/widgets/neon-clock-weather.css" />
+  <title>Dashboard · Easylife</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      color-scheme: dark;
-      --page-bg: #060912;
-      --page-gradient-a: radial-gradient(1200px 700px at 70% -10%, rgba(77, 228, 255, 0.08), transparent 55%);
-      --page-gradient-b: radial-gradient(800px 600px at -10% 120%, rgba(77, 228, 255, 0.06), transparent 60%);
-      --page-text: #e6edf7;
-      --page-muted: #7e8ca8;
-      --bar-bg: rgba(15, 21, 36, 0.72);
-      --bar-border: rgba(77, 228, 255, 0.2);
-      --bar-shadow: 0 18px 36px rgba(0, 0, 0, 0.35);
+      color-scheme: light;
+      --sidebar-bg: linear-gradient(180deg, #101828 0%, #020617 100%);
+      --sidebar-width: 260px;
+      --card-bg: rgba(255, 255, 255, 0.08);
+      --text-primary: #0f1c2e;
+      --text-secondary: rgba(15, 28, 46, 0.64);
+      --surface: rgba(255, 255, 255, 0.55);
+      --surface-border: rgba(255, 255, 255, 0.35);
+      --chip-bg: rgba(15, 28, 46, 0.55);
+      --bg: #0b0f1a;
+      --card: #0f1524;
+      --muted: #7e8ca8;
+      --text: #e6edf7;
       --accent: #4de4ff;
+      --ring-size: 160px;
+      --glow: 0 0 20px rgba(77, 228, 255, 0.65);
+      --shadow: 0 8px 30px rgba(0, 0, 0, 0.55);
+      --progress: 0deg;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(120% 120% at 10% 0%, rgba(201, 226, 255, 0.9) 0%, rgba(228, 241, 255, 0.9) 45%, rgba(196, 215, 238, 0.95) 100%), #f1f5f9;
+      color: var(--text-primary);
       min-height: 100vh;
-      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-      background: var(--page-gradient-a), var(--page-gradient-b), var(--page-bg);
-      color: var(--page-text);
       display: flex;
-      justify-content: center;
-      align-items: stretch;
-      padding: clamp(20px, 5vw, 48px);
-    }
-
-    .app-layout {
-      width: min(1200px, 100%);
-      display: flex;
-      gap: clamp(24px, 4vw, 48px);
-      align-items: flex-start;
     }
 
     .sidebar {
-      width: clamp(220px, 22vw, 260px);
+      width: var(--sidebar-width);
+      background: var(--sidebar-bg);
+      color: rgba(255, 255, 255, 0.92);
+      padding: 16px 24px 32px;
       display: flex;
       flex-direction: column;
       gap: 24px;
-      padding: 24px;
-      background: var(--bar-bg);
-      border: 1px solid var(--bar-border);
-      border-radius: 24px;
-      box-shadow: var(--bar-shadow);
-      backdrop-filter: blur(18px);
+      position: relative;
+      box-shadow: 12px 0 32px rgba(18, 38, 63, 0.25);
+      z-index: 2;
+    }
+
+    .logo {
+      display: block;
     }
 
     .logo img {
@@ -76,11 +75,19 @@
       align-items: center;
       gap: 14px;
       padding: 12px 16px;
-      border-radius: 16px;
-      color: rgba(230, 237, 247, 0.78);
+      border-radius: 14px;
+      color: rgba(255, 255, 255, 0.8);
       text-decoration: none;
       font-weight: 500;
-      transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+      transition: background 160ms ease, color 160ms ease;
+    }
+
+    .menu a.active,
+    .menu a:hover,
+    .menu a:focus-visible {
+      background: rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+      outline: none;
     }
 
     .menu a .icon {
@@ -90,74 +97,71 @@
       border-radius: 12px;
       align-items: center;
       justify-content: center;
-      background: rgba(10, 16, 28, 0.7);
+      background: #000;
     }
 
     .menu a .icon img {
+      max-width: 20px;
+      max-height: 20px;
       width: 20px;
       height: 20px;
       object-fit: contain;
     }
 
-    .menu a:hover,
-    .menu a:focus-visible,
-    .menu a.active {
-      background: rgba(77, 228, 255, 0.16);
-      color: var(--page-text);
-      transform: translateX(2px);
-      outline: none;
-    }
-
-    .page-shell {
+    main {
       flex: 1;
-      width: min(820px, 100%);
+      padding: 48px clamp(24px, 4vw, 64px);
       display: flex;
       flex-direction: column;
-      gap: clamp(24px, 5vw, 40px);
-      align-items: center;
+      gap: 32px;
     }
 
-    .page-shell > * {
-      width: min(100%, 680px);
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 2vw + 1rem, 2.75rem);
     }
 
-    .top-bar {
+    p {
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    .page-header {
       display: flex;
-      align-items: center;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .page-header__top {
+      display: flex;
+      flex-wrap: wrap;
       justify-content: space-between;
-      gap: 16px;
-      padding: 18px 24px;
-      background: var(--bar-bg);
-      border: 1px solid var(--bar-border);
-      border-radius: 20px;
-      box-shadow: var(--bar-shadow);
-      backdrop-filter: blur(18px);
+      align-items: flex-end;
+      gap: 24px;
     }
 
     .welcome-message {
-      margin: 0;
-      font-size: clamp(1rem, 2vw, 1.25rem);
-      font-weight: 600;
-      color: var(--page-text);
+      color: var(--text-secondary);
+      font-size: 1rem;
     }
 
     .logout-button {
-      padding: 10px 20px;
-      border-radius: 999px;
       border: none;
+      background: rgba(255, 255, 255, 0.52);
+      border-radius: 999px;
+      padding: 12px 28px;
       font-weight: 600;
-      font-size: 0.95rem;
-      color: #020617;
-      background: var(--page-text);
+      color: var(--text-primary);
       cursor: pointer;
-      transition: transform 160ms ease, box-shadow 160ms ease;
-      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      box-shadow: 0 10px 30px rgba(31, 63, 104, 0.12);
+      transition: background 160ms ease, transform 160ms ease;
     }
 
     .logout-button:hover,
     .logout-button:focus-visible {
+      background: rgba(255, 255, 255, 0.82);
       transform: translateY(-1px);
-      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.35);
       outline: none;
     }
 
@@ -165,38 +169,166 @@
       transform: translateY(0);
     }
 
-    .dashboard {
+    .dashboard-section {
+      display: flex;
+      justify-content: center;
+    }
+
+    .clock-widget {
+      --bg: #0b0f1a;
+      --card: #0f1524;
+      --muted: #7e8ca8;
+      --text: #e6edf7;
+      --accent: #4de4ff;
+      --ring-size: 160px;
+      --glow: 0 0 20px rgba(77, 228, 255, 0.65);
+      --shadow: 0 8px 30px rgba(0, 0, 0, 0.55);
+      --progress: 0deg;
+      width: min(460px, 100%);
+      display: flex;
+      justify-content: center;
+    }
+
+    .clock-widget .widget {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      align-items: center;
+      gap: 14px;
+      background: var(--card);
+      border: 1px solid rgba(77, 228, 255, 0.14);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      padding: 10px 18px 14px 18px;
+      color: var(--text);
+    }
+
+    .clock-widget .clock-wrap {
+      height: 180px;
+      width: 160px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 24px;
-      width: min(100%, 680px);
+      justify-content: space-between;
+      padding: 10px 0;
+      position: relative;
     }
 
-    .widget-grid {
+    .clock-widget .ring,
+    .clock-widget canvas {
+      height: var(--ring-size);
+      width: var(--ring-size);
+      border-radius: 50%;
+    }
+
+    .clock-widget .ring {
+      background:
+        radial-gradient(closest-side, rgba(7, 12, 22, 1) 78%, transparent 79%),
+        conic-gradient(from -90deg, var(--accent) var(--progress), rgba(77, 228, 255, 0.12) 0 360deg);
+      box-shadow: inset 0 0 18px rgba(77, 228, 255, 0.25), var(--glow);
       display: grid;
-      gap: 24px;
-      justify-content: center;
-      width: 100%;
-      max-width: 640px;
-      margin: 0 auto;
+      place-items: center;
     }
 
-    @media (max-width: 720px) {
-      body {
-        padding: 20px;
-      }
+    .clock-widget .time {
+      text-align: center;
+    }
 
-      .app-layout {
-        flex-direction: column;
-        align-items: stretch;
-      }
+    .clock-widget .time .hhmm {
+      font-size: 34px;
+      font-weight: 700;
+      text-shadow: var(--glow);
+    }
+
+    .clock-widget .time .sec {
+      font-size: 12px;
+      opacity: 0.8;
+      margin-top: 2px;
+    }
+
+    .clock-widget .info {
+      display: grid;
+      gap: 4px;
+    }
+
+    .clock-widget .greeting {
+      font-size: 19px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .clock-widget .subtle {
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .clock-widget .weather {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(77, 228, 255, 0.15);
+      border-radius: 14px;
+      padding: 4px 8px;
+      width: fit-content;
+    }
+
+    .clock-widget .weather .icon {
+      font-size: 22px;
+      filter: drop-shadow(0 0 8px rgba(77, 228, 255, 0.25));
+    }
+
+    .clock-widget .weather .temp {
+      font-size: 16px;
+      font-weight: 700;
+      text-shadow: var(--glow);
+    }
+
+    .clock-widget .weather .meta {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .clock-widget .dots {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: absolute;
+      top: 50%;
+      left: -24px;
+      transform: translateY(-50%);
+    }
+
+    .clock-widget .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      cursor: pointer;
+    }
+
+    .clock-widget .dot.active {
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    .clock-widget canvas {
+      display: none;
+      position: absolute;
+      top: 12px;
+    }
+
+    @media (max-width: 960px) {
+      body { flex-direction: column; }
 
       .sidebar {
+        width: auto;
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
-        width: 100%;
+        padding: 20px 24px;
+        box-shadow: none;
+        gap: 20px;
       }
 
       .menu {
@@ -205,94 +337,222 @@
         gap: 12px;
       }
 
-      .menu a {
-        flex: 1 1 140px;
-      }
+      .menu a { padding: 10px 14px; }
 
-      .page-shell {
-        align-items: stretch;
-      }
+      main { padding: 32px 24px; }
+    }
 
-      .top-bar {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .logout-button {
-        align-self: stretch;
+    @media (max-width: 640px) {
+      .clock-widget .widget {
+        grid-template-columns: 1fr;
+        justify-items: center;
         text-align: center;
       }
 
-      .widget-grid {
-        gap: 20px;
+      .clock-widget .clock-wrap {
+        margin-bottom: 12px;
+      }
+
+      .clock-widget .dots {
+        position: static;
+        flex-direction: row;
+        transform: none;
+        margin-top: 12px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="app-layout">
-    <aside class="sidebar">
-      <div class="logo">
-        <img src="images/logo%20white.png" alt="Easylife logo" />
-      </div>
-      <nav class="menu" aria-label="Hovedmeny">
-        <a class="active" href="index.html"><span class="icon"><img src="images/Icon_home2.png" alt="Hjem" /></span>Dashboard</a>
-        <a href="mal.html"><span class="icon"><img src="images/Icon_goal2.png" alt="Mål" /></span>Mål</a>
-        <a href="todo.html"><span class="icon"><img src="images/Icon_todo2.png" alt="Todo" /></span>Todo</a>
-        <a href="rutiner.html"><span class="icon"><img src="images/Icon_routine2.png" alt="Rutiner" /></span>Rutiner</a>
-        <a href="training.html"><span class="icon"><img src="images/Icon_train2.png" alt="Trening" /></span>Training og kostholdsplan</a>
-      </nav>
-    </aside>
-
-    <div class="page-shell">
-      <header class="top-bar">
-        <p class="welcome-message" data-welcome-message>Velkommen</p>
-        <button id="logout-button" class="logout-button" type="button">Logg ut</button>
-      </header>
-
-      <main class="dashboard" aria-label="Dashboard">
-        <section class="widget-grid" aria-label="Forsideelementer">
-          <article class="neon-clock-weather" data-neon-widget role="group" aria-label="Klokke og vær">
-            <div class="clock-wrap">
-              <div class="ring" data-ring>
-                <div class="time" aria-live="polite">
-                  <div class="hhmm" data-hhmm>12:52</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="info">
-              <p class="greeting" data-greeting>God kveld ✨</p>
-              <p class="subtle" data-date>torsdag 11. juli 2013</p>
-
-              <div>
-                <span class="pill" data-message>Fokusmodus: La oss knuse målene i dag</span>
-              </div>
-
-              <div class="weather" aria-live="polite">
-                <div class="icon" data-weather-icon>☁️</div>
-                <div>
-                  <div class="temp" data-weather-temp>--°</div>
-                  <div class="meta" data-weather-meta>Henter vær...</div>
-                </div>
-                <div class="meta" data-weather-place>–</div>
-              </div>
-
-              <div class="grid">
-                <div class="stat" data-weather-wind>Vind: –</div>
-                <div class="stat" data-weather-feels>Føles som: –</div>
-                <div class="stat" data-weather-uv>UV: –</div>
-              </div>
-            </div>
-          </article>
-        </section>
-      </main>
+  <aside class="sidebar">
+    <div class="logo">
+      <img src="images/logo%20white.png" alt="Easylife logo" />
     </div>
-  </div>
+    <nav class="menu" aria-label="Hovedmeny">
+      <a class="active" href="index.html"><span class="icon"><img src="images/Icon_home2.png" alt="Hjem" /></span>Dashboard</a>
+      <a href="mal.html"><span class="icon"><img src="images/Icon_goal2.png" alt="Mål" /></span>Mål</a>
+      <a href="todo.html"><span class="icon"><img src="images/Icon_todo2.png" alt="Todo" /></span>Todo</a>
+      <a href="rutiner.html"><span class="icon"><img src="images/Icon_routine2.png" alt="Rutiner" /></span>Rutiner</a>
+      <a href="training.html"><span class="icon"><img src="images/Icon_train2.png" alt="Trening" /></span>Training og kostholdsplan</a>
+    </nav>
+  </aside>
+  <main>
+    <header class="page-header">
+      <div class="page-header__top">
+        <div>
+          <h1>Dashboard</h1>
+          <p class="welcome-message" data-welcome-message>Velkommen</p>
+        </div>
+        <button id="logout-button" class="logout-button" type="button">Logg ut</button>
+      </div>
+    </header>
+
+    <section class="dashboard-section" aria-label="Klokke og vær">
+      <div class="clock-widget">
+        <div class="widget">
+          <div class="clock-wrap" id="clockWrap">
+            <div class="ring" id="ring">
+              <div class="time">
+                <div class="hhmm" id="hhmm">12:52</div>
+                <div class="sec" id="sec">sek</div>
+              </div>
+            </div>
+            <canvas id="classicClock" width="160" height="160"></canvas>
+            <canvas id="romanClock" width="160" height="160"></canvas>
+            <div class="dots">
+              <div class="dot active" data-style="neon"></div>
+              <div class="dot" data-style="classic"></div>
+              <div class="dot" data-style="roman"></div>
+            </div>
+          </div>
+
+          <div class="info">
+            <div class="greeting" id="greeting">God kveld ✨</div>
+            <div class="subtle" id="date">torsdag 11. juli 2013</div>
+            <div class="weather" id="weather">
+              <div class="icon" id="w-icon">☁️</div>
+              <div class="temp" id="w-temp">--°</div>
+              <div class="meta" id="w-place">–</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const hhmmEl = document.getElementById('hhmm');
+    const secEl = document.getElementById('sec');
+    const ringEl = document.getElementById('ring');
+    const classic = document.getElementById('classicClock');
+    const roman = document.getElementById('romanClock');
+    const dots = document.querySelectorAll('.dot');
+    let style = 'neon';
+
+    function pad(n) { return String(n).padStart(2, '0'); }
+
+    function greetByHour(h) {
+      if (h < 5) return 'God natt 🌙';
+      if (h < 11) return 'God morgen ☀️';
+      if (h < 17) return 'God ettermiddag ✨';
+      if (h < 22) return 'God kveld 🌆';
+      return 'God natt 🌙';
+    }
+
+    function tick() {
+      const now = new Date();
+      const h = now.getHours();
+      const m = now.getMinutes();
+      const s = now.getSeconds();
+      if (style === 'neon') {
+        hhmmEl.textContent = `${pad(h)}:${pad(m)}`;
+        secEl.textContent = `${pad(s)} sek`;
+        ringEl.style.display = 'grid'; classic.style.display = 'none'; roman.style.display = 'none';
+        document.documentElement.style.setProperty('--progress', `${(s / 60) * 360}deg`);
+      } else if (style === 'classic') {
+        ringEl.style.display = 'none'; classic.style.display = 'block'; roman.style.display = 'none';
+        drawClassic(h, m, s);
+      } else {
+        ringEl.style.display = 'none'; classic.style.display = 'none'; roman.style.display = 'block';
+        drawRoman(h, m, s);
+      }
+
+      document.getElementById('greeting').textContent = greetByHour(h);
+      document.getElementById('date').textContent = new Intl.DateTimeFormat('no-NO', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+      }).format(now);
+    }
+
+    function drawClassic(h, m, s) {
+      const ctx = classic.getContext('2d');
+      ctx.clearRect(0, 0, 160, 160);
+      ctx.save();
+      ctx.translate(80, 80);
+      ctx.strokeStyle = '#e6edf7';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(0, 0, 75, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.font = '14px Arial';
+      ctx.fillStyle = '#e6edf7';
+      for (let num = 1; num <= 12; num++) {
+        const ang = num * Math.PI / 6;
+        const x = 60 * Math.sin(ang);
+        const y = -60 * Math.cos(ang);
+        ctx.fillText(num.toString(), x - 5, y + 5);
+      }
+      drawHands(ctx, h, m, s);
+      ctx.restore();
+    }
+
+    function drawRoman(h, m, s) {
+      const ctx = roman.getContext('2d');
+      ctx.clearRect(0, 0, 160, 160);
+      ctx.save();
+      ctx.translate(80, 80);
+      ctx.strokeStyle = '#aaa';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(0, 0, 75, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.font = '13px Times New Roman';
+      ctx.fillStyle = '#fff';
+      const romans = ['XII', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI'];
+      romans.forEach((r, i) => {
+        const ang = (i * Math.PI / 6);
+        const offsetX = (i >= 6 && i <= 10) ? 55 : 60;
+        const x = offsetX * Math.sin(ang);
+        const y = -60 * Math.cos(ang);
+        ctx.fillText(r, x - 10, y + 5);
+      });
+      drawHands(ctx, h, m, s, true);
+      ctx.restore();
+    }
+
+    function drawHands(ctx, h, m, s, roman = false) {
+      const hourAng = ((h % 12) + m / 60) * Math.PI / 6;
+      const minAng = (m + s / 60) * Math.PI / 30;
+      const secAng = s * Math.PI / 30;
+      ctx.lineWidth = 4;
+      ctx.beginPath(); ctx.rotate(hourAng); ctx.moveTo(0, 10); ctx.lineTo(0, -35); ctx.stroke(); ctx.rotate(-hourAng);
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.rotate(minAng); ctx.moveTo(0, 15); ctx.lineTo(0, -55); ctx.stroke(); ctx.rotate(-minAng);
+      ctx.strokeStyle = roman ? 'red' : '#ff4444';
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.rotate(secAng); ctx.moveTo(0, 20); ctx.lineTo(0, -65); ctx.stroke(); ctx.rotate(-secAng);
+    }
+
+    dots.forEach(d => {
+      d.addEventListener('click', () => {
+        dots.forEach(dot => dot.classList.remove('active'));
+        d.classList.add('active');
+        style = d.dataset.style;
+      });
+    });
+
+    setInterval(tick, 1000); tick();
+
+    async function getWeather() {
+      try {
+        const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=59.91&longitude=10.75&current=temperature_2m,weather_code&timezone=auto');
+        const data = await res.json();
+        const c = data.current;
+        const wx = { 0: ['☀️', 'Klarvær'], 1: ['🌤', 'Lett skyet'], 2: ['⛅️', 'Delvis skyet'], 3: ['☁️', 'Overskyet'] };
+        const [ico, desc] = wx[c.weather_code] || ['🌡', ''];
+        document.getElementById('w-icon').textContent = ico;
+        document.getElementById('w-temp').textContent = Math.round(c.temperature_2m) + '°';
+        document.getElementById('w-place').textContent = desc;
+      } catch {
+        document.getElementById('w-icon').textContent = '⛅️';
+        document.getElementById('w-temp').textContent = '18°';
+        document.getElementById('w-place').textContent = 'Delvis skyet';
+      }
+    }
+
+    getWeather();
+  </script>
 
   <script type="module">
     import supabaseClient from './supabase-client.js';
-    import { initNeonClockWidget } from './dashboard/widgets/neon-clock-weather.js';
 
     async function enforceSession() {
       try {
@@ -331,7 +591,6 @@
       }
     }
 
-    initNeonClockWidget();
     enforceSession();
   </script>
 </body>
