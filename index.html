@@ -202,6 +202,55 @@
       font-size: 0.95rem;
     }
 
+    .page-header__forecast {
+      display: inline-grid;
+      grid-auto-flow: column;
+      gap: 12px;
+      padding-left: 12px;
+      margin-left: 12px;
+      border-left: 1px solid rgba(255, 255, 255, 0.16);
+    }
+
+    .page-header__forecast-item {
+      display: grid;
+      gap: 4px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.85);
+      min-width: 52px;
+    }
+
+    .page-header__forecast-icon {
+      font-size: 1.1rem;
+      line-height: 1;
+    }
+
+    .page-header__forecast-temp {
+      font-weight: 600;
+    }
+
+    @media (max-width: 640px) {
+      .page-header__weather {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+      }
+
+      .page-header__forecast {
+        border-left: 0;
+        margin-left: 0;
+        padding-left: 0;
+        width: 100%;
+        grid-auto-flow: row;
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+      }
+
+      .page-header__forecast-item {
+        justify-items: flex-start;
+        text-align: left;
+      }
+    }
+
     .page-header__right {
       display: flex;
       flex-direction: column;
@@ -359,6 +408,7 @@
                   <span class="page-header__weather-temp" id="w-temp">--°</span>
                   <span id="w-place">–</span>
                 </div>
+                <div class="page-header__forecast" id="w-forecast" aria-live="polite"></div>
               </div>
             </div>
           </div>
@@ -414,20 +464,97 @@
     setInterval(tick, 1000);
     tick();
 
+    function resolveWeatherIcon(code) {
+      const mapping = {
+        0: ['☀️', 'Klarvær'],
+        1: ['🌤', 'Lett skyet'],
+        2: ['⛅️', 'Delvis skyet'],
+        3: ['☁️', 'Overskyet'],
+        45: ['🌫️', 'Tåke'],
+        48: ['🌫️', 'Tåke'],
+        51: ['🌦️', 'Lett yr'],
+        53: ['🌦️', 'Yr'],
+        55: ['🌧️', 'Kraftig yr'],
+        61: ['🌦️', 'Lett regn'],
+        63: ['🌧️', 'Regn'],
+        65: ['🌧️', 'Kraftig regn'],
+        66: ['🌧️', 'Underkjølt regn'],
+        67: ['🌧️', 'Kraftig underkjølt regn'],
+        71: ['🌨️', 'Lett snø'],
+        73: ['🌨️', 'Snø'],
+        75: ['❄️', 'Kraftig snø'],
+        77: ['🌨️', 'Snøbyger'],
+        80: ['🌦️', 'Lette regnbyger'],
+        81: ['🌧️', 'Regnbyger'],
+        82: ['🌧️', 'Kraftige regnbyger'],
+        85: ['🌨️', 'Snøbyger'],
+        86: ['🌨️', 'Kraftige snøbyger'],
+        95: ['⛈️', 'Torden'],
+        96: ['⛈️', 'Torden og hagl'],
+        99: ['⛈️', 'Kraftig torden'],
+      };
+
+      return mapping[code] || ['🌡️', ''];
+    }
+
+    function renderForecast(items) {
+      const container = document.getElementById('w-forecast');
+      if (!container) return;
+
+      container.innerHTML = items.map(({ icon, temperature, label }) => `
+        <div class="page-header__forecast-item">
+          <span class="page-header__forecast-icon" aria-hidden="true">${icon}</span>
+          <span class="page-header__forecast-temp">${temperature}°</span>
+          <span class="page-header__forecast-time">${label}</span>
+        </div>
+      `).join('');
+    }
+
     async function getWeather() {
       try {
-        const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=59.91&longitude=10.75&current=temperature_2m,weather_code&timezone=auto');
+        const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=59.91&longitude=10.75&current=temperature_2m,weather_code&hourly=temperature_2m,weather_code&forecast_days=1&timezone=auto');
         const data = await res.json();
         const c = data.current;
-        const wx = { 0: ['☀️', 'Klarvær'], 1: ['🌤', 'Lett skyet'], 2: ['⛅️', 'Delvis skyet'], 3: ['☁️', 'Overskyet'] };
-        const [ico, desc] = wx[c.weather_code] || ['🌡', ''];
+        const [ico, desc] = resolveWeatherIcon(c.weather_code);
+
         document.getElementById('w-icon').textContent = ico;
         document.getElementById('w-temp').textContent = Math.round(c.temperature_2m) + '°';
         document.getElementById('w-place').textContent = desc;
+
+        if (Array.isArray(data.hourly?.time)) {
+          const now = c.time ? new Date(c.time) : new Date();
+          const formatter = new Intl.DateTimeFormat('no-NO', { hour: '2-digit', minute: '2-digit' });
+
+          const futureIndices = data.hourly.time
+            .map((t, idx) => ({ time: new Date(t), idx }))
+            .filter(item => item.time > now);
+
+          const upcoming = futureIndices.slice(0, 2).map(({ time, idx }) => {
+            const [icon, label] = resolveWeatherIcon(data.hourly.weather_code[idx]);
+            return {
+              icon,
+              description: label,
+              temperature: Math.round(data.hourly.temperature_2m[idx]),
+              label: formatter.format(time),
+            };
+          });
+
+          const forecastItems = [
+            { icon: ico, temperature: Math.round(c.temperature_2m), label: 'Nå' },
+            ...upcoming,
+          ];
+
+          renderForecast(forecastItems);
+        }
       } catch {
         document.getElementById('w-icon').textContent = '⛅️';
         document.getElementById('w-temp').textContent = '18°';
         document.getElementById('w-place').textContent = 'Delvis skyet';
+        renderForecast([
+          { icon: '⛅️', temperature: 18, label: 'Nå' },
+          { icon: '🌧️', temperature: 17, label: '14:00' },
+          { icon: '🌧️', temperature: 16, label: '15:00' },
+        ]);
       }
     }
 
