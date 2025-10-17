@@ -529,7 +529,7 @@
             .map((t, idx) => ({ time: new Date(t), idx }))
             .filter(item => item.time > now);
 
-          const upcoming = futureIndices.slice(0, 2).map(({ time, idx }) => {
+          const upcoming = futureIndices.slice(0, 3).map(({ time, idx }) => {
             const [icon, label] = resolveWeatherIcon(data.hourly.weather_code[idx]);
             return {
               icon,
@@ -539,21 +539,16 @@
             };
           });
 
-          const forecastItems = [
-            { icon: ico, temperature: Math.round(c.temperature_2m), label: 'Nå' },
-            ...upcoming,
-          ];
-
-          renderForecast(forecastItems);
+          renderForecast(upcoming);
         }
       } catch {
         document.getElementById('w-icon').textContent = '⛅️';
         document.getElementById('w-temp').textContent = '18°';
         document.getElementById('w-place').textContent = 'Delvis skyet';
         renderForecast([
-          { icon: '⛅️', temperature: 18, label: 'Nå' },
           { icon: '🌧️', temperature: 17, label: '14:00' },
           { icon: '🌧️', temperature: 16, label: '15:00' },
+          { icon: '☁️', temperature: 15, label: '16:00' },
         ]);
       }
     }
