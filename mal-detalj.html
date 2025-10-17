@@ -411,6 +411,54 @@
       justify-content: center;
     }
 
+    .goal-section__ai-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border: none;
+      border-radius: 999px;
+      padding: 10px 18px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      color: #ffffff;
+      box-shadow: 0 10px 28px rgba(37, 99, 235, 0.18);
+      transition: transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    .goal-section__ai-button:hover,
+    .goal-section__ai-button:focus-visible {
+      transform: translateY(-1px);
+      outline: none;
+      box-shadow: 0 12px 30px rgba(37, 99, 235, 0.24);
+    }
+
+    .goal-section__ai-button[disabled] {
+      opacity: 0.65;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .goal-section__ai-icon {
+      font-size: 1.1rem;
+    }
+
+    .goal-ai-inline-status {
+      margin: 8px 0 0;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .goal-ai-inline-status[data-state="success"] {
+      color: #047857;
+    }
+
+    .goal-ai-inline-status[data-state="error"] {
+      color: #b91c1c;
+    }
+
     .chip {
       display: inline-flex;
       align-items: center;
@@ -1063,6 +1111,61 @@
       cursor: pointer;
     }
 
+    .stacked-form button[type="submit"][disabled] {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .goal-ai-preferences {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .goal-ai-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin-top: 4px;
+    }
+
+    .goal-ai-actions button[type="button"] {
+      border-radius: 12px;
+      border: 1px solid rgba(15, 28, 46, 0.14);
+      background: rgba(15, 28, 46, 0.04);
+      color: var(--text-primary);
+      padding: 10px 18px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .goal-ai-actions button[type="button"]:hover,
+    .goal-ai-actions button[type="button"]:focus-visible {
+      outline: none;
+      border-color: rgba(37, 99, 235, 0.3);
+      color: #1d4ed8;
+      background: rgba(37, 99, 235, 0.12);
+    }
+
+    .goal-ai-actions button[type="button"][disabled] {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .goal-ai-status {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin: 4px 0 0;
+    }
+
+    .goal-ai-status[data-state="error"] {
+      color: #b91c1c;
+    }
+
+    .goal-ai-status[data-state="success"] {
+      color: #047857;
+    }
+
     .note-editor {
       display: flex;
       flex-direction: column;
@@ -1231,6 +1334,8 @@
       <a href="todo.html"><span class="icon"><img src="images/Icon_todo2.png" alt="Todo" /></span>Todo</a>
       <a href="rutiner.html"><span class="icon"><img src="images/Icon_routine2.png" alt="Rutiner" /></span>Rutiner</a>
       <a href="training.html"><span class="icon"><img src="images/Icon_train2.png" alt="Trening" /></span>Training og kostholdsplan</a>
+      <a href="api-manager.html"><span class="icon">🧠</span>API Manager</a>
+      <a href="api-log.html"><span class="icon">📈</span>API-logg</a>
     </nav>
   </aside>
   <main>
@@ -1292,10 +1397,15 @@
                 </button>
               </h3>
               <div class="goal-section__actions">
+                <button type="button" class="goal-section__ai-button" id="goal-milestone-ai-button">
+                  <span class="goal-section__ai-icon" aria-hidden="true">✨</span>
+                  <span class="goal-section__ai-label">Fyll ut med AI</span>
+                </button>
                 <button type="button" class="goal-section__action-button goal-icon-button" id="goal-milestone-add-button" aria-expanded="false">
                   <span class="goal-sr-only">Legg til milepæl</span>
                 </button>
               </div>
+              <p class="goal-ai-inline-status" id="goal-milestone-ai-inline-status" hidden></p>
             </div>
             <form class="goal-section__form" id="goal-milestone-form" hidden>
               <input type="text" name="milestone-title" placeholder="Legg til milepæl" required />
@@ -1414,9 +1524,42 @@
       </form>
     </div>
   </div>
+  <div class="note-modal" id="goal-milestone-ai-modal" role="dialog" aria-modal="true" aria-hidden="true" hidden>
+    <div class="note-modal__dialog note-modal__dialog--form">
+      <div class="note-modal__header">
+        <h3 id="goal-milestone-ai-title">Fyll ut milepæler med AI</h3>
+        <div class="note-modal__actions">
+          <button type="button" class="goal-icon-button" id="goal-milestone-ai-close"></button>
+        </div>
+      </div>
+      <form class="stacked-form" id="goal-milestone-ai-form">
+        <label for="goal-milestone-ai-preferences">Preferanser til AI (valgfritt)</label>
+        <textarea
+          id="goal-milestone-ai-preferences"
+          name="aiPreferences"
+          class="goal-ai-preferences"
+          rows="5"
+          placeholder="F.eks. maks 3 milepæler og maks 5 to-dos per milepæl."
+        ></textarea>
+        <p class="goal-ai-status" id="goal-milestone-ai-status" hidden role="status"></p>
+        <div class="goal-ai-actions">
+          <button type="submit" id="goal-milestone-ai-submit">Kjør AI</button>
+          <button type="button" id="goal-milestone-ai-cancel">Avbryt</button>
+        </div>
+      </form>
+    </div>
+  </div>
   <script src="goals-data.js"></script>
   <script type="module">
     import supabaseClient from './supabase-client.js';
+    import { ApiClient, ApiRunLogger, API_SELECTION_REQUIRED } from './api/engine.js';
+    import {
+      loadGoalPlanningPrompts,
+      buildMilestonePrompt,
+      parseMilestoneResponse,
+      buildTodoPrompt,
+      parseTodoResponse
+    } from './api/goalPrompts.js';
 
     (async function () {
       const baseGoalsData = window.EASYLIFE_GOALS_DATA || [];
@@ -1795,6 +1938,15 @@
       const milestoneHeadingButton = document.getElementById('goal-milestones-title');
       const milestoneFormToggle = document.getElementById('goal-milestone-add-button');
       const milestoneForm = document.getElementById('goal-milestone-form');
+      const milestoneAiButton = document.getElementById('goal-milestone-ai-button');
+      const milestoneAiInlineStatus = document.getElementById('goal-milestone-ai-inline-status');
+      const milestoneAiModal = document.getElementById('goal-milestone-ai-modal');
+      const milestoneAiForm = document.getElementById('goal-milestone-ai-form');
+      const milestoneAiClose = document.getElementById('goal-milestone-ai-close');
+      const milestoneAiCancel = document.getElementById('goal-milestone-ai-cancel');
+      const milestoneAiPreferencesField = document.getElementById('goal-milestone-ai-preferences');
+      const milestoneAiStatus = document.getElementById('goal-milestone-ai-status');
+      const milestoneAiSubmit = document.getElementById('goal-milestone-ai-submit');
       const notesList = document.getElementById('goal-notes-list');
       const notesSearchInput = document.getElementById('goal-notes-search');
       const addNoteButton = document.getElementById('goal-add-note');
@@ -1838,6 +1990,10 @@
         milestoneDeleteButton.disabled = true;
       }
 
+      if (milestoneAiClose) {
+        setButtonIconContent(milestoneAiClose, 'close', 'Lukk AI-dialogen');
+      }
+
       const currentUrl = new URL(window.location.href);
       const goalParam = currentUrl.searchParams.get('goal');
       const fallbackGoalParam = currentUrl.searchParams.get('goalIndex');
@@ -1864,6 +2020,9 @@
       let activeModalCount = 0;
       let milestoneFormIsOpen = false;
       let milestoneEditIndex = null;
+      let milestoneAiIsOpen = false;
+      let milestoneAiIsRunning = false;
+      let lastAiPreferences = '';
 
       const mapDatabaseTodo = (todo, index = 0, { fallbackMilestoneId } = {}) => ({
         id: todo?.id ?? null,
@@ -2020,6 +2179,98 @@
 
         if (typeof disabled === 'boolean') {
           milestoneCompleteButton.disabled = disabled;
+        }
+      };
+
+      const updateMilestoneAiInlineStatus = (message, state = 'info') => {
+        if (!milestoneAiInlineStatus) {
+          return;
+        }
+
+        if (!message) {
+          milestoneAiInlineStatus.hidden = true;
+          milestoneAiInlineStatus.textContent = '';
+          milestoneAiInlineStatus.dataset.state = 'info';
+          return;
+        }
+
+        milestoneAiInlineStatus.hidden = false;
+        milestoneAiInlineStatus.textContent = message;
+        milestoneAiInlineStatus.dataset.state = state;
+      };
+
+      const updateMilestoneAiStatus = (message, state = 'info') => {
+        if (!milestoneAiStatus) {
+          return;
+        }
+
+        if (!message) {
+          milestoneAiStatus.hidden = true;
+          milestoneAiStatus.textContent = '';
+          milestoneAiStatus.dataset.state = 'info';
+          return;
+        }
+
+        milestoneAiStatus.hidden = false;
+        milestoneAiStatus.textContent = message;
+        milestoneAiStatus.dataset.state = state;
+      };
+
+      const setMilestoneAiLoading = (isLoading) => {
+        milestoneAiIsRunning = Boolean(isLoading);
+        if (milestoneAiButton) {
+          milestoneAiButton.disabled = isLoading;
+        }
+        if (milestoneAiSubmit) {
+          milestoneAiSubmit.disabled = isLoading;
+          milestoneAiSubmit.textContent = isLoading ? 'Genererer …' : 'Kjør AI';
+        }
+        if (milestoneAiCancel) {
+          milestoneAiCancel.disabled = isLoading;
+        }
+      };
+
+      const openMilestoneAiModal = () => {
+        if (!milestoneAiModal) {
+          return;
+        }
+
+        milestoneAiIsOpen = true;
+        milestoneAiModal.removeAttribute('hidden');
+        milestoneAiModal.setAttribute('aria-hidden', 'false');
+        lockBodyScroll();
+        updateMilestoneAiStatus('', 'info');
+
+        if (milestoneAiPreferencesField) {
+          milestoneAiPreferencesField.value = lastAiPreferences;
+          requestAnimationFrame(() => {
+            milestoneAiPreferencesField.focus();
+          });
+        }
+      };
+
+      const closeMilestoneAiModal = ({ restoreFocus = true } = {}) => {
+        if (!milestoneAiModal) {
+          return;
+        }
+
+        if (milestoneAiIsRunning) {
+          return;
+        }
+
+        milestoneAiIsOpen = false;
+        milestoneAiModal.setAttribute('hidden', '');
+        milestoneAiModal.setAttribute('aria-hidden', 'true');
+
+        if (milestoneAiForm) {
+          milestoneAiForm.reset();
+        }
+
+        updateMilestoneAiStatus('', 'info');
+        unlockBodyScroll();
+
+        if (restoreFocus && milestoneAiButton) {
+          requestAnimationFrame(() => milestoneAiButton.focus());
         }
       };
 
@@ -2394,6 +2645,218 @@
         }
 
         return data;
+      }
+
+      const normalizeLabel = (value) =>
+        (value || '')
+          .toString()
+          .normalize('NFKD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^a-zA-Z0-9\s-]/g, '')
+          .toLowerCase()
+          .trim();
+
+      async function generateMilestonesWithAi(goal, preferencesText = '') {
+        if (!goal) {
+          return { createdCount: 0, createdTodos: 0 };
+        }
+
+        await loadGoalPlanningPrompts();
+        ensureGoalCollections(goal);
+
+        const client = new ApiClient();
+        const logger = new ApiRunLogger();
+        const config = client.getConfiguration();
+        const sequenceId = goal?.id ? `goal-${goal.id}` : `goal-local-${Date.now()}`;
+
+        const promptDetails = await buildMilestonePrompt(goal, { preferencesText });
+
+        let milestoneResponse = '';
+        try {
+          milestoneResponse = await client.call(promptDetails.prompt, {
+            systemPrompt: promptDetails.systemPrompt
+          });
+          logger.log({
+            sequenceId,
+            stepId: 'milestones',
+            label: 'Generer milepæler',
+            provider: config.provider,
+            model: config.model,
+            prompt: promptDetails.prompt,
+            output: milestoneResponse,
+            meta: promptDetails.meta
+          });
+        } catch (error) {
+          logger.log({
+            sequenceId,
+            stepId: 'milestones',
+            label: 'Generer milepæler',
+            provider: config.provider,
+            model: config.model,
+            prompt: promptDetails.prompt,
+            error: error?.message || String(error),
+            status: 'error'
+          });
+          throw error;
+        }
+
+        const suggestedMilestones = parseMilestoneResponse(milestoneResponse);
+        if (!suggestedMilestones.length) {
+          return { createdCount: 0, createdTodos: 0 };
+        }
+
+        const existingTitles = new Set(
+          (goal.milestones || [])
+            .map((milestone) => normalizeLabel(milestone?.title))
+            .filter(Boolean)
+        );
+
+        const newMilestones = suggestedMilestones.filter((item) => {
+          const normalized = normalizeLabel(item?.title);
+          if (!normalized) {
+            return false;
+          }
+          if (existingTitles.has(normalized)) {
+            return false;
+          }
+          existingTitles.add(normalized);
+          return true;
+        });
+
+        if (!newMilestones.length) {
+          return { createdCount: 0, createdTodos: 0 };
+        }
+
+        let createdCount = 0;
+        let createdTodos = 0;
+
+        for (let index = 0; index < newMilestones.length; index++) {
+          const milestoneData = newMilestones[index];
+          const position = goal.milestones.length;
+          const baseMilestone = {
+            id: null,
+            goalId: goal.id ?? null,
+            title: milestoneData.title,
+            detail: milestoneData.detail || '',
+            completed: false,
+            progress: null,
+            deadline: milestoneData.deadline || '',
+            position,
+            isExpanded: true,
+            isTodoFormOpen: false,
+            shouldFocusTodoTitle: false,
+            todos: []
+          };
+
+          let persistedMilestone = { ...baseMilestone };
+
+          if (goal.id && currentUserId) {
+            try {
+              const inserted = await insertMilestoneIntoDatabase(goal, {
+                title: baseMilestone.title,
+                detail: baseMilestone.detail,
+                position,
+                deadline: baseMilestone.deadline
+              });
+              if (inserted) {
+                persistedMilestone = {
+                  ...mapDatabaseMilestone(inserted, position, { fallbackGoalId: goal.id }),
+                  isExpanded: true,
+                  isTodoFormOpen: false,
+                  shouldFocusTodoTitle: false
+                };
+              }
+            } catch (milestoneError) {
+              console.error('Feil ved lagring av milepæl', milestoneError);
+              persistedMilestone = { ...baseMilestone };
+            }
+          }
+
+          goal.milestones.push(persistedMilestone);
+          createdCount += 1;
+
+          const todoPromptDetails = await buildTodoPrompt(goal, persistedMilestone, { preferencesText });
+          let todoResponse = '';
+
+          try {
+            todoResponse = await client.call(todoPromptDetails.prompt, {
+              systemPrompt: todoPromptDetails.systemPrompt
+            });
+            logger.log({
+              sequenceId,
+              stepId: `todos-${position}`,
+              label: `To-dos for ${persistedMilestone.title}`,
+              provider: config.provider,
+              model: config.model,
+              prompt: todoPromptDetails.prompt,
+              output: todoResponse,
+              meta: { milestoneTitle: persistedMilestone.title }
+            });
+          } catch (todoError) {
+            logger.log({
+              sequenceId,
+              stepId: `todos-${position}`,
+              label: `To-dos for ${persistedMilestone.title}`,
+              provider: config.provider,
+              model: config.model,
+              prompt: todoPromptDetails.prompt,
+              error: todoError?.message || String(todoError),
+              status: 'error',
+              meta: { milestoneTitle: persistedMilestone.title }
+            });
+            throw todoError;
+          }
+
+          const suggestedTodos = parseTodoResponse(todoResponse);
+          const todoObjects = suggestedTodos.map((todoItem, todoIndex) => ({
+            id: null,
+            milestoneId: persistedMilestone.id ?? null,
+            title: todoItem.title,
+            detail: todoItem.detail || '',
+            completed: false,
+            position: todoIndex
+          }));
+
+          createdTodos += todoObjects.length;
+          persistedMilestone.todos = todoObjects;
+
+          if (goal.id && currentUserId && persistedMilestone.id) {
+            for (let todoIndex = 0; todoIndex < todoObjects.length; todoIndex++) {
+              const todoPayload = todoObjects[todoIndex];
+              try {
+                const insertedTodo = await insertTodoIntoDatabase(goal, persistedMilestone, {
+                  title: todoPayload.title,
+                  detail: todoPayload.detail,
+                  position: todoIndex
+                });
+                if (insertedTodo) {
+                  persistedMilestone.todos[todoIndex] = mapDatabaseTodo(insertedTodo, todoIndex, {
+                    fallbackMilestoneId: persistedMilestone.id
+                  });
+                }
+              } catch (todoSaveError) {
+                console.error('Feil ved lagring av to-do', todoSaveError);
+              }
+            }
+          }
+        }
+
+        goal.milestones.forEach((milestoneItem, index) => {
+          milestoneItem.position = index;
+        });
+
+        ensureGoalCollections(goal);
+        renderMilestones(goal);
+
+        if (goal.id && currentUserId) {
+          try {
+            await persistMilestoneOrder(goal);
+          } catch (orderError) {
+            console.error('Feil ved lagring av rekkefølge for milepæler', orderError);
+          }
+        }
+
+        return { createdCount, createdTodos };
       }
 
       async function updateTodoCompletionInDatabase(todo, completed) {
@@ -4104,6 +4567,8 @@
         if (event.key === 'Escape') {
           if (milestoneEditModal && !milestoneEditModal.hasAttribute('hidden')) {
             closeMilestoneEditModal();
+          } else if (milestoneAiModal && !milestoneAiModal.hasAttribute('hidden')) {
+            closeMilestoneAiModal();
           } else if (noteCreateModal && !noteCreateModal.hasAttribute('hidden')) {
             closeNoteCreateModal();
           } else if (noteModal && !noteModal.hasAttribute('hidden')) {
@@ -4111,6 +4576,78 @@
           }
         }
       });
+
+      if (milestoneAiButton) {
+        milestoneAiButton.addEventListener('click', () => {
+          if (milestoneAiIsRunning) {
+            return;
+          }
+          openMilestoneAiModal();
+        });
+      }
+
+      if (milestoneAiClose) {
+        milestoneAiClose.addEventListener('click', () => closeMilestoneAiModal());
+      }
+
+      if (milestoneAiCancel) {
+        milestoneAiCancel.addEventListener('click', () => closeMilestoneAiModal({ restoreFocus: false }));
+      }
+
+      if (milestoneAiModal) {
+        milestoneAiModal.addEventListener('click', (event) => {
+          if (event.target === milestoneAiModal) {
+            closeMilestoneAiModal();
+          }
+        });
+      }
+
+      if (milestoneAiForm) {
+        milestoneAiForm.addEventListener('submit', async (event) => {
+          event.preventDefault();
+          if (milestoneAiIsRunning) {
+            return;
+          }
+
+          if (!currentGoal) {
+            updateMilestoneAiStatus('Ingen mål er lastet inn.', 'error');
+            return;
+          }
+
+          ensureGoalCollections(currentGoal);
+
+          const preferencesValue = milestoneAiPreferencesField?.value?.trim() || '';
+          lastAiPreferences = preferencesValue;
+
+          setMilestoneAiLoading(true);
+          updateMilestoneAiStatus('Genererer forslag …', 'info');
+          updateMilestoneAiInlineStatus('', 'info');
+
+          try {
+            const result = await generateMilestonesWithAi(currentGoal, preferencesValue);
+            if (result.createdCount > 0) {
+              updateMilestoneAiInlineStatus(
+                `La til ${result.createdCount} nye milepæler og ${result.createdTodos} to-dos.`,
+                'success'
+              );
+              closeMilestoneAiModal({ restoreFocus: true });
+            } else {
+              updateMilestoneAiStatus('Ingen nye milepæler ble foreslått. Juster preferansene og prøv igjen.', 'info');
+            }
+          } catch (error) {
+            console.error('Feil ved AI-generering av milepæler', error);
+            if (error?.code === API_SELECTION_REQUIRED) {
+              const message = 'Konfigurer API-nøkkel og modell i API Manager før du kjører AI.';
+              updateMilestoneAiStatus(message, 'error');
+              updateMilestoneAiInlineStatus(message, 'error');
+            } else {
+              updateMilestoneAiStatus(error?.message || 'Noe gikk galt under AI-genereringen.', 'error');
+            }
+          } finally {
+            setMilestoneAiLoading(false);
+          }
+        });
+      }
 
       if (milestoneForm) {
         milestoneForm.addEventListener('submit', async (event) => {

@@ -1,0 +1,9 @@
+Returner svaret som et gyldig JSON-array. Hvert element skal ha følgende struktur:
+[
+  {
+    "title": "Kort og tydelig milepæl",
+    "detail": "Kort beskrivelse som forklarer milepælen",
+    "deadline": "YYYY-MM-DD"
+  }
+]
+Bruk tom streng ("") hvis du ikke vil foreslå en detalj eller en dato. Inkluder ingen annen tekst eller forklaring enn selve JSON-objektet.

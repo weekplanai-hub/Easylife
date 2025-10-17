@@ -1,2 +1,0 @@
-Oppgave del 1 – oversikt:
-Du skal lage en ukemeny med måltider basert på preferansene angitt i denne prompt. Resultatet skal være en kort, strukturell oversikt som brukes til videre API-kall. 
