@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fokusrom · Easylife</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --sidebar-bg: linear-gradient(180deg, #101828 0%, #020617 100%);
+      --sidebar-width: 260px;
+      --text-primary: #0f172a;
+      --text-secondary: rgba(15, 23, 42, 0.72);
+      --surface: rgba(255, 255, 255, 0.66);
+      --surface-border: rgba(148, 163, 184, 0.24);
+      --glass: rgba(255, 255, 255, 0.38);
+      --accent: #6366f1;
+      --accent-soft: rgba(99, 102, 241, 0.16);
+      --accent-strong: rgba(79, 70, 229, 0.85);
+      --glow: 0 24px 60px rgba(99, 102, 241, 0.32);
+      --timer-progress: 0deg;
+      --background-image: radial-gradient(140% 140% at 12% -10%, rgba(99, 102, 241, 0.45) 0%, rgba(14, 165, 233, 0.35) 32%, rgba(244, 244, 255, 0.92) 72%);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      color: var(--text-primary);
+      display: flex;
+      background: #f4f6fb;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: var(--background-image);
+      background-size: cover;
+      background-position: center;
+      filter: saturate(0.9);
+      z-index: -2;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.82) 0%, rgba(248, 250, 255, 0.88) 42%, rgba(241, 245, 249, 0.92) 100%);
+      z-index: -1;
+    }
+
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--sidebar-bg);
+      color: rgba(255, 255, 255, 0.92);
+      padding: 16px 24px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      position: relative;
+      box-shadow: 12px 0 32px rgba(18, 38, 63, 0.25);
+      z-index: 2;
+    }
+
+    .logo img {
+      width: 160px;
+      height: auto;
+      display: block;
+    }
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .menu a {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 16px;
+      border-radius: 14px;
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      font-weight: 500;
+      transition: background 160ms ease, color 160ms ease;
+    }
+
+    .menu a.active,
+    .menu a:hover,
+    .menu a:focus-visible {
+      background: rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+      outline: none;
+    }
+
+    .menu a .icon {
+      display: inline-flex;
+      width: 32px;
+      height: 32px;
+      border-radius: 12px;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 23, 42, 0.65);
+    }
+
+    .menu a .icon img {
+      max-width: 20px;
+      max-height: 20px;
+      width: 20px;
+      height: 20px;
+      object-fit: contain;
+    }
+
+    main {
+      flex: 1;
+      padding: 48px clamp(24px, 4vw, 72px);
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+
+    .focus-hero {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(24px, 6vw, 64px);
+      padding: clamp(28px, 6vw, 48px);
+      border-radius: 36px;
+      background: rgba(255, 255, 255, 0.68);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 30px 60px rgba(15, 23, 42, 0.1);
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .focus-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 20% 20%, rgba(79, 70, 229, 0.24), transparent 55%),
+        radial-gradient(circle at 80% 12%, rgba(14, 165, 233, 0.18), transparent 45%);
+      z-index: -1;
+      opacity: 0.9;
+    }
+
+    .focus-hero__eyebrow {
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: rgba(79, 70, 229, 0.78);
+    }
+
+    .focus-hero h1 {
+      margin: 10px 0 16px;
+      font-size: clamp(2.4rem, 3vw + 1rem, 3.4rem);
+      letter-spacing: -0.02em;
+    }
+
+    .focus-hero p {
+      margin: 0;
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+
+    .focus-hero__actions {
+      margin-top: 28px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 22px;
+      border-radius: 999px;
+      border: none;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+    }
+
+    .button--primary {
+      background: linear-gradient(130deg, rgba(79, 70, 229, 0.92), rgba(99, 102, 241, 0.82));
+      color: #ffffff;
+      box-shadow: var(--glow);
+    }
+
+    .button--primary:hover,
+    .button--primary:focus-visible {
+      transform: translateY(-1px);
+      box-shadow: 0 24px 40px rgba(99, 102, 241, 0.26);
+      outline: none;
+    }
+
+    .button--ghost {
+      background: rgba(99, 102, 241, 0.12);
+      color: var(--accent-strong);
+    }
+
+    .button--ghost:hover,
+    .button--ghost:focus-visible {
+      background: rgba(99, 102, 241, 0.16);
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .focus-hero__preview {
+      position: relative;
+      display: grid;
+      place-items: center;
+    }
+
+    .preview-card {
+      position: relative;
+      background: rgba(15, 23, 42, 0.78);
+      color: rgba(255, 255, 255, 0.94);
+      padding: 24px 28px;
+      border-radius: 24px;
+      box-shadow: 0 30px 60px rgba(15, 23, 42, 0.22);
+      backdrop-filter: blur(12px);
+    }
+
+    .preview-card__title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-weight: 600;
+      margin-bottom: 16px;
+      font-size: 1.05rem;
+    }
+
+    .preview-card__progress {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .preview-card__progress-circle {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: conic-gradient(#60a5fa 210deg, rgba(255, 255, 255, 0.16) 0deg);
+      display: grid;
+      place-items: center;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .preview-card__progress-list {
+      display: grid;
+      gap: 10px;
+      font-size: 0.95rem;
+      color: rgba(226, 232, 240, 0.85);
+    }
+
+    .preview-pulse {
+      position: absolute;
+      inset: -24px;
+      border-radius: 32px;
+      background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.22), transparent 65%);
+      filter: blur(0px);
+      opacity: 0.8;
+      z-index: -1;
+      animation: pulse 8s infinite alternate;
+    }
+
+    @keyframes pulse {
+      from { opacity: 0.65; transform: scale(0.95); }
+      to { opacity: 0.9; transform: scale(1); }
+    }
+
+    .focus-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: clamp(20px, 4vw, 36px);
+    }
+
+    .focus-grid__column {
+      display: grid;
+      gap: 24px;
+    }
+
+    .card {
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid var(--surface-border);
+      box-shadow: 0 22px 48px rgba(15, 23, 42, 0.08);
+      padding: clamp(24px, 4vw, 36px);
+      display: grid;
+      gap: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .card__title {
+      margin: 0;
+      font-size: 1.4rem;
+      letter-spacing: -0.01em;
+    }
+
+    .card__subtitle {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: 1rem;
+    }
+
+    .focus-timer {
+      display: grid;
+      gap: 20px;
+    }
+
+    .focus-timer__dial {
+      width: min(320px, 100%);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      margin-inline: auto;
+      padding: 28px;
+      background: linear-gradient(145deg, rgba(236, 245, 255, 0.95), rgba(255, 255, 255, 0.6));
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      box-shadow: inset 0 0 0 1px rgba(79, 70, 229, 0.12), 0 18px 40px rgba(148, 163, 184, 0.16);
+      display: grid;
+      place-items: center;
+      position: relative;
+    }
+
+    .focus-timer__dial::before {
+      content: '';
+      position: absolute;
+      inset: 12px;
+      border-radius: 50%;
+      background: conic-gradient(from 270deg, rgba(99, 102, 241, 0.35) var(--timer-progress), rgba(226, 232, 240, 0.32) 0deg);
+      filter: drop-shadow(0 12px 30px rgba(99, 102, 241, 0.25));
+      transition: background 0.4s ease;
+    }
+
+    .focus-timer__time {
+      position: relative;
+      font-size: clamp(2.5rem, 6vw, 3.4rem);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+    }
+
+    .focus-timer__phase {
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      letter-spacing: 0.2em;
+      color: var(--accent-strong);
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .focus-timer__controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .focus-timer__controls button {
+      min-width: 140px;
+    }
+
+    .focus-settings {
+      display: grid;
+      gap: 18px;
+    }
+
+    .focus-settings label {
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .focus-settings__row {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .focus-settings__value {
+      min-width: 48px;
+      font-variant-numeric: tabular-nums;
+      font-weight: 600;
+      color: var(--accent-strong);
+    }
+
+    .focus-settings input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.35);
+      outline: none;
+    }
+
+    .focus-settings input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.18);
+      cursor: pointer;
+      border: none;
+    }
+
+    .focus-settings input[type="range"]::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.18);
+      cursor: pointer;
+      border: none;
+    }
+
+    .focus-plan {
+      display: grid;
+      gap: 18px;
+    }
+
+    .focus-plan__item {
+      display: grid;
+      gap: 4px;
+      padding: 18px 20px;
+      border-radius: 20px;
+      background: rgba(99, 102, 241, 0.08);
+      border: 1px solid rgba(99, 102, 241, 0.12);
+    }
+
+    .focus-plan__meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      color: rgba(15, 23, 42, 0.55);
+    }
+
+    .focus-plan__title {
+      font-weight: 600;
+    }
+
+    .focus-playlists {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    }
+
+    .playlist-card {
+      border-radius: 20px;
+      padding: 18px;
+      background: rgba(15, 23, 42, 0.86);
+      color: rgba(226, 232, 240, 0.92);
+      display: grid;
+      gap: 12px;
+      box-shadow: 0 20px 30px rgba(15, 23, 42, 0.18);
+    }
+
+    .playlist-card__tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(99, 102, 241, 0.22);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #c7d2fe;
+    }
+
+    .playlist-card__title {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .focus-checkin {
+      display: grid;
+      gap: 18px;
+    }
+
+    .mood-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .mood-buttons button {
+      border: none;
+      background: rgba(99, 102, 241, 0.1);
+      color: var(--accent-strong);
+      padding: 10px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 160ms ease, transform 160ms ease;
+    }
+
+    .mood-buttons button:is(:hover, :focus-visible) {
+      background: rgba(99, 102, 241, 0.2);
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 12px;
+    }
+
+    .checklist label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.68);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .checklist input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      border-radius: 6px;
+    }
+
+    .focus-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      color: rgba(15, 23, 42, 0.55);
+      font-size: 0.95rem;
+      padding-bottom: 24px;
+    }
+
+    @media (max-width: 1080px) {
+      .focus-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .focus-grid__column:last-child {
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      }
+    }
+
+    @media (max-width: 960px) {
+      body {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: auto;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 24px;
+        box-shadow: none;
+        gap: 20px;
+      }
+
+      .menu {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .menu a {
+        padding: 10px 14px;
+      }
+
+      main {
+        padding: 32px 24px;
+      }
+
+      .focus-hero {
+        grid-template-columns: 1fr;
+      }
+
+      .focus-hero__preview {
+        order: -1;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .focus-hero {
+        padding: 24px;
+      }
+
+      .card {
+        padding: 22px;
+        border-radius: 22px;
+      }
+
+      .focus-timer__dial {
+        padding: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="logo">
+      <img src="images/logo%20white.png" alt="Easylife logo" />
+    </div>
+    <nav class="menu" aria-label="Hovedmeny">
+      <a href="index.html"><span class="icon"><img src="images/Icon_home2.png" alt="Hjem" /></span>Dashboard</a>
+      <a href="mal.html"><span class="icon"><img src="images/Icon_goal2.png" alt="Mål" /></span>Mål</a>
+      <a href="todo.html"><span class="icon"><img src="images/Icon_todo2.png" alt="Todo" /></span>Todo</a>
+      <a href="rutiner.html"><span class="icon"><img src="images/Icon_routine2.png" alt="Rutiner" /></span>Rutiner</a>
+      <a class="active" href="fokus.html"><span class="icon">🧘</span>Fokus</a>
+      <a href="training.html"><span class="icon"><img src="images/Icon_train2.png" alt="Trening" /></span>Training og kostholdsplan</a>
+      <a href="api-manager.html"><span class="icon">🧠</span>API Manager</a>
+      <a href="api-log.html"><span class="icon">📈</span>API-logg</a>
+    </nav>
+  </aside>
+  <main>
+    <header class="focus-hero">
+      <div>
+        <span class="focus-hero__eyebrow">Ny modul</span>
+        <h1>Fokusrommet</h1>
+        <p>Skap et dedikert rom for dyp jobb, pustepauser og mikrovaner. Her samler vi fokusøkter, dagsplan og ritualer i ett visuelt og rolig miljø som spiller sammen med resten av Easylife.</p>
+        <div class="focus-hero__actions">
+          <button class="button button--primary" type="button">Start en fokusøkt</button>
+          <button class="button button--ghost" type="button">Planlegg dagen</button>
+        </div>
+      </div>
+      <div class="focus-hero__preview" aria-hidden="true">
+        <div class="preview-card">
+          <div class="preview-card__title">
+            <span>Gjeldende økt</span>
+            <span>45 min</span>
+          </div>
+          <div class="preview-card__progress">
+            <div class="preview-card__progress-circle">72%</div>
+            <div class="preview-card__progress-list">
+              <span>• Dyp jobb: Strategi deck</span>
+              <span>• Pause: Tøye + vann</span>
+              <span>• Neste: Refleksjonslogg</span>
+            </div>
+          </div>
+          <div class="preview-card__footer" style="margin-top:20px;font-size:0.9rem;color:rgba(226,232,240,0.74);">
+            Synkronisert med oppgaver og rutiner for resten av dagen.
+          </div>
+        </div>
+        <div class="preview-pulse" aria-hidden="true"></div>
+      </div>
+    </header>
+
+    <section class="focus-grid">
+      <section class="card focus-timer" aria-labelledby="focus-session-title">
+        <div class="card__header">
+          <div>
+            <h2 class="card__title" id="focus-session-title">Dagens fokusøkt</h2>
+            <p class="card__subtitle">Velg varighet, start når du er klar og følg fremdriften i rolig tempo.</p>
+          </div>
+          <span class="pill" style="background:rgba(99,102,241,0.12);color:var(--accent-strong);padding:8px 14px;border-radius:999px;font-weight:600;">Flowmodus</span>
+        </div>
+        <div class="focus-timer__dial">
+          <span class="focus-timer__time" data-timer-display>45:00</span>
+        </div>
+        <span class="focus-timer__phase" data-session-phase>Fokus</span>
+        <div class="focus-timer__controls">
+          <button class="button button--primary" type="button" data-start-stop>Start</button>
+          <button class="button button--ghost" type="button" data-reset>Nullstill</button>
+        </div>
+        <div class="focus-settings">
+          <div>
+            <label for="session-length">Varighet</label>
+            <div class="focus-settings__row">
+              <input type="range" id="session-length" min="15" max="90" step="5" value="45" />
+              <span class="focus-settings__value" data-length-output>45 min</span>
+            </div>
+          </div>
+          <div>
+            <label for="break-length">Pause etter økt</label>
+            <div class="focus-settings__row">
+              <input type="range" id="break-length" min="5" max="30" step="5" value="10" />
+              <span class="focus-settings__value" data-break-output>10 min</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="focus-grid__column">
+        <section class="card focus-plan" aria-labelledby="focus-plan-title">
+          <div class="card__header">
+            <div>
+              <h2 class="card__title" id="focus-plan-title">Ritual for ettermiddagen</h2>
+              <p class="card__subtitle">Flyt gjennom arbeidsøkten med små milepæler og bevisste avbrekk.</p>
+            </div>
+          </div>
+          <article class="focus-plan__item">
+            <div class="focus-plan__meta">
+              <span>15:00 – 15:10</span>
+              <span>Oppvarming</span>
+            </div>
+            <span class="focus-plan__title">Sjekk energinivå og sett intensjon</span>
+            <p style="margin:0;color:var(--text-secondary);">Åpne loggen fra morgenen og noter hva som er viktigst å få til akkurat nå.</p>
+          </article>
+          <article class="focus-plan__item">
+            <div class="focus-plan__meta">
+              <span>15:10 – 15:55</span>
+              <span>Dyp jobb</span>
+            </div>
+            <span class="focus-plan__title">Arbeid på «Strategi deck»</span>
+            <p style="margin:0;color:var(--text-secondary);">Jobb uten forstyrrelser. Easylife muter varsler og holder styr på tiden.</p>
+          </article>
+          <article class="focus-plan__item">
+            <div class="focus-plan__meta">
+              <span>15:55 – 16:05</span>
+              <span>Pause</span>
+            </div>
+            <span class="focus-plan__title">Pust + vann + bevegelse</span>
+            <p style="margin:0;color:var(--text-secondary);">Kort guidet bevegelsespause. Registreres som oppfylt når du huker av sjekklisten.</p>
+          </article>
+        </section>
+
+        <section class="card focus-checkin" aria-labelledby="focus-checkin-title">
+          <div class="card__header">
+            <div>
+              <h2 class="card__title" id="focus-checkin-title">Før du starter</h2>
+              <p class="card__subtitle">Loggfør dagsform og gjør klar ritualene dine.</p>
+            </div>
+          </div>
+          <div>
+            <h3 style="margin:0 0 12px;font-size:1rem;">Hvordan kjennes energien?</h3>
+            <div class="mood-buttons" role="group" aria-label="Energisjekk">
+              <button type="button">⚡ Superklar</button>
+              <button type="button">😊 God flyt</button>
+              <button type="button">😌 Rolig tempo</button>
+              <button type="button">🌧️ Litt tung</button>
+            </div>
+          </div>
+          <div class="checklist" role="group" aria-label="Forberedelser">
+            <label><input type="checkbox" /> Varsler dempet</label>
+            <label><input type="checkbox" /> Klargjort spilliste / lyd</label>
+            <label><input type="checkbox" /> Vann tilgjengelig</label>
+            <label><input type="checkbox" /> Notatblokk klar</label>
+          </div>
+          <div>
+            <h3 style="margin:0 0 12px;font-size:1rem;">Anbefalte lydspor</h3>
+            <div class="focus-playlists">
+              <article class="playlist-card">
+                <span class="playlist-card__tag">🌊 Flow</span>
+                <h4 class="playlist-card__title">Oceanic focus</h4>
+                <p style="margin:0;font-size:0.9rem;color:rgba(226,232,240,0.75);">Myk ambient med bølgesus og lavfrekvente pads.</p>
+              </article>
+              <article class="playlist-card">
+                <span class="playlist-card__tag">🔥 Tempo</span>
+                <h4 class="playlist-card__title">Deep pulse</h4>
+                <p style="margin:0;font-size:0.9rem;color:rgba(226,232,240,0.75);">Elektronisk fokusmusikk som bygger gradvis energi.</p>
+              </article>
+              <article class="playlist-card">
+                <span class="playlist-card__tag">🌿 Pust</span>
+                <h4 class="playlist-card__title">Calm reset</h4>
+                <p style="margin:0;font-size:0.9rem;color:rgba(226,232,240,0.75);">5 minutters guided breathwork til pausen.</p>
+              </article>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <footer class="focus-footer">
+      <span>Tipset: Når du lagrer økten synkroniserer vi med mål og todo, og foreslår nye ritualer basert på mønsteret ditt.</span>
+      <span>Bygg videre på demoen ved å koble til Supabase-tabell for fokusøkter.</span>
+    </footer>
+  </main>
+
+  <script>
+    const timerDisplay = document.querySelector('[data-timer-display]');
+    const phaseLabel = document.querySelector('[data-session-phase]');
+    const startStopButton = document.querySelector('[data-start-stop]');
+    const resetButton = document.querySelector('[data-reset]');
+    const lengthInput = document.getElementById('session-length');
+    const breakInput = document.getElementById('break-length');
+    const lengthOutput = document.querySelector('[data-length-output]');
+    const breakOutput = document.querySelector('[data-break-output]');
+    const dial = document.querySelector('.focus-timer__dial');
+
+    const timerState = {
+      totalSeconds: Number(lengthInput.value) * 60,
+      remainingSeconds: Number(lengthInput.value) * 60,
+      breakMinutes: Number(breakInput.value),
+      running: false,
+      intervalId: null,
+    };
+
+    function formatTime(totalSeconds) {
+      const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+      const seconds = Math.floor(totalSeconds % 60).toString().padStart(2, '0');
+      return `${minutes}:${seconds}`;
+    }
+
+    function updateDial() {
+      if (!dial || timerState.totalSeconds <= 0) {
+        return;
+      }
+      const progress = 360 - (timerState.remainingSeconds / timerState.totalSeconds) * 360;
+      dial.style.setProperty('--timer-progress', `${progress}deg`);
+    }
+
+    function updateDisplay() {
+      timerDisplay.textContent = formatTime(timerState.remainingSeconds);
+      lengthOutput.textContent = `${lengthInput.value} min`;
+      breakOutput.textContent = `${breakInput.value} min`;
+      updateDial();
+    }
+
+    function startTimer() {
+      if (timerState.running) {
+        clearInterval(timerState.intervalId);
+        timerState.running = false;
+        startStopButton.textContent = 'Fortsett';
+        phaseLabel.textContent = 'Pause';
+        return;
+      }
+
+      if (timerState.remainingSeconds <= 0) {
+        timerState.remainingSeconds = timerState.totalSeconds;
+        updateDisplay();
+      }
+
+      timerState.running = true;
+      phaseLabel.textContent = 'Fokus';
+      startStopButton.textContent = 'Pause';
+      timerState.intervalId = setInterval(() => {
+        timerState.remainingSeconds -= 1;
+        if (timerState.remainingSeconds <= 0) {
+          clearInterval(timerState.intervalId);
+          timerState.running = false;
+          timerState.remainingSeconds = 0;
+          phaseLabel.textContent = 'Fullført';
+          startStopButton.textContent = 'Start';
+        }
+        updateDisplay();
+      }, 1000);
+    }
+
+    function resetTimer() {
+      clearInterval(timerState.intervalId);
+      timerState.running = false;
+      timerState.totalSeconds = Number(lengthInput.value) * 60;
+      timerState.remainingSeconds = timerState.totalSeconds;
+      phaseLabel.textContent = 'Fokus';
+      startStopButton.textContent = 'Start';
+      updateDisplay();
+    }
+
+    lengthInput.addEventListener('input', () => {
+      if (!timerState.running) {
+        timerState.totalSeconds = Number(lengthInput.value) * 60;
+        timerState.remainingSeconds = timerState.totalSeconds;
+        updateDisplay();
+      } else {
+        lengthOutput.textContent = `${lengthInput.value} min`;
+      }
+    });
+
+    breakInput.addEventListener('input', () => {
+      timerState.breakMinutes = Number(breakInput.value);
+      breakOutput.textContent = `${breakInput.value} min`;
+    });
+
+    startStopButton.addEventListener('click', startTimer);
+    resetButton.addEventListener('click', resetTimer);
+
+    updateDisplay();
+  </script>
+
+  <script type="module">
+    import supabaseClient from './supabase-client.js';
+
+    async function enforceSession() {
+      try {
+        const { data, error } = await supabaseClient.auth.getSession();
+
+        if (error) {
+          throw error;
+        }
+
+        if (!data?.session) {
+          window.location.replace('login.html');
+          return;
+        }
+
+        const emailEl = document.querySelector('[data-user-email]');
+        if (emailEl && data.session?.user?.email) {
+          emailEl.textContent = data.session.user.email;
+        }
+      } catch (authError) {
+        console.error('Feil ved henting av sesjon', authError);
+        window.location.replace('login.html');
+      }
+    }
+
+    enforceSession();
+  </script>
+</body>
+</html>
