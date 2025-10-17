@@ -1,0 +1,9 @@
+Du skal foreslå ett nytt menyforslag for {{mealLabel}} på {{dayName}} (kode {{dayCode}}).
+Husholdningen består av {{householdLabel}}, og planen bruker målesystem: {{unitsLabel}}.
+Tidsbruk som bør respekteres: {{timeRange}}.
+Allergier og matvarer som må unngås: {{allergiesList}}.
+Viktige ønsker og preferanser fra brukeren: {{notesText}}.
+Spesielle hensyn eller påminnelser: {{remindersText}}.
+Tidligere forslag var «{{previousName}}». Lag et nytt alternativ som skiller seg tydelig fra dette, men som fortsatt passer godt for husholdningen.
+Hvis du foreslår tilbehør eller servering, ta det med i infolinjene.
+Hold språket norsk, konkret og appetittvekkende.

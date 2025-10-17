@@ -1,0 +1,2 @@
+Oppgave del 2 – detaljer:
+For hver meny (#nummer) som ble returert i første api call lager du nå en god og fullstendig oppskrift og tilhørende handleliste. 

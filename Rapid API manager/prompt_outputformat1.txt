@@ -1,0 +1,18 @@
+Outputformat
+Outputregler: 
+- Returner kun en JSON-liste uten ekstra tekst.
+- Hvert objekt må ha feltene:
+  - "nummer": dagkoden i formatet "#1000". Sørg for at dagkoder går fra 1000 til 1006 i stigende rekkefølge.
+  - Ett objekt per dag i samme rekkefølge som dagkodene.
+  - "m": måltidskode (B, L, D eller S). Måltidskodener per dag (nummer) angis i preferanser. Vi kan ha en eller flere måltidskoder per dag.
+  - "navn": menyens tittel. Sikre at det ikke brukes gjentagende menyer. Alltid sikre stor forbokstav i navnet/menyens tittel.
+  - "info1": estimert tilberedningstid eller annen kort info.
+  - "info2": kort kvalitet- eller vanskelighetsbeskrivelse.
+    
+
+Eksempel:
+[
+  {"nummer":"#1000","m":"L","navn":"Kyllingsalat Med Krutonger","info1":"20 min","info2":"Lett"},
+  {"nummer":"#1000","m":"D","navn":"Pasta Bolognese","info1":"30 min","info2":"Middels"}
+  {"nummer":"#1001","m":"D","navn":"Grillet Laks Med Urter","info1":"25 min","info2":"Lett"}
+]

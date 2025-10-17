@@ -1,0 +1,25 @@
+Outputformat
+Outputregler:
+- Bruk alltid daglinjen: `100X {{ukedag}}`.
+- Deretter måltidslinjen: `n000 {{måltidskode}}` der `n` bestemmes av måltidet (2 for B, 3 for L, 4 for D, 5 for S).
+- Følg rekkefølgen for blokkene:
+  - xxx1: menyens tittel.
+  - xxx2: oppskrift.
+- For frokost (B) bruk 2000/2001/2002.
+- For lunsj (L) bruk 3000/3001/3002.
+- For middag (D) bruk 4000/4001/4002.
+- For kveldsmat (S) bruk 5000/5001/5002.
+- Linjen med xxx2 skal starte med "Oppskrift" og inkludere avsnittet:
+  - "Ingredienser (beregnet for {{householdLabel}})" etterfulgt av ingrediensliste linje for linje.
+  - "Fremgangsmåte" etterfulgt av nummererte steg.
+- Ikke legg til tekst før eller etter formatet.
+
+Eksempel:
+1000 Mandag
+4000 D
+4001 Grillet laks med urter
+4002 Oppskrift
+Ingredienser (2 porsjoner)
+- …
+Fremgangsmåte
+1. …

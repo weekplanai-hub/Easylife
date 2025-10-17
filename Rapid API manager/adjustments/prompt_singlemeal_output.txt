@@ -1,0 +1,15 @@
+Svar KUN med JSON i følgende format (ingen forklaringstekst):
+[
+  {
+    "nummer": {{dayCode}},
+    "meal": "{{mealCode}}",
+    "name": "Kort og presist navn på retten (maks 70 tegn)",
+    "info1": "Kort ekstra info eller serveringstips (maks 80 tegn, tom streng hvis ikke relevant)",
+    "info2": "Eventuell andre korte detaljer (maks 80 tegn, tom streng hvis ikke relevant)"
+  }
+]
+Regler:
+- Bruk norsk språk.
+- Forslaget må passe med preferansene og tidsrammen over.
+- «name» må ikke være identisk med «{{previousName}}».
+- Ikke legg til noe annet enn JSON-strukturen over.

@@ -1,0 +1,8 @@
+Preferanser for oversikt:
+[Husstand = {{householdLabel}}]
+[Ønsket tidsbruk = {{timeRange}}]
+[Måleenheter = {{unitsLabel}}]
+[Måltidstyper valgt = {{mealCodes}}]
+[Allergier/intoleranser = {{allergiesList}}]
+[Tilpassede instruksjoner = {{notesText}}]
+[Spesielle hensyn = {{remindersText}}]
