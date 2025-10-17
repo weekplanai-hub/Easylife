@@ -1,0 +1,16 @@
+Bakgrunnsinformasjon:
+- Hovedmål: {{goalTitle}}
+- Hvorfor er målet viktig: {{goalWhy}}
+- Kategori eller livsområde: {{goalCategory}}
+- Viktigste fokus/ambisjon: {{goalImportance}}
+- Hovedmålets frist: {{goalDeadlineLong}} ({{goalDeadlineIso}})
+- Eksisterende milepæler: {{existingMilestones}}
+
+Preferanser og ønsket tilnærming:
+{{preferencesText}}
+
+Konkrete detaljer om en valgt milepæl (hvis relevant):
+- Milepæl: {{milestoneTitle}}
+- Beskrivelse: {{milestoneDetail}}
+- Ønsket milepældato: {{milestoneDeadlineLong}} ({{milestoneDeadlineIso}})
+- Eksisterende to-dos knyttet til milepælen: {{existingTodos}}

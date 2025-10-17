@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Manager · Easylife</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --sidebar-bg: linear-gradient(180deg, #101828 0%, #020617 100%);
+      --sidebar-width: 260px;
+      --text-primary: #0f1c2e;
+      --text-secondary: rgba(15, 28, 46, 0.64);
+      --surface: rgba(255, 255, 255, 0.75);
+      --surface-border: rgba(255, 255, 255, 0.35);
+      --bg: #f1f5f9;
+      --card-bg: rgba(255, 255, 255, 0.8);
+      --card-border: rgba(15, 28, 46, 0.08);
+      --accent: #2563eb;
+      --accent-strong: #1d4ed8;
+      --muted: #64748b;
+      --shadow: 0 16px 40px rgba(15, 23, 42, 0.14);
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --radius-sm: 10px;
+      --transition: 160ms ease;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(120% 120% at 10% 0%, rgba(201, 226, 255, 0.9) 0%, rgba(228, 241, 255, 0.9) 45%, rgba(196, 215, 238, 0.95) 100%), var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+    }
+
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--sidebar-bg);
+      color: rgba(255, 255, 255, 0.92);
+      padding: 16px 24px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      box-shadow: 12px 0 32px rgba(18, 38, 63, 0.25);
+      position: relative;
+      z-index: 2;
+    }
+
+    .logo img {
+      display: block;
+      width: 160px;
+      height: auto;
+    }
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .menu a {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 16px;
+      border-radius: 14px;
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      font-weight: 500;
+      transition: background var(--transition), color var(--transition);
+    }
+
+    .menu a.active,
+    .menu a:hover,
+    .menu a:focus-visible {
+      background: rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+      outline: none;
+    }
+
+    .menu a .icon {
+      display: inline-flex;
+      width: 32px;
+      height: 32px;
+      border-radius: 12px;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 23, 42, 0.36);
+      font-weight: 600;
+    }
+
+    main {
+      flex: 1;
+      padding: 48px clamp(24px, 4vw, 64px);
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .page-header {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-width: 720px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 2vw + 1rem, 2.5rem);
+    }
+
+    p {
+      margin: 0;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: clamp(24px, 3vw, 32px);
+      max-width: 720px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .card h2 {
+      margin: 0;
+      font-size: 1.4rem;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    label {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    select,
+    input[type="text"],
+    textarea {
+      font: inherit;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(15, 23, 42, 0.14);
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.94);
+      color: var(--text-primary);
+      transition: border var(--transition), box-shadow var(--transition);
+    }
+
+    select:focus-visible,
+    input[type="text"]:focus-visible,
+    textarea:focus-visible {
+      outline: none;
+      border-color: rgba(37, 99, 235, 0.55);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+
+    .field-row {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+    }
+
+    button,
+    .button-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: 999px;
+      border: none;
+      padding: 12px 24px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+
+    button.primary {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%);
+      color: #fff;
+      box-shadow: 0 14px 30px rgba(37, 99, 235, 0.25);
+    }
+
+    button.primary:hover,
+    button.primary:focus-visible {
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .button-link {
+      background: rgba(15, 23, 42, 0.08);
+      color: var(--text-primary);
+      border: 1px solid rgba(15, 23, 42, 0.1);
+    }
+
+    .button-link:hover,
+    .button-link:focus-visible {
+      border-color: rgba(15, 23, 42, 0.24);
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .status {
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    .status[data-state="success"] {
+      color: #047857;
+    }
+
+    .status[data-state="error"] {
+      color: #b91c1c;
+    }
+
+    .storage-note {
+      font-size: 0.9rem;
+      color: var(--muted);
+      background: rgba(15, 23, 42, 0.04);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 960px) {
+      body {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .menu {
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+
+      .menu a {
+        padding: 10px 14px;
+      }
+
+      main {
+        padding-top: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="logo" href="index.html"><img src="images/logo%20white.png" alt="Easylife" /></a>
+    <nav class="menu" aria-label="Hovedmeny">
+      <a href="index.html"><span class="icon">🏠</span>Dashboard</a>
+      <a href="mal.html"><span class="icon">🎯</span>Mål</a>
+      <a href="todo.html"><span class="icon">✅</span>To-dos</a>
+      <a href="rutiner.html"><span class="icon">🔁</span>Rutiner</a>
+      <a href="training.html"><span class="icon">📚</span>Trening</a>
+      <a href="api-manager.html" class="active"><span class="icon">🧠</span>API Manager</a>
+      <a href="api-log.html"><span class="icon">📈</span>API-logg</a>
+    </nav>
+  </aside>
+  <main>
+    <header class="page-header">
+      <div>
+        <p class="status" data-state="info">Her konfigurerer du AI-leverandøren som brukes i Easylife.</p>
+        <h1>API Manager</h1>
+      </div>
+      <p>
+        Legg inn API-nøkkel og modell for leverandøren du ønsker å bruke. Alle verdier lagres lokalt i nettleseren din. Når du har
+        oppdatert informasjonen kan du teste funksjonene som bruker AI, for eksempel målplanleggingen på en mål-side.
+      </p>
+    </header>
+
+    <section class="card" aria-labelledby="provider-settings-title">
+      <div>
+        <h2 id="provider-settings-title">Valgt leverandør</h2>
+        <p class="status" id="provider-description"></p>
+      </div>
+      <form id="provider-form">
+        <label for="provider-select">Velg leverandør</label>
+        <select id="provider-select" name="provider">
+          <option value="openrouter">OpenRouter</option>
+          <option value="openai">OpenAI</option>
+          <option value="gemini">Google Gemini</option>
+        </select>
+
+        <div class="field-row">
+          <label for="api-key">API-nøkkel
+            <input id="api-key" name="apiKey" type="text" autocomplete="off" spellcheck="false" placeholder="Lim inn nøkkel her" required />
+          </label>
+          <label for="api-model">Modellnavn
+            <input id="api-model" name="model" type="text" autocomplete="off" spellcheck="false" placeholder="f.eks. openai/gpt-4o-mini" required />
+          </label>
+        </div>
+
+        <p class="status" id="model-hint"></p>
+
+        <div class="actions">
+          <button type="submit" class="primary" id="save-button">Lagre oppsett</button>
+          <a class="button-link" href="api-log.html">Åpne API-logg</a>
+          <a class="button-link" id="docs-link" href="#" target="_blank" rel="noopener">Les dokumentasjon</a>
+          <span class="status" id="save-status" aria-live="polite"></span>
+        </div>
+      </form>
+      <p class="storage-note">
+        ⚠️ Verdiene lagres i nettleserens <em>localStorage</em>. Hvis du tømmer nettleserdata eller bytter enhet må du legge inn nøkkel og modell på nytt.
+      </p>
+    </section>
+  </main>
+
+  <script type="module">
+    import { getProviderConfigMap, getCurrentProvider, setCurrentProvider } from './api/engine.js';
+
+    const providerSelect = document.getElementById('provider-select');
+    const apiKeyInput = document.getElementById('api-key');
+    const modelInput = document.getElementById('api-model');
+    const modelHint = document.getElementById('model-hint');
+    const description = document.getElementById('provider-description');
+    const saveStatus = document.getElementById('save-status');
+    const docsLink = document.getElementById('docs-link');
+    const form = document.getElementById('provider-form');
+
+    const PROVIDER_META = {
+      openrouter: {
+        label: 'OpenRouter',
+        docs: 'https://openrouter.ai/docs',
+        hint: 'Eksempel på modell: openai/gpt-4o-mini eller meta-llama/llama-3.1-8b-instruct',
+        keyLabel: 'Bearer <din nøkkel>'
+      },
+      openai: {
+        label: 'OpenAI',
+        docs: 'https://platform.openai.com/docs/overview',
+        hint: 'Eksempel på modell: gpt-4o-mini, gpt-4o, gpt-4.1-mini',
+        keyLabel: 'sk-...'
+      },
+      gemini: {
+        label: 'Google Gemini',
+        docs: 'https://ai.google.dev/gemini-api/docs',
+        hint: 'Eksempel på modell: gemini-1.5-flash eller gemini-1.5-pro',
+        keyLabel: 'AIza...'
+      }
+    };
+
+    const providerConfigMap = getProviderConfigMap();
+
+    function readLocalStorage(key) {
+      if (!key) return '';
+      try {
+        return localStorage.getItem(key) || '';
+      } catch (error) {
+        console.warn('Kunne ikke lese localStorage', error);
+        return '';
+      }
+    }
+
+    function writeLocalStorage(key, value) {
+      if (!key) return;
+      try {
+        if (value) {
+          localStorage.setItem(key, value);
+        } else {
+          localStorage.removeItem(key);
+        }
+      } catch (error) {
+        console.warn('Kunne ikke lagre til localStorage', error);
+      }
+    }
+
+    function updateMeta(provider) {
+      const meta = PROVIDER_META[provider];
+      if (meta) {
+        description.textContent = `Bruker ${meta.label}. API-nøkkelen skal starte med ${meta.keyLabel}.`;
+        docsLink.href = meta.docs;
+        docsLink.hidden = false;
+        modelHint.textContent = meta.hint;
+      } else {
+        description.textContent = '';
+        docsLink.href = '#';
+        docsLink.hidden = true;
+        modelHint.textContent = '';
+      }
+    }
+
+    function loadConfiguration(provider) {
+      const config = providerConfigMap[provider];
+      if (!config) {
+        apiKeyInput.value = '';
+        modelInput.value = '';
+        return;
+      }
+      apiKeyInput.value = readLocalStorage(config.keyStorage);
+      modelInput.value = readLocalStorage(config.modelStorage);
+      updateMeta(provider);
+      modelInput.placeholder = provider === 'openrouter'
+        ? 'f.eks. openai/gpt-4o-mini'
+        : provider === 'openai'
+          ? 'f.eks. gpt-4o-mini'
+          : 'f.eks. gemini-1.5-flash';
+    }
+
+    function showStatus(message, state = 'info') {
+      if (!saveStatus) return;
+      saveStatus.textContent = message;
+      saveStatus.dataset.state = state;
+    }
+
+    providerSelect.addEventListener('change', (event) => {
+      const provider = event.target.value;
+      setCurrentProvider(provider);
+      loadConfiguration(provider);
+      showStatus(`Valgt ${PROVIDER_META[provider]?.label || provider}.`, 'info');
+    });
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const provider = providerSelect.value;
+      const config = providerConfigMap[provider];
+      if (!config) {
+        showStatus('Ukjent leverandør valgt.', 'error');
+        return;
+      }
+      const keyValue = apiKeyInput.value.trim();
+      const modelValue = modelInput.value.trim();
+      writeLocalStorage(config.keyStorage, keyValue);
+      writeLocalStorage(config.modelStorage, modelValue);
+      setCurrentProvider(provider);
+      showStatus('Oppsett lagret. Du kan nå bruke AI-funksjonene i Easylife.', 'success');
+    });
+
+    (function init() {
+      const provider = getCurrentProvider();
+      providerSelect.value = provider;
+      loadConfiguration(provider);
+      showStatus('Gjør endringer og trykk "Lagre oppsett".', 'info');
+    })();
+  </script>
+</body>
+</html>

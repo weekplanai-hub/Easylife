@@ -1,7 +1,6 @@
-// tools/apiEngine.js
-// General-purpose API orchestration helpers for multi-run AI workflows.
-// Provides provider configuration lookup, chat completion wrapper, sequential
-// run controller with history awareness, and a lightweight localStorage logger.
+// api/engine.js
+// Hjelpebibliotek for å konfigurere og kjøre AI-kall på tvers av flere leverandører.
+// Tilbyr klient for samtale-API, enkel sekvenskjøring og lokal logging av kjøringer.
 
 export const API_SELECTION_REQUIRED = 'API_SELECTION_REQUIRED';
 
@@ -133,7 +132,7 @@ export class ApiClient {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${this.apiKey}`,
         'HTTP-Referer': window.location.origin,
-        'X-Title': 'Weekplan.ai'
+        'X-Title': 'Easylife'
       },
       body: JSON.stringify({
         model: this.model,

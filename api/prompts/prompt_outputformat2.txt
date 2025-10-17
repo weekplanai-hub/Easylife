@@ -1,0 +1,8 @@
+Returner svaret som et gyldig JSON-array. Hvert element skal ha følgende struktur:
+[
+  {
+    "title": "Kort oppgave som starter med et handlingsverb",
+    "detail": "Valgfri presisering eller tips"
+  }
+]
+Bruk tom streng ("") dersom du ikke trenger å fylle ut "detail". Ingen annen tekst enn selve JSON-objektet skal være med i svaret.
