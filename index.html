@@ -127,40 +127,68 @@
     }
 
     .page-header {
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
+      background: radial-gradient(160% 140% at 10% 20%, rgba(58, 82, 168, 0.24) 0%, rgba(255, 255, 255, 0.08) 36%, rgba(255, 255, 255, 0) 100%), linear-gradient(118deg, rgba(19, 32, 62, 0.92) 0%, rgba(66, 89, 178, 0.65) 52%, rgba(144, 114, 219, 0.42) 100%);
+      border-radius: 32px;
+      padding: clamp(24px, 6vw, 40px);
+      color: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 20px 45px rgba(25, 36, 63, 0.24);
     }
 
     .page-header__top {
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
-      align-items: flex-end;
+      align-items: center;
       gap: 24px;
     }
 
-    .welcome-message {
-      color: var(--text-secondary);
+    .page-header__left {
+      display: grid;
+      gap: 4px;
+    }
+
+    .page-header__title {
+      font-size: clamp(2.2rem, 3vw + 1rem, 3.2rem);
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: -0.02em;
+    }
+
+    .page-header__subtitle {
+      margin: 0;
       font-size: 1rem;
+      color: rgba(255, 255, 255, 0.74);
+      text-transform: capitalize;
+    }
+
+    .page-header__right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .user-email {
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.82);
     }
 
     .logout-button {
       border: none;
-      background: rgba(255, 255, 255, 0.52);
+      background: rgba(255, 255, 255, 0.16);
       border-radius: 999px;
       padding: 12px 28px;
       font-weight: 600;
-      color: var(--text-primary);
+      color: rgba(255, 255, 255, 0.96);
       cursor: pointer;
-      border: 1px solid rgba(255, 255, 255, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.28);
       box-shadow: 0 10px 30px rgba(31, 63, 104, 0.12);
       transition: background 160ms ease, transform 160ms ease;
     }
 
     .logout-button:hover,
     .logout-button:focus-visible {
-      background: rgba(255, 255, 255, 0.82);
+      background: rgba(255, 255, 255, 0.32);
       transform: translateY(-1px);
       outline: none;
     }
@@ -175,147 +203,108 @@
     }
 
     .clock-widget {
-      --bg: #0b0f1a;
-      --card: #0f1524;
-      --muted: #7e8ca8;
-      --text: #e6edf7;
-      --accent: #4de4ff;
-      --ring-size: 160px;
-      --glow: 0 0 20px rgba(77, 228, 255, 0.65);
-      --shadow: 0 8px 30px rgba(0, 0, 0, 0.55);
-      --progress: 0deg;
-      width: min(460px, 100%);
-      display: flex;
-      justify-content: center;
+      width: min(820px, 100%);
     }
 
     .clock-widget .widget {
-      width: 100%;
-      display: grid;
-      grid-template-columns: 200px 1fr;
-      align-items: center;
-      gap: 14px;
-      background: var(--card);
-      border: 1px solid rgba(77, 228, 255, 0.14);
-      border-radius: 20px;
-      box-shadow: var(--shadow);
-      padding: 10px 18px 14px 18px;
-      color: var(--text);
-    }
-
-    .clock-widget .clock-wrap {
-      height: 180px;
-      width: 160px;
+      background: radial-gradient(120% 150% at 0% 0%, rgba(66, 103, 210, 0.58) 0%, rgba(40, 55, 115, 0.72) 32%, rgba(16, 22, 53, 0.94) 100%);
+      border-radius: 40px;
+      padding: clamp(28px, 6vw, 46px);
+      color: #f8fbff;
       display: flex;
-      flex-direction: column;
+      flex-wrap: wrap;
+      gap: clamp(24px, 6vw, 60px);
       align-items: center;
       justify-content: space-between;
-      padding: 10px 0;
       position: relative;
+      overflow: hidden;
+      box-shadow: 0 28px 60px rgba(11, 20, 57, 0.45);
     }
 
-    .clock-widget .ring,
-    .clock-widget canvas {
-      height: var(--ring-size);
-      width: var(--ring-size);
+    .clock-widget .widget::after {
+      content: '';
+      position: absolute;
+      inset: -20% -40% auto auto;
+      width: clamp(200px, 30vw, 340px);
+      aspect-ratio: 1;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0) 60%);
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .clock-widget__dial {
+      width: clamp(180px, 28vw, 240px);
+      aspect-ratio: 1;
       border-radius: 50%;
-    }
-
-    .clock-widget .ring {
-      background:
-        radial-gradient(closest-side, rgba(7, 12, 22, 1) 78%, transparent 79%),
-        conic-gradient(from -90deg, var(--accent) var(--progress), rgba(77, 228, 255, 0.12) 0 360deg);
-      box-shadow: inset 0 0 18px rgba(77, 228, 255, 0.25), var(--glow);
+      background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.12) 38%, rgba(12, 18, 48, 0.92) 85%);
       display: grid;
       place-items: center;
+      box-shadow: inset 0 0 50px rgba(255, 255, 255, 0.16), 0 0 45px rgba(84, 123, 244, 0.45);
+      position: relative;
+      isolation: isolate;
     }
 
-    .clock-widget .time {
-      text-align: center;
+    .clock-widget__dial::before {
+      content: '';
+      position: absolute;
+      inset: 14%;
+      border-radius: 50%;
+      background: rgba(11, 18, 47, 0.85);
+      box-shadow: inset 0 0 35px rgba(95, 132, 255, 0.24);
+      z-index: -1;
     }
 
-    .clock-widget .time .hhmm {
-      font-size: 34px;
+    .clock-widget__time {
+      font-size: clamp(3rem, 6vw, 4.5rem);
       font-weight: 700;
-      text-shadow: var(--glow);
+      letter-spacing: 0.04em;
     }
 
-    .clock-widget .time .sec {
-      font-size: 12px;
-      opacity: 0.8;
-      margin-top: 2px;
-    }
-
-    .clock-widget .info {
+    .clock-widget__details {
+      flex: 1;
+      min-width: min(240px, 100%);
       display: grid;
-      gap: 4px;
+      gap: 12px;
+      position: relative;
+      z-index: 1;
     }
 
-    .clock-widget .greeting {
-      font-size: 19px;
-      font-weight: 700;
+    .clock-widget__greeting {
       margin: 0;
+      font-size: clamp(1.5rem, 3vw, 2.4rem);
+      font-weight: 600;
     }
 
-    .clock-widget .subtle {
-      color: var(--muted);
-      font-weight: 500;
+    .clock-widget__date {
+      margin: 0;
+      color: rgba(235, 243, 255, 0.7);
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      text-transform: capitalize;
     }
 
-    .clock-widget .weather {
-      display: flex;
+    .clock-widget__weather {
+      display: inline-flex;
       align-items: center;
-      gap: 6px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(77, 228, 255, 0.15);
-      border-radius: 14px;
-      padding: 4px 8px;
+      gap: 10px;
+      padding: 10px 16px;
+      border-radius: 18px;
+      background: rgba(19, 34, 76, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.18);
       width: fit-content;
     }
 
-    .clock-widget .weather .icon {
-      font-size: 22px;
-      filter: drop-shadow(0 0 8px rgba(77, 228, 255, 0.25));
+    .clock-widget__weather .icon {
+      font-size: 1.4rem;
+      filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.4));
     }
 
-    .clock-widget .weather .temp {
-      font-size: 16px;
-      font-weight: 700;
-      text-shadow: var(--glow);
+    .clock-widget__weather .temp {
+      font-weight: 600;
+      font-size: 1.1rem;
     }
 
-    .clock-widget .weather .meta {
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .clock-widget .dots {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      position: absolute;
-      top: 50%;
-      left: -24px;
-      transform: translateY(-50%);
-    }
-
-    .clock-widget .dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.3);
-      cursor: pointer;
-    }
-
-    .clock-widget .dot.active {
-      background: var(--accent);
-      box-shadow: 0 0 8px var(--accent);
-    }
-
-    .clock-widget canvas {
-      display: none;
-      position: absolute;
-      top: 12px;
+    .clock-widget__weather .meta {
+      color: rgba(235, 243, 255, 0.72);
     }
 
     @media (max-width: 960px) {
@@ -343,21 +332,26 @@
     }
 
     @media (max-width: 640px) {
+      .page-header__top {
+        align-items: flex-start;
+      }
+
+      .page-header__right {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
       .clock-widget .widget {
-        grid-template-columns: 1fr;
-        justify-items: center;
+        justify-content: center;
         text-align: center;
       }
 
-      .clock-widget .clock-wrap {
-        margin-bottom: 12px;
+      .clock-widget__details {
+        justify-items: center;
       }
 
-      .clock-widget .dots {
-        position: static;
-        flex-direction: row;
-        transform: none;
-        margin-top: 12px;
+      .clock-widget__weather {
+        margin-inline: auto;
       }
     }
   </style>
@@ -380,40 +374,30 @@
   <main>
     <header class="page-header">
       <div class="page-header__top">
-        <div>
-          <h1>Dashboard</h1>
-          <p class="welcome-message" data-welcome-message>Velkommen</p>
+        <div class="page-header__left">
+          <h1 class="page-header__title" data-greeting-heading>God dag</h1>
+          <p class="page-header__subtitle" data-current-date>fredag 1. januar 2027</p>
         </div>
-        <button id="logout-button" class="logout-button" type="button">Logg ut</button>
+        <div class="page-header__right">
+          <span class="user-email" data-user-email></span>
+          <button id="logout-button" class="logout-button" type="button">Logg ut</button>
+        </div>
       </div>
     </header>
 
     <section class="dashboard-section" aria-label="Klokke og vær">
       <div class="clock-widget">
         <div class="widget">
-          <div class="clock-wrap" id="clockWrap">
-            <div class="ring" id="ring">
-              <div class="time">
-                <div class="hhmm" id="hhmm">12:52</div>
-                <div class="sec" id="sec">sek</div>
-              </div>
-            </div>
-            <canvas id="classicClock" width="160" height="160"></canvas>
-            <canvas id="romanClock" width="160" height="160"></canvas>
-            <div class="dots">
-              <div class="dot active" data-style="neon"></div>
-              <div class="dot" data-style="classic"></div>
-              <div class="dot" data-style="roman"></div>
-            </div>
+          <div class="clock-widget__dial">
+            <span class="clock-widget__time" id="hhmm">12:52</span>
           </div>
-
-          <div class="info">
-            <div class="greeting" id="greeting">God kveld ✨</div>
-            <div class="subtle" id="date">torsdag 11. juli 2013</div>
-            <div class="weather" id="weather">
-              <div class="icon" id="w-icon">☁️</div>
-              <div class="temp" id="w-temp">--°</div>
-              <div class="meta" id="w-place">–</div>
+          <div class="clock-widget__details">
+            <p class="clock-widget__greeting" id="greeting">God kveld</p>
+            <p class="clock-widget__date" id="date">torsdag 11. juli 2013</p>
+            <div class="clock-widget__weather" id="weather">
+              <span class="icon" id="w-icon">☁️</span>
+              <span class="temp" id="w-temp">--°</span>
+              <span class="meta" id="w-place">–</span>
             </div>
           </div>
         </div>
@@ -423,115 +407,44 @@
 
   <script>
     const hhmmEl = document.getElementById('hhmm');
-    const secEl = document.getElementById('sec');
-    const ringEl = document.getElementById('ring');
-    const classic = document.getElementById('classicClock');
-    const roman = document.getElementById('romanClock');
-    const dots = document.querySelectorAll('.dot');
-    let style = 'neon';
+    const greetingEl = document.getElementById('greeting');
+    const dateEl = document.getElementById('date');
+    const headerGreetingEl = document.querySelector('[data-greeting-heading]');
+    const headerDateEl = document.querySelector('[data-current-date]');
 
     function pad(n) { return String(n).padStart(2, '0'); }
 
     function greetByHour(h) {
-      if (h < 5) return 'God natt 🌙';
-      if (h < 11) return 'God morgen ☀️';
-      if (h < 17) return 'God ettermiddag ✨';
-      if (h < 22) return 'God kveld 🌆';
-      return 'God natt 🌙';
+      if (h < 5) return 'God natt';
+      if (h < 11) return 'God morgen';
+      if (h < 17) return 'God ettermiddag';
+      if (h < 22) return 'God kveld';
+      return 'God natt';
     }
 
     function tick() {
       const now = new Date();
       const h = now.getHours();
       const m = now.getMinutes();
-      const s = now.getSeconds();
-      if (style === 'neon') {
-        hhmmEl.textContent = `${pad(h)}:${pad(m)}`;
-        secEl.textContent = `${pad(s)} sek`;
-        ringEl.style.display = 'grid'; classic.style.display = 'none'; roman.style.display = 'none';
-        document.documentElement.style.setProperty('--progress', `${(s / 60) * 360}deg`);
-      } else if (style === 'classic') {
-        ringEl.style.display = 'none'; classic.style.display = 'block'; roman.style.display = 'none';
-        drawClassic(h, m, s);
-      } else {
-        ringEl.style.display = 'none'; classic.style.display = 'none'; roman.style.display = 'block';
-        drawRoman(h, m, s);
-      }
-
-      document.getElementById('greeting').textContent = greetByHour(h);
-      document.getElementById('date').textContent = new Intl.DateTimeFormat('no-NO', {
+      const formattedDate = new Intl.DateTimeFormat('no-NO', {
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
       }).format(now);
-    }
 
-    function drawClassic(h, m, s) {
-      const ctx = classic.getContext('2d');
-      ctx.clearRect(0, 0, 160, 160);
-      ctx.save();
-      ctx.translate(80, 80);
-      ctx.strokeStyle = '#e6edf7';
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.arc(0, 0, 75, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.font = '14px Arial';
-      ctx.fillStyle = '#e6edf7';
-      for (let num = 1; num <= 12; num++) {
-        const ang = num * Math.PI / 6;
-        const x = 60 * Math.sin(ang);
-        const y = -60 * Math.cos(ang);
-        ctx.fillText(num.toString(), x - 5, y + 5);
+      hhmmEl.textContent = `${pad(h)}:${pad(m)}`;
+      greetingEl.textContent = greetByHour(h);
+      dateEl.textContent = formattedDate;
+
+      if (headerGreetingEl) {
+        headerGreetingEl.textContent = greetByHour(h);
       }
-      drawHands(ctx, h, m, s);
-      ctx.restore();
+
+      if (headerDateEl) {
+        headerDateEl.textContent = formattedDate;
+      }
     }
 
-    function drawRoman(h, m, s) {
-      const ctx = roman.getContext('2d');
-      ctx.clearRect(0, 0, 160, 160);
-      ctx.save();
-      ctx.translate(80, 80);
-      ctx.strokeStyle = '#aaa';
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.arc(0, 0, 75, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.font = '13px Times New Roman';
-      ctx.fillStyle = '#fff';
-      const romans = ['XII', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI'];
-      romans.forEach((r, i) => {
-        const ang = (i * Math.PI / 6);
-        const offsetX = (i >= 6 && i <= 10) ? 55 : 60;
-        const x = offsetX * Math.sin(ang);
-        const y = -60 * Math.cos(ang);
-        ctx.fillText(r, x - 10, y + 5);
-      });
-      drawHands(ctx, h, m, s, true);
-      ctx.restore();
-    }
-
-    function drawHands(ctx, h, m, s, roman = false) {
-      const hourAng = ((h % 12) + m / 60) * Math.PI / 6;
-      const minAng = (m + s / 60) * Math.PI / 30;
-      const secAng = s * Math.PI / 30;
-      ctx.lineWidth = 4;
-      ctx.beginPath(); ctx.rotate(hourAng); ctx.moveTo(0, 10); ctx.lineTo(0, -35); ctx.stroke(); ctx.rotate(-hourAng);
-      ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.rotate(minAng); ctx.moveTo(0, 15); ctx.lineTo(0, -55); ctx.stroke(); ctx.rotate(-minAng);
-      ctx.strokeStyle = roman ? 'red' : '#ff4444';
-      ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.rotate(secAng); ctx.moveTo(0, 20); ctx.lineTo(0, -65); ctx.stroke(); ctx.rotate(-secAng);
-    }
-
-    dots.forEach(d => {
-      d.addEventListener('click', () => {
-        dots.forEach(dot => dot.classList.remove('active'));
-        d.classList.add('active');
-        style = d.dataset.style;
-      });
-    });
-
-    setInterval(tick, 1000); tick();
+    setInterval(tick, 1000);
+    tick();
 
     async function getWeather() {
       try {
@@ -569,9 +482,9 @@
           return;
         }
 
-        const welcomeMessage = document.querySelector('[data-welcome-message]');
-        if (welcomeMessage && data.session?.user?.email) {
-          welcomeMessage.textContent = `Velkommen, ${data.session.user.email}`;
+        const emailEl = document.querySelector('[data-user-email]');
+        if (emailEl && data.session?.user?.email) {
+          emailEl.textContent = data.session.user.email;
         }
 
         const logoutButton = document.querySelector('#logout-button');
