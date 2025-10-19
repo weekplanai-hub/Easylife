@@ -7,10 +7,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="preload" as="image" href="Scenery/Lake.png" />
+  <link rel="preload" as="image" href="Scenery/Beach.png" />
+  <link rel="preload" as="image" href="Scenery/Cafe.png" />
+  <link rel="preload" as="image" href="Scenery/Mountain.png" />
   <style>
     :root {
       color-scheme: dark light;
-      --glass-bg: rgba(18, 21, 30, 0.28);
+      --glass-bg: rgba(18, 21, 30, 0.18);
       --glass-border: rgba(255, 255, 255, 0.22);
       --glass-blur: 24px;
       --accent: rgba(255, 255, 255, 0.82);
@@ -19,7 +23,7 @@
       --panel-bg: rgba(12, 15, 24, 0.68);
       --panel-border: rgba(255, 255, 255, 0.12);
       --panel-radius: 22px;
-      --background-image: none;
+      --background-image: url('Scenery/Lake.png');
       font-family: 'SF Pro Display', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
@@ -81,6 +85,36 @@
       z-index: 3;
     }
 
+    .top-actions {
+      position: fixed;
+      top: clamp(16px, 3vw, 36px);
+      right: clamp(18px, 3vw, 40px);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 3;
+    }
+
+    .back-button {
+      padding: 10px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(12, 15, 24, 0.48);
+      color: rgba(255, 255, 255, 0.88);
+      font-size: 0.84rem;
+      letter-spacing: 0.03em;
+      text-decoration: none;
+      transition: background 200ms ease, border 200ms ease;
+      backdrop-filter: blur(12px);
+    }
+
+    .back-button:hover,
+    .back-button:focus-visible {
+      border-color: rgba(255, 255, 255, 0.42);
+      background: rgba(12, 15, 24, 0.64);
+      outline: none;
+    }
+
     .background-dots button {
       width: 12px;
       height: 12px;
@@ -99,7 +133,6 @@
     }
 
     .fullscreen-toggle {
-      margin-left: 16px;
       padding: 10px 18px;
       border-radius: 999px;
       border: 1px solid rgba(255, 255, 255, 0.16);
@@ -239,6 +272,39 @@
       z-index: 3;
     }
 
+    .timer-lengths {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .timer-lengths button {
+      flex: 1 1 48%;
+      min-width: 110px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: rgba(12, 15, 24, 0.5);
+      color: rgba(255, 255, 255, 0.86);
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      transition: transform 160ms ease, background 160ms ease, border 160ms ease;
+    }
+
+    .timer-lengths button:hover,
+    .timer-lengths button:focus-visible {
+      background: rgba(12, 15, 24, 0.68);
+      border-color: rgba(255, 255, 255, 0.36);
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .timer-lengths button.active {
+      background: rgba(255, 255, 255, 0.16);
+      border-color: rgba(255, 255, 255, 0.42);
+      color: rgba(255, 255, 255, 0.94);
+    }
+
     .dock-panel.open {
       opacity: 1;
       pointer-events: auto;
@@ -347,6 +413,10 @@
   <div class="ui-shell">
     <div class="background-dots" aria-label="Bakgrunnsvelger">
       <div class="dot-group"></div>
+    </div>
+
+    <div class="top-actions">
+      <a class="back-button" href="index.html">Tilbake</a>
       <button class="fullscreen-toggle" type="button">Fullskjerm</button>
     </div>
 
@@ -373,6 +443,12 @@
       <p style="margin:0;color:rgba(255,255,255,0.56);font-size:0.9rem;line-height:1.5;">
         Tilpass fokussonen med varsler, varigheter og flere alternativer. Denne menyen blir utvidet snart.
       </p>
+      <div class="timer-lengths" role="group" aria-label="Velg fokustid">
+        <button type="button" data-focus-length="15">15 min</button>
+        <button type="button" data-focus-length="25">25 min</button>
+        <button type="button" data-focus-length="45">45 min</button>
+        <button type="button" data-focus-length="custom">Tilpass</button>
+      </div>
     </div>
 
     <div class="dock-panel" id="todo-panel" aria-hidden="true">
@@ -390,16 +466,24 @@
 
   <script>
     const backgrounds = [
+      'Scenery/Lake.png',
       'Scenery/Beach.png',
       'Scenery/Cafe.png',
-      'Scenery/Lake.png',
       'Scenery/Mountain.png'
     ];
     const body = document.body;
     const dotGroup = document.querySelector('.dot-group');
     const fullscreenButton = document.querySelector('.fullscreen-toggle');
+    const focusLengthButtons = document.querySelectorAll('[data-focus-length]');
+    const customFocusButton = document.querySelector('[data-focus-length="custom"]');
+    const customFocusDefaultLabel = customFocusButton ? customFocusButton.textContent : '';
 
     let currentBackground = 0;
+
+    backgrounds.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+    });
 
     function setBackground(index) {
       currentBackground = (index + backgrounds.length) % backgrounds.length;
@@ -546,6 +630,46 @@
     });
 
     updateDisplay();
+
+    function applyFocusDuration(minutes, triggerButton) {
+      MODES[0].duration = minutes * 60;
+      resetTimer();
+      focusLengthButtons.forEach((btn) => {
+        btn.classList.toggle('active', btn === triggerButton);
+      });
+    }
+
+    focusLengthButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const { focusLength } = button.dataset;
+        if (!focusLength) return;
+
+        if (focusLength === 'custom') {
+          const input = prompt('Angi ønsket fokustid i minutter:', MODES[0].duration / 60);
+          const parsedMinutes = Number.parseFloat(input);
+          if (!Number.isFinite(parsedMinutes) || parsedMinutes <= 0) {
+            return;
+          }
+          const minutes = Math.round(parsedMinutes);
+          if (customFocusButton) {
+            customFocusButton.textContent = `${minutes} min`;
+          }
+          applyFocusDuration(minutes, button);
+          return;
+        }
+
+        if (customFocusButton) {
+          customFocusButton.textContent = customFocusDefaultLabel;
+        }
+        applyFocusDuration(Number(focusLength), button);
+      });
+    });
+
+    focusLengthButtons.forEach((button) => {
+      if (button.dataset.focusLength === String(MODES[0].duration / 60)) {
+        button.classList.add('active');
+      }
+    });
 
     const dockButtons = document.querySelectorAll('.dock button[data-panel]');
     const panels = {
