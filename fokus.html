@@ -95,23 +95,30 @@
       z-index: 3;
     }
 
-    .back-button {
-      padding: 10px 18px;
-      border-radius: 999px;
+    .home-button {
+      position: fixed;
+      left: clamp(18px, 3vw, 40px);
+      bottom: clamp(18px, 4vw, 40px);
+      width: 52px;
+      height: 52px;
+      border-radius: 18px;
       border: 1px solid rgba(255, 255, 255, 0.16);
       background: rgba(12, 15, 24, 0.48);
-      color: rgba(255, 255, 255, 0.88);
-      font-size: 0.84rem;
-      letter-spacing: 0.03em;
+      color: rgba(255, 255, 255, 0.9);
       text-decoration: none;
-      transition: background 200ms ease, border 200ms ease;
+      display: grid;
+      place-items: center;
+      font-size: 1.2rem;
+      transition: background 200ms ease, border 200ms ease, transform 200ms ease;
       backdrop-filter: blur(12px);
+      z-index: 3;
     }
 
-    .back-button:hover,
-    .back-button:focus-visible {
+    .home-button:hover,
+    .home-button:focus-visible {
       border-color: rgba(255, 255, 255, 0.42);
       background: rgba(12, 15, 24, 0.64);
+      transform: translateY(-1px);
       outline: none;
     }
 
@@ -476,12 +483,39 @@
       letter-spacing: 0.08em;
       text-transform: uppercase;
       color: rgba(255, 255, 255, 0.58);
+      gap: 12px;
+    }
+
+    .todo-toggle {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(12, 15, 24, 0.6);
+      color: rgba(255, 255, 255, 0.9);
+      display: grid;
+      place-items: center;
+      font-size: 1.3rem;
+      cursor: pointer;
+      transition: background 200ms ease, border 200ms ease, transform 180ms ease;
+    }
+
+    .todo-toggle:hover,
+    .todo-toggle:focus-visible {
+      background: rgba(12, 15, 24, 0.78);
+      border-color: rgba(255, 255, 255, 0.32);
+      transform: translateY(-1px);
+      outline: none;
     }
 
     .todo-form {
       display: grid;
-      grid-template-columns: 1fr auto;
       gap: 12px;
+      margin-top: 16px;
+    }
+
+    .todo-form[hidden] {
+      display: none;
     }
 
     .todo-form input {
@@ -496,17 +530,6 @@
 
     .todo-form input::placeholder {
       color: rgba(255, 255, 255, 0.5);
-    }
-
-    .todo-form button {
-      padding: 12px 18px;
-      border-radius: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      background: rgba(12, 15, 24, 0.58);
-      color: rgba(255, 255, 255, 0.84);
-      cursor: pointer;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
     }
 
     .todo-list {
@@ -583,8 +606,12 @@
       <div class="dot-group"></div>
     </div>
 
+    <a class="home-button" href="index.html">
+      <span aria-hidden="true">🏠</span>
+      <span class="visually-hidden">Til forsiden</span>
+    </a>
+
     <div class="top-actions">
-      <a class="back-button" href="index.html">Tilbake</a>
       <button class="fullscreen-toggle" type="button">Fullskjerm</button>
     </div>
 
@@ -636,11 +663,26 @@
     <div class="dock-panel" id="todo-panel" aria-hidden="true">
       <div class="panel-header">
         <span>Gjøremål</span>
-        <span data-todo-count>0</span>
+        <button
+          type="button"
+          class="todo-toggle"
+          data-todo-toggle
+          aria-controls="todo-form"
+          aria-expanded="false"
+        >
+          <span aria-hidden="true">+</span>
+          <span class="visually-hidden">Legg til gjøremål</span>
+        </button>
       </div>
-      <form class="todo-form" autocomplete="off">
-        <input type="text" name="todo" placeholder="Legg til gjøremål" aria-label="Nytt gjøremål" />
-        <button type="submit">Legg til</button>
+      <form class="todo-form" id="todo-form" autocomplete="off" hidden>
+        <label class="visually-hidden" for="todo-input">Nytt gjøremål</label>
+        <input
+          id="todo-input"
+          type="text"
+          name="todo"
+          placeholder="Legg til gjøremål"
+          aria-label="Nytt gjøremål"
+        />
       </form>
       <ul class="todo-list" data-todo-list></ul>
     </div>
@@ -893,6 +935,27 @@
       });
     }
 
+    const todoToggle = document.querySelector('[data-todo-toggle]');
+    const todoForm = document.querySelector('.todo-form');
+    const todoInput = todoForm ? todoForm.querySelector('input[name="todo"]') : null;
+    const todoList = document.querySelector('[data-todo-list]');
+
+    function collapseTodoInput() {
+      if (!todoForm || !todoToggle || !todoInput) return;
+      todoForm.hidden = true;
+      todoToggle.setAttribute('aria-expanded', 'false');
+      todoInput.value = '';
+    }
+
+    function openTodoInput() {
+      if (!todoForm || !todoToggle || !todoInput) return;
+      todoForm.hidden = false;
+      todoToggle.setAttribute('aria-expanded', 'true');
+      requestAnimationFrame(() => {
+        todoInput.focus();
+      });
+    }
+
     function closeAllPanels(exceptName) {
       dockButtons.forEach((btn) => btn.setAttribute('aria-pressed', 'false'));
       Object.entries(panels).forEach(([name, panel]) => {
@@ -902,6 +965,9 @@
         }
         panel.classList.remove('open');
         panel.setAttribute('aria-hidden', 'true');
+        if (name === 'todo') {
+          collapseTodoInput();
+        }
       });
     }
 
@@ -916,21 +982,38 @@
           panel.classList.add('open');
           panel.setAttribute('aria-hidden', 'false');
           button.setAttribute('aria-pressed', 'true');
+          if (panelName === 'todo') {
+            collapseTodoInput();
+          }
         } else {
           panel.classList.remove('open');
           panel.setAttribute('aria-hidden', 'true');
+          if (panelName === 'todo') {
+            collapseTodoInput();
+          }
         }
       });
     });
 
-    const todoForm = document.querySelector('.todo-form');
-    const todoInput = todoForm.querySelector('input[name="todo"]');
-    const todoList = document.querySelector('[data-todo-list]');
-    const todoCount = document.querySelector('[data-todo-count]');
+    if (todoToggle && todoForm && todoInput) {
+      todoToggle.addEventListener('click', () => {
+        if (todoForm.hidden) {
+          openTodoInput();
+          return;
+        }
+        const value = todoInput.value.trim();
+        if (!value) {
+          collapseTodoInput();
+          return;
+        }
+        todoForm.requestSubmit();
+      });
+    }
 
     const todos = [];
 
     function renderTodos() {
+      if (!todoList) return;
       todoList.innerHTML = '';
       todos.forEach((item, index) => {
         const li = document.createElement('li');
@@ -959,17 +1042,18 @@
         li.append(checkbox, label, removeBtn);
         todoList.appendChild(li);
       });
-      todoCount.textContent = todos.filter((todo) => !todo.completed).length;
     }
 
-    todoForm.addEventListener('submit', (event) => {
-      event.preventDefault();
-      const value = todoInput.value.trim();
-      if (!value) return;
-      todos.push({ text: value, completed: false });
-      todoInput.value = '';
-      renderTodos();
-    });
+    if (todoForm && todoInput) {
+      todoForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const value = todoInput.value.trim();
+        if (!value) return;
+        todos.push({ text: value, completed: false });
+        collapseTodoInput();
+        renderTodos();
+      });
+    }
 
     renderTodos();
   </script>
