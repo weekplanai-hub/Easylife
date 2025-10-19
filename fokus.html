@@ -176,15 +176,19 @@
 
     .timer-shell.collapsed {
       position: fixed;
-      top: calc(clamp(16px, 3vw, 36px) + 86px);
-      right: clamp(18px, 3vw, 40px);
-      left: auto;
-      transform: translateX(0);
-      width: min(340px, 70vw);
-      padding: clamp(24px, 6vw, 40px);
-      gap: 18px;
+      top: clamp(16px, 3vw, 36px);
+      left: 50%;
+      right: auto;
+      transform: translateX(-50%);
+      width: min(320px, 90vw);
+      padding: clamp(14px, 3.5vw, 22px) clamp(22px, 6vw, 30px);
+      gap: 10px;
       box-shadow: 0 24px 70px rgba(0, 0, 0, 0.3);
       z-index: 4;
+    }
+
+    .timer-shell.collapsed .timer-controls {
+      gap: 10px;
     }
 
     .timer-shell.collapsed .timer-display {
@@ -193,37 +197,7 @@
     }
 
     .timer-shell.collapsed .mode-indicator {
-      font-size: 0.74rem;
-    }
-
-    .timer-collapse {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      width: 34px;
-      height: 34px;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      background: rgba(12, 15, 24, 0.36);
-      color: rgba(255, 255, 255, 0.85);
-      display: grid;
-      place-items: center;
-      cursor: pointer;
-      font-size: 1rem;
-      backdrop-filter: blur(10px);
-      transition: background 180ms ease, border 180ms ease, transform 180ms ease;
-    }
-
-    .timer-collapse:hover,
-    .timer-collapse:focus-visible {
-      background: rgba(12, 15, 24, 0.55);
-      border-color: rgba(255, 255, 255, 0.32);
-      transform: translateY(-1px);
-      outline: none;
-    }
-
-    .timer-shell.collapsed .timer-collapse {
-      background: rgba(12, 15, 24, 0.5);
+      display: none;
     }
 
     .timer-display {
@@ -266,6 +240,18 @@
       cursor: pointer;
       transition: transform 180ms ease, background 180ms ease, border 180ms ease;
       backdrop-filter: blur(12px);
+    }
+
+    .timer-shell.collapsed .timer-controls button {
+      background: transparent;
+      border-color: rgba(255, 255, 255, 0.26);
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .timer-shell.collapsed .timer-controls button:hover,
+    .timer-shell.collapsed .timer-controls button:focus-visible {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.42);
     }
 
     .timer-controls button:hover,
@@ -312,16 +298,16 @@
 
     .dock-panel {
       position: fixed;
-      bottom: calc(clamp(82px, 6vw, 110px) + 60px);
+      bottom: calc(clamp(18px, 4vw, 40px) + 72px);
       right: clamp(18px, 4vw, 40px);
       width: min(360px, 86vw);
-      background: var(--panel-bg);
-      border: 1px solid var(--panel-border);
-      border-radius: var(--panel-radius);
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 32px;
       padding: 24px;
-      backdrop-filter: blur(18px);
+      backdrop-filter: blur(var(--glass-blur));
       color: rgba(255, 255, 255, 0.86);
-      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
       transform-origin: bottom right;
       transform: scale(0.92) translateY(12px);
       opacity: 0;
@@ -488,16 +474,6 @@
     </div>
 
     <div class="timer-shell" role="timer" aria-live="polite">
-      <button
-        class="timer-collapse"
-        type="button"
-        data-action="collapse"
-        aria-label="Minimer timer"
-        aria-pressed="false"
-        title="Minimer timer"
-      >
-        ⤢
-      </button>
       <span class="mode-indicator" data-mode></span>
       <div class="timer-display" data-display>25:00</div>
       <div class="timer-controls">
@@ -601,7 +577,6 @@
     const modeIndicator = document.querySelector('[data-mode]');
     const controls = document.querySelector('.timer-controls');
     const timerShell = document.querySelector('.timer-shell');
-    const collapseButton = document.querySelector('[data-action="collapse"]');
     const toggleButton = controls.querySelector('[data-action="toggle"]');
     const skipButton = controls.querySelector('[data-action="skip"]');
 
@@ -615,22 +590,9 @@
     let timerId = null;
     let cycleCount = 0;
     let awaitingBreakStart = false;
-    let isCollapsed = false;
 
     function setCollapsed(state) {
-      if (!collapseButton) return;
-      isCollapsed = state;
       timerShell.classList.toggle('collapsed', state);
-      collapseButton.setAttribute('aria-pressed', String(state));
-      collapseButton.setAttribute('aria-label', state ? 'Gjenopprett timer' : 'Minimer timer');
-      collapseButton.setAttribute('title', state ? 'Gjenopprett timer' : 'Minimer timer');
-      collapseButton.textContent = state ? '⤴' : '⤢';
-    }
-
-    if (collapseButton) {
-      collapseButton.addEventListener('click', () => {
-        setCollapsed(!isCollapsed);
-      });
     }
 
     function formatTime(seconds) {
@@ -656,6 +618,7 @@
         timerId = null;
       }
       toggleButton.textContent = 'Start';
+      setCollapsed(false);
     }
 
     function handleCompletion() {
@@ -687,6 +650,7 @@
       awaitingBreakStart = false;
       skipButton.textContent = 'Neste';
       toggleButton.textContent = 'Pause';
+      setCollapsed(true);
       timerId = setInterval(() => {
         remaining -= 1;
         if (remaining <= 0) {
