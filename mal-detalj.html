@@ -412,37 +412,13 @@
     }
 
     .goal-section__ai-button {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      border: none;
-      border-radius: 999px;
-      padding: 10px 18px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-      color: #ffffff;
-      box-shadow: 0 10px 28px rgba(37, 99, 235, 0.18);
-      transition: transform 160ms ease, box-shadow 160ms ease;
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 0.04em;
     }
 
-    .goal-section__ai-button:hover,
-    .goal-section__ai-button:focus-visible {
-      transform: translateY(-1px);
-      outline: none;
-      box-shadow: 0 12px 30px rgba(37, 99, 235, 0.24);
-    }
-
-    .goal-section__ai-button[disabled] {
-      opacity: 0.65;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
-    }
-
-    .goal-section__ai-icon {
-      font-size: 1.1rem;
+    .goal-section__ai-button span[aria-hidden="true"] {
+      pointer-events: none;
     }
 
     .goal-ai-inline-status {
@@ -533,6 +509,28 @@
       font-size: 0.95rem;
     }
 
+    .goal-milestone__label {
+      border: none;
+      background: transparent;
+      padding: 0;
+      margin: 0;
+      text-align: left;
+      cursor: pointer;
+      color: inherit;
+      align-items: flex-start;
+      font: inherit;
+    }
+
+    .goal-milestone__label:hover {
+      color: #0f172a;
+    }
+
+    .goal-milestone__label:focus-visible {
+      outline: 3px solid rgba(99, 102, 241, 0.35);
+      border-radius: 12px;
+      outline-offset: 2px;
+    }
+
     .goal-milestone__deadline {
       font-size: 0.85rem;
       color: var(--text-secondary);
@@ -617,7 +615,6 @@
       margin-left: auto;
     }
 
-    .goal-milestone__edit,
     .goal-milestone__toggle,
     .goal-milestone__todo-add {
       font: inherit;
@@ -1398,9 +1395,15 @@
                 </button>
               </h3>
               <div class="goal-section__actions">
-                <button type="button" class="goal-section__ai-button" id="goal-milestone-ai-button">
-                  <span class="goal-section__ai-icon" aria-hidden="true">✨</span>
-                  <span class="goal-section__ai-label">Fyll ut med AI</span>
+                <button
+                  type="button"
+                  class="goal-section__action-button goal-icon-button goal-section__ai-button"
+                  id="goal-milestone-ai-button"
+                  title="La AI generere milepæler og to-do's"
+                  aria-label="La AI generere milepæler og to-do's"
+                >
+                  <span aria-hidden="true">AI</span>
+                  <span class="goal-sr-only">La AI generere milepæler og to-do's</span>
                 </button>
                 <button type="button" class="goal-section__action-button goal-icon-button" id="goal-milestone-add-button" aria-expanded="false">
                   <span class="goal-sr-only">Legg til milepæl</span>
@@ -3303,6 +3306,8 @@
 
           const todosContainerId = `goal-milestone-${index}-todos`;
           const todos = Array.isArray(milestone.todos) ? milestone.todos : [];
+          const trimmedTitle = (milestone.title || '').trim();
+          const editLabel = trimmedTitle ? `Rediger milepælen ${trimmedTitle}` : 'Rediger milepælen';
 
           if (milestone.progress) {
             item.dataset.progress = milestone.progress;
@@ -3313,17 +3318,23 @@
           const header = document.createElement('div');
           header.className = 'goal-milestone__header';
 
-          const label = document.createElement('div');
-          label.className = 'goal-list__label';
+          const labelButton = document.createElement('button');
+          labelButton.type = 'button';
+          labelButton.className = 'goal-list__label goal-milestone__label';
+          labelButton.setAttribute('aria-label', editLabel);
+          labelButton.title = editLabel;
+          labelButton.addEventListener('click', () => {
+            openMilestoneEditModal(goal, index);
+          });
 
           const titleSpan = document.createElement('span');
           titleSpan.textContent = milestone.title;
-          label.appendChild(titleSpan);
+          labelButton.appendChild(titleSpan);
 
           if (milestone.detail) {
             const detailSpan = document.createElement('span');
             detailSpan.textContent = milestone.detail;
-            label.appendChild(detailSpan);
+            labelButton.appendChild(detailSpan);
           }
 
           const formattedMilestoneDeadline = formatShortDeadline(milestone.deadline);
@@ -3331,32 +3342,19 @@
             const deadlineSpan = document.createElement('span');
             deadlineSpan.className = 'goal-milestone__deadline';
             deadlineSpan.textContent = `Deadline: ${formattedMilestoneDeadline}`;
-            label.appendChild(deadlineSpan);
+            labelButton.appendChild(deadlineSpan);
           }
 
           const info = document.createElement('div');
           info.className = 'goal-milestone__info';
           const statusIndicator = createMilestoneStatusIndicator(todos);
           info.appendChild(statusIndicator);
-          info.appendChild(label);
+          info.appendChild(labelButton);
 
           header.appendChild(info);
 
           const actions = document.createElement('div');
           actions.className = 'goal-milestone__actions';
-
-          const trimmedTitle = (milestone.title || '').trim();
-          const editButton = document.createElement('button');
-          editButton.type = 'button';
-          editButton.className = 'goal-icon-button goal-milestone__edit';
-          editButton.dataset.milestoneIndex = String(index);
-          const editLabel = trimmedTitle ? `Rediger milepælen ${trimmedTitle}` : 'Rediger milepælen';
-          editButton.setAttribute('aria-label', editLabel);
-          editButton.title = editLabel;
-          setButtonIconContent(editButton, 'pencil', editLabel);
-          editButton.addEventListener('click', () => {
-            openMilestoneEditModal(goal, index);
-          });
 
           const isExpanded = Boolean(milestone.isExpanded);
           const toggleButton = document.createElement('button');
@@ -3401,7 +3399,6 @@
             renderMilestones(goal);
           });
 
-          actions.appendChild(editButton);
           actions.appendChild(toggleButton);
           actions.appendChild(todoAddButton);
 
@@ -3986,9 +3983,9 @@
         unlockBodyScroll();
 
         if (restoreFocus && previousIndex !== null && milestoneList) {
-          const selector = `.goal-milestone[data-draggable-index="${previousIndex}"] .goal-milestone__edit`;
-          const editButton = milestoneList.querySelector(selector);
-          editButton?.focus();
+          const selector = `.goal-milestone[data-draggable-index="${previousIndex}"] .goal-milestone__label`;
+          const labelButton = milestoneList.querySelector(selector);
+          labelButton?.focus();
         }
       }
 
@@ -4556,9 +4553,9 @@
             renderMilestones(currentGoal);
           } finally {
             requestAnimationFrame(() => {
-              const selector = `.goal-milestone[data-draggable-index="${editedIndex}"] .goal-milestone__edit`;
-              const editButton = milestoneList?.querySelector(selector);
-              editButton?.focus();
+              const selector = `.goal-milestone[data-draggable-index="${editedIndex}"] .goal-milestone__label`;
+              const labelButton = milestoneList?.querySelector(selector);
+              labelButton?.focus();
             });
           }
         });
