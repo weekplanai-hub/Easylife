@@ -102,9 +102,9 @@
       width: 52px;
       height: 52px;
       border-radius: 18px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      background: rgba(12, 15, 24, 0.48);
-      color: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(12, 15, 24, 0.6);
+      color: rgba(255, 255, 255, 0.94);
       text-decoration: none;
       display: grid;
       place-items: center;
@@ -116,10 +116,16 @@
 
     .home-button:hover,
     .home-button:focus-visible {
-      border-color: rgba(255, 255, 255, 0.42);
-      background: rgba(12, 15, 24, 0.64);
+      border-color: rgba(255, 255, 255, 0.28);
+      background: rgba(12, 15, 24, 0.78);
       transform: translateY(-1px);
       outline: none;
+    }
+
+    .home-button svg {
+      width: 22px;
+      height: 22px;
+      fill: currentColor;
     }
 
     .background-dots button {
@@ -607,7 +613,9 @@
     </div>
 
     <a class="home-button" href="index.html">
-      <span aria-hidden="true">🏠</span>
+      <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+        <path d="M4 10.75 12 4l8 6.75V20a1 1 0 0 1-1 1h-4.5a1 1 0 0 1-1-1v-4.25h-3V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z" />
+      </svg>
       <span class="visually-hidden">Til forsiden</span>
     </a>
 
@@ -668,13 +676,13 @@
           class="todo-toggle"
           data-todo-toggle
           aria-controls="todo-form"
-          aria-expanded="false"
+          aria-expanded="true"
         >
           <span aria-hidden="true">+</span>
           <span class="visually-hidden">Legg til gjøremål</span>
         </button>
       </div>
-      <form class="todo-form" id="todo-form" autocomplete="off" hidden>
+      <form class="todo-form" id="todo-form" autocomplete="off">
         <label class="visually-hidden" for="todo-input">Nytt gjøremål</label>
         <input
           id="todo-input"
@@ -939,21 +947,46 @@
     const todoForm = document.querySelector('.todo-form');
     const todoInput = todoForm ? todoForm.querySelector('input[name="todo"]') : null;
     const todoList = document.querySelector('[data-todo-list]');
+    const todos = [];
 
     function collapseTodoInput() {
       if (!todoForm || !todoToggle || !todoInput) return;
+      if (todos.length === 0) {
+        todoForm.hidden = false;
+        todoToggle.setAttribute('aria-expanded', 'true');
+        todoInput.value = '';
+        return;
+      }
       todoForm.hidden = true;
       todoToggle.setAttribute('aria-expanded', 'false');
       todoInput.value = '';
     }
 
-    function openTodoInput() {
+    function openTodoInput({ focus = true } = {}) {
       if (!todoForm || !todoToggle || !todoInput) return;
       todoForm.hidden = false;
       todoToggle.setAttribute('aria-expanded', 'true');
-      requestAnimationFrame(() => {
-        todoInput.focus();
-      });
+      if (focus) {
+        requestAnimationFrame(() => {
+          todoInput.focus();
+        });
+      }
+    }
+
+    function syncTodoInputState({ focus = false } = {}) {
+      if (!todoForm || !todoToggle || !todoInput) return;
+      if (todos.length === 0) {
+        const wasHidden = todoForm.hidden;
+        todoForm.hidden = false;
+        todoToggle.setAttribute('aria-expanded', 'true');
+        if ((focus || wasHidden) && panels.todo && panels.todo.classList.contains('open')) {
+          requestAnimationFrame(() => {
+            todoInput.focus();
+          });
+        }
+        return;
+      }
+      todoToggle.setAttribute('aria-expanded', todoForm.hidden ? 'false' : 'true');
     }
 
     function closeAllPanels(exceptName) {
@@ -983,7 +1016,11 @@
           panel.setAttribute('aria-hidden', 'false');
           button.setAttribute('aria-pressed', 'true');
           if (panelName === 'todo') {
-            collapseTodoInput();
+            if (todos.length === 0) {
+              openTodoInput({ focus: true });
+            } else {
+              collapseTodoInput();
+            }
           }
         } else {
           panel.classList.remove('open');
@@ -1010,9 +1047,7 @@
       });
     }
 
-    const todos = [];
-
-    function renderTodos() {
+    function renderTodos({ focusEmpty = false } = {}) {
       if (!todoList) return;
       todoList.innerHTML = '';
       todos.forEach((item, index) => {
@@ -1036,12 +1071,13 @@
         removeBtn.textContent = '×';
         removeBtn.addEventListener('click', () => {
           todos.splice(index, 1);
-          renderTodos();
+          renderTodos({ focusEmpty: todos.length === 0 });
         });
 
         li.append(checkbox, label, removeBtn);
         todoList.appendChild(li);
       });
+      syncTodoInputState({ focus: focusEmpty });
     }
 
     if (todoForm && todoInput) {
@@ -1056,6 +1092,7 @@
     }
 
     renderTodos();
+    syncTodoInputState();
   </script>
 </body>
 </html>
