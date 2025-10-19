@@ -166,53 +166,73 @@
       color: var(--text-secondary);
     }
 
-    .column-section {
+    .column-body {
       display: flex;
       flex-direction: column;
-      gap: 12px;
-    }
-
-    .section-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: rgba(15,28,46,0.8);
-    }
-
-    .section-label::before {
-      content: '';
-      width: 12px;
-      height: 12px;
-      border-radius: 4px;
-      background: currentColor;
-      opacity: 0.7;
+      gap: 16px;
     }
 
     .todo-card {
       position: relative;
       background: var(--card-bg);
-      border-radius: 18px;
-      padding: 16px 18px 18px;
+      border-radius: 20px;
+      padding: 18px 20px;
       display: flex;
-      flex-direction: column;
-      gap: 12px;
+      align-items: flex-start;
+      gap: 18px;
       box-shadow: var(--card-shadow);
-      transition: transform 150ms ease, box-shadow 150ms ease;
+      transition: transform 150ms ease, box-shadow 220ms ease;
     }
 
     .todo-card:hover {
       transform: translateY(-2px);
-      box-shadow: 0 16px 35px rgba(15, 28, 46, 0.12);
+      box-shadow: 0 18px 38px rgba(15, 28, 46, 0.14);
     }
 
-    .todo-title {
-      font-weight: 600;
-      line-height: 1.4;
+    .todo-card.is-editing {
+      box-shadow: 0 0 0 2px rgba(15, 28, 46, 0.12), 0 22px 46px rgba(15, 28, 46, 0.2);
+    }
+
+    .todo-main {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      flex: 1;
+    }
+
+    .todo-checkbox {
+      margin-top: 4px;
+      width: 18px;
+      height: 18px;
+      border-radius: 6px;
+      border: 1.5px solid rgba(15, 28, 46, 0.35);
+      flex-shrink: 0;
+    }
+
+    .todo-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .todo-title,
+    .todo-text {
       margin: 0;
+      line-height: 1.5;
+      color: var(--text-primary);
+    }
+
+    .todo-text[contenteditable='true'] {
+      cursor: text;
+      outline: none;
+    }
+
+    .todo-note {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
     }
 
     .todo-meta {
@@ -232,61 +252,10 @@
       background: rgba(15, 28, 46, 0.05);
     }
 
-    .todo-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    }
-
-    .todo-list li {
-      position: relative;
-    }
-
-    .todo-content {
-      display: flex;
-      gap: 12px;
-      align-items: flex-start;
-    }
-
-    .todo-checkbox {
-      margin-top: 3px;
-      width: 18px;
-      height: 18px;
-      border-radius: 6px;
-      border: 1.5px solid rgba(15, 28, 46, 0.35);
-    }
-
-    .todo-text {
-      margin: 0;
-      line-height: 1.5;
-      color: var(--text-primary);
-    }
-
     .todo-actions {
-      position: absolute;
-      top: 50%;
-      right: 12px;
-      transform: translateY(-50%);
       display: flex;
-      gap: 8px;
-      background: rgba(247, 248, 251, 0.95);
-      border-radius: 999px;
-      padding: 6px 10px;
-      box-shadow: 0 12px 26px rgba(15, 28, 46, 0.18);
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 160ms ease, transform 160ms ease;
-      transform-origin: right center;
-    }
-
-    .todo-card:hover .todo-actions,
-    .todo-list li:hover .todo-actions {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(-50%) scale(1.02);
+      gap: 10px;
+      flex-shrink: 0;
     }
 
     .todo-action-btn {
@@ -321,24 +290,109 @@
       stroke-linejoin: round;
     }
 
-    .follow-up-list {
+    .todo-menu {
+      position: absolute;
+      min-width: 260px;
+      background: rgba(15, 23, 42, 0.88);
+      color: rgba(255, 255, 255, 0.94);
+      border-radius: 22px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      padding: 20px 22px;
+      box-shadow: 0 38px 90px rgba(15, 23, 42, 0.35);
+      backdrop-filter: blur(18px);
+      display: none;
+      flex-direction: column;
+      gap: 18px;
+      z-index: 5;
+    }
+
+    .todo-menu[data-open='true'] {
+      display: flex;
+    }
+
+    .todo-menu .menu-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .todo-menu .menu-header button {
+      background: rgba(255, 255, 255, 0.14);
+      border: none;
+      color: inherit;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      font-size: 1.05rem;
+      line-height: 1;
+    }
+
+    .todo-menu form {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 14px;
     }
 
-    .follow-up-list li {
-      list-style: none;
-      padding-left: 16px;
-      position: relative;
+    .todo-menu label {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.82rem;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.72);
     }
 
-    .follow-up-list li::before {
-      content: '\2022';
-      position: absolute;
-      left: 0;
-      top: 0;
-      color: rgba(15, 28, 46, 0.45);
+    .todo-menu input[type='date'],
+    .todo-menu select {
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(12, 16, 28, 0.65);
+      color: rgba(255, 255, 255, 0.94);
+      padding: 10px 12px;
+      font-size: 0.95rem;
+      font-family: inherit;
+    }
+
+    .todo-menu input[type='date']::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+    }
+
+    .todo-menu .menu-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .todo-menu .menu-actions button,
+    .todo-menu .menu-actions a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: rgba(12, 16, 28, 0.6);
+      color: inherit;
+      text-decoration: none;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 160ms ease, border-color 160ms ease;
+    }
+
+    .todo-menu .menu-actions button:hover,
+    .todo-menu .menu-actions button:focus-visible,
+    .todo-menu .menu-actions a:hover,
+    .todo-menu .menu-actions a:focus-visible {
+      background: rgba(12, 16, 28, 0.78);
+      border-color: rgba(255, 255, 255, 0.42);
+      outline: none;
     }
 
     @media (max-width: 1024px) {
@@ -370,18 +424,22 @@
     }
 
     @media (max-width: 640px) {
-      .todo-actions {
-        position: static;
-        transform: none;
-        opacity: 1;
-        visibility: visible;
-        margin-top: 12px;
-        justify-content: center;
+      .todo-card {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 14px;
       }
 
-      .todo-card:hover .todo-actions,
-      .todo-list li:hover .todo-actions {
-        transform: none;
+      .todo-main {
+        width: 100%;
+      }
+
+      .todo-actions {
+        justify-content: flex-end;
+      }
+
+      .todo-menu {
+        min-width: min(260px, calc(100vw - 32px));
       }
     }
   </style>
@@ -412,344 +470,379 @@
       </p>
     </header>
     <section class="board" aria-label="Oppgaveoversikt">
-      <article class="task-column" style="--accent: var(--important)">
+      <article class="task-column" style="--accent: var(--important)" data-column>
         <div class="column-header">
           <h2>Tasks – Backlog</h2>
           <p>Samle alt som kan være aktuelt å jobbe med.</p>
         </div>
-        <div class="column-section">
-          <span class="section-label" style="color: var(--important)">Important</span>
-          <div class="todo-card">
-            <p class="todo-title">Strategier · Hevn hva oversikt // Reg strategisk fokus.</p>
-            <div class="todo-meta">
-              <span>Overlevering: Nina</span>
-              <span>Oppdatere kravspekk</span>
+        <div class="column-body" data-column-body>
+          <article class="todo-card" data-todo-card data-todo-id="backlog-1">
+            <div class="todo-main">
+              <input class="todo-checkbox" type="checkbox" aria-label="Strategier · Hevn hva oversikt" />
+              <div class="todo-copy">
+                <p class="todo-text" data-editable tabindex="0">Strategier · Hevn hva oversikt // Reg strategisk fokus.</p>
+                <div class="todo-meta">
+                  <span>Overlevering: Nina</span>
+                  <span>Oppdatere kravspekk</span>
+                </div>
+              </div>
             </div>
-            <div class="todo-actions" aria-hidden="true">
-              <button class="todo-action-btn" title="Flytt fremover" aria-label="Flytt oppgave fremover">
+            <div class="todo-actions">
+              <button class="todo-action-btn" type="button" data-action="move-next" title="Flytt fremover" aria-label="Flytt oppgave fremover">
                 <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
               </button>
-              <button class="todo-action-btn" title="Sett forfallsdato" aria-label="Sett forfallsdato">
-                <svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="16" rx="2" /><path d="M8 3.5v4" /><path d="M16 3.5v4" /><path d="M3.5 9.5h17" /><path d="m9 13 2 2 4-4" /></svg>
-              </button>
-              <button class="todo-action-btn" title="Legg til i fokus" aria-label="Legg til i fokus">
+              <button class="todo-action-btn" type="button" data-action="open-focus" title="Åpne i fokus" aria-label="Åpne i fokus">
                 <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8m-4-4h8" /></svg>
               </button>
             </div>
-          </div>
-          <div class="todo-card">
-            <p class="todo-title">Gant skjema // oppdatere leder.</p>
-            <ul class="todo-list">
-              <li>
-                <div class="todo-content">
-                  <input class="todo-checkbox" type="checkbox" aria-label="Lag styresak" />
-                  <p class="todo-text">Lag styresak // Hvem tar oversikt? Reg strategi fokus</p>
-                </div>
-                <div class="todo-actions" aria-hidden="true">
-                  <button class="todo-action-btn" title="Flytt fremover" aria-label="Flytt oppgave fremover">
-                    <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
-                  </button>
-                  <button class="todo-action-btn" title="Sett forfallsdato" aria-label="Sett forfallsdato">
-                    <svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="16" rx="2" /><path d="M8 3.5v4" /><path d="M16 3.5v4" /><path d="M3.5 9.5h17" /><path d="m9 13 2 2 4-4" /></svg>
-                  </button>
-                  <button class="todo-action-btn" title="Legg til i fokus" aria-label="Legg til i fokus">
-                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8m-4-4h8" /></svg>
-                  </button>
-                </div>
-              </li>
-              <li>
-                <div class="todo-content">
-                  <input class="todo-checkbox" type="checkbox" aria-label="Godkjenne kontrakter" />
-                  <p class="todo-text">Godkjenne kontrakter på key accounts.</p>
-                </div>
-                <div class="todo-actions" aria-hidden="true">
-                  <button class="todo-action-btn" title="Flytt fremover" aria-label="Flytt oppgave fremover">
-                    <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
-                  </button>
-                  <button class="todo-action-btn" title="Sett forfallsdato" aria-label="Sett forfallsdato">
-                    <svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="16" rx="2" /><path d="M8 3.5v4" /><path d="M16 3.5v4" /><path d="M3.5 9.5h17" /><path d="m9 13 2 2 4-4" /></svg>
-                  </button>
-                  <button class="todo-action-btn" title="Legg til i fokus" aria-label="Legg til i fokus">
-                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8m-4-4h8" /></svg>
-                  </button>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div class="column-section">
-          <span class="section-label" style="color: var(--less-important)">Less Important</span>
-          <div class="todo-card">
-            <p class="todo-title">Loven om å glemme permisjon inkl. adekvans.</p>
-            <div class="todo-meta">
-              <span>Konferanse</span>
-              <span>Oppfølging: Roy</span>
+          </article>
+
+          <article class="todo-card" data-todo-card data-todo-id="backlog-2">
+            <div class="todo-main">
+              <input class="todo-checkbox" type="checkbox" aria-label="Lag styresak" />
+              <div class="todo-copy">
+                <p class="todo-text" data-editable tabindex="0">Lag styresak // Hvem tar oversikt? Reg strategi fokus</p>
+                <p class="todo-note">Prosjekt: Gant skjema – oppdatere leder</p>
+              </div>
             </div>
-            <div class="todo-actions" aria-hidden="true">
-              <button class="todo-action-btn" title="Flytt fremover" aria-label="Flytt oppgave fremover">
+            <div class="todo-actions">
+              <button class="todo-action-btn" type="button" data-action="move-next" title="Flytt fremover" aria-label="Flytt oppgave fremover">
                 <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
               </button>
-              <button class="todo-action-btn" title="Sett forfallsdato" aria-label="Sett forfallsdato">
-                <svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="16" rx="2" /><path d="M8 3.5v4" /><path d="M16 3.5v4" /><path d="M3.5 9.5h17" /><path d="m9 13 2 2 4-4" /></svg>
-              </button>
-              <button class="todo-action-btn" title="Legg til i fokus" aria-label="Legg til i fokus">
+              <button class="todo-action-btn" type="button" data-action="open-focus" title="Åpne i fokus" aria-label="Åpne i fokus">
                 <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8m-4-4h8" /></svg>
               </button>
             </div>
-          </div>
-          <div class="todo-card">
-            <p class="todo-title">Oppdatere sikkerhetsplan for kundereiser.</p>
-            <div class="todo-actions" aria-hidden="true">
-              <button class="todo-action-btn" title="Flytt fremover" aria-label="Flytt oppgave fremover">
+          </article>
+
+          <article class="todo-card" data-todo-card data-todo-id="backlog-3">
+            <div class="todo-main">
+              <input class="todo-checkbox" type="checkbox" aria-label="Godkjenne kontrakter" />
+              <div class="todo-copy">
+                <p class="todo-text" data-editable tabindex="0">Godkjenne kontrakter på key accounts.</p>
+                <p class="todo-note">Prosjekt: Gant skjema – oppdatere leder</p>
+              </div>
+            </div>
+            <div class="todo-actions">
+              <button class="todo-action-btn" type="button" data-action="move-next" title="Flytt fremover" aria-label="Flytt oppgave fremover">
                 <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
               </button>
-              <button class="todo-action-btn" title="Sett forfallsdato" aria-label="Sett forfallsdato">
-                <svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="16" rx="2" /><path d="M8 3.5v4" /><path d="M16 3.5v4" /><path d="M3.5 9.5h17" /><path d="m9 13 2 2 4-4" /></svg>
-              </button>
-              <button class="todo-action-btn" title="Legg til i fokus" aria-label="Legg til i fokus">
+              <button class="todo-action-btn" type="button" data-action="open-focus" title="Åpne i fokus" aria-label="Åpne i fokus">
                 <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8m-4-4h8" /></svg>
               </button>
             </div>
-          </div>
+          </article>
+
+          <article class="todo-card" data-todo-card data-todo-id="backlog-4">
+            <div class="todo-main">
+              <input class="todo-checkbox" type="checkbox" aria-label="Loven om å glemme permisjon" />
+              <div class="todo-copy">
+                <p class="todo-text" data-editable tabindex="0">Loven om å glemme permisjon inkl. adekvans.</p>
+                <div class="todo-meta">
+                  <span>Konferanse</span>
+                  <span>Oppfølging: Roy</span>
+                </div>
+              </div>
+            </div>
+            <div class="todo-actions">
+              <button class="todo-action-btn" type="button" data-action="move-next" title="Flytt fremover" aria-label="Flytt oppgave fremover">
+                <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+              </button>
+              <button class="todo-action-btn" type="button" data-action="open-focus" title="Åpne i fokus" aria-label="Åpne i fokus">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8m-4-4h8" /></svg>
+              </button>
+            </div>
+          </article>
+
+          <article class="todo-card" data-todo-card data-todo-id="backlog-5">
+            <div class="todo-main">
+              <input class="todo-checkbox" type="checkbox" aria-label="Oppdatere sikkerhetsplan" />
+              <div class="todo-copy">
+                <p class="todo-text" data-editable tabindex="0">Oppdatere sikkerhetsplan for kundereiser.</p>
+              </div>
+            </div>
+            <div class="todo-actions">
+              <button class="todo-action-btn" type="button" data-action="move-next" title="Flytt fremover" aria-label="Flytt oppgave fremover">
+                <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+              </button>
+              <button class="todo-action-btn" type="button" data-action="open-focus" title="Åpne i fokus" aria-label="Åpne i fokus">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8m-4-4h8" /></svg>
+              </button>
+            </div>
+          </article>
         </div>
       </article>
 
-      <article class="task-column" style="--accent: var(--next)">
+      <article class="task-column" style="--accent: var(--next)" data-column>
         <div class="column-header">
           <h2>Next Tasks</h2>
           <p>Oppgaver som er klare til å plukkes opp.</p>
         </div>
-        <div class="todo-card">
-          <p class="todo-title">Lønnsprosjekter og titler</p>
-          <ul class="todo-list">
-            <li>
-              <div class="todo-content">
-                <input class="todo-checkbox" type="checkbox" aria-label="Oppdatere Excel" />
-                <p class="todo-text">Oppdater Excel-oversikt med nye titler</p>
+        <div class="column-body" data-column-body>
+          <article class="todo-card" data-todo-card data-todo-id="next-1">
+            <div class="todo-main">
+              <input class="todo-checkbox" type="checkbox" aria-label="Oppdater Excel-oversikt" />
+              <div class="todo-copy">
+                <p class="todo-text" data-editable tabindex="0">Oppdater Excel-oversikt med nye titler</p>
+                <p class="todo-note">Initiativ: Lønnsprosjekter og titler</p>
               </div>
-              <div class="todo-actions" aria-hidden="true">
-                <button class="todo-action-btn" title="Flytt fremover" aria-label="Flytt oppgave fremover">
-                  <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
-                </button>
-                <button class="todo-action-btn" title="Sett forfallsdato" aria-label="Sett forfallsdato">
-                  <svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="16" rx="2" /><path d="M8 3.5v4" /><path d="M16 3.5v4" /><path d="M3.5 9.5h17" /><path d="m9 13 2 2 4-4" /></svg>
-                </button>
-                <button class="todo-action-btn" title="Legg til i fokus" aria-label="Legg til i fokus">
-                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8m-4-4h8" /></svg>
-                </button>
+            </div>
+            <div class="todo-actions">
+              <button class="todo-action-btn" type="button" data-action="move-next" title="Flytt fremover" aria-label="Flytt oppgave fremover">
+                <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+              </button>
+              <button class="todo-action-btn" type="button" data-action="open-focus" title="Åpne i fokus" aria-label="Åpne i fokus">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8m-4-4h8" /></svg>
+              </button>
+            </div>
+          </article>
+
+          <article class="todo-card" data-todo-card data-todo-id="next-2">
+            <div class="todo-main">
+              <input class="todo-checkbox" type="checkbox" aria-label="Forbered intern kommunikasjon" />
+              <div class="todo-copy">
+                <p class="todo-text" data-editable tabindex="0">Forbered intern kommunikasjon om endringene</p>
+                <p class="todo-note">Initiativ: Lønnsprosjekter og titler</p>
               </div>
-            </li>
-            <li>
-              <div class="todo-content">
-                <input class="todo-checkbox" type="checkbox" aria-label="Forberede kommunikasjon" />
-                <p class="todo-text">Forbered intern kommunikasjon om endringene</p>
-              </div>
-              <div class="todo-actions" aria-hidden="true">
-                <button class="todo-action-btn" title="Flytt fremover" aria-label="Flytt oppgave fremover">
-                  <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
-                </button>
-                <button class="todo-action-btn" title="Sett forfallsdato" aria-label="Sett forfallsdato">
-                  <svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="16" rx="2" /><path d="M8 3.5v4" /><path d="M16 3.5v4" /><path d="M3.5 9.5h17" /><path d="m9 13 2 2 4-4" /></svg>
-                </button>
-                <button class="todo-action-btn" title="Legg til i fokus" aria-label="Legg til i fokus">
-                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8m-4-4h8" /></svg>
-                </button>
-              </div>
-            </li>
-          </ul>
+            </div>
+            <div class="todo-actions">
+              <button class="todo-action-btn" type="button" data-action="move-next" title="Flytt fremover" aria-label="Flytt oppgave fremover">
+                <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+              </button>
+              <button class="todo-action-btn" type="button" data-action="open-focus" title="Åpne i fokus" aria-label="Åpne i fokus">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8m-4-4h8" /></svg>
+              </button>
+            </div>
+          </article>
         </div>
       </article>
 
-      <article class="task-column" style="--accent: var(--progress)">
+      <article class="task-column" style="--accent: var(--progress)" data-column>
         <div class="column-header">
           <h2>Tasks In Progress</h2>
           <p>Pågående arbeid hvor status oppdateres fortløpende.</p>
         </div>
-        <div class="todo-card">
-          <p class="todo-title">Gjerdrumcase – prismodell skisse</p>
-          <ul class="todo-list">
-            <li>
-              <div class="todo-content">
-                <input class="todo-checkbox" type="checkbox" aria-label="Gjennomgå kontrakter" />
-                <p class="todo-text">Gjennomgå eksisterende kontrakter</p>
+        <div class="column-body" data-column-body>
+          <article class="todo-card" data-todo-card data-todo-id="progress-1">
+            <div class="todo-main">
+              <input class="todo-checkbox" type="checkbox" aria-label="Gjennomgå eksisterende kontrakter" />
+              <div class="todo-copy">
+                <p class="todo-text" data-editable tabindex="0">Gjennomgå eksisterende kontrakter</p>
+                <p class="todo-note">Gjerdrumcase – prismodell skisse</p>
               </div>
-              <div class="todo-actions" aria-hidden="true">
-                <button class="todo-action-btn" title="Flytt fremover" aria-label="Flytt oppgave fremover">
-                  <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
-                </button>
-                <button class="todo-action-btn" title="Sett forfallsdato" aria-label="Sett forfallsdato">
-                  <svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="16" rx="2" /><path d="M8 3.5v4" /><path d="M16 3.5v4" /><path d="M3.5 9.5h17" /><path d="m9 13 2 2 4-4" /></svg>
-                </button>
-                <button class="todo-action-btn" title="Legg til i fokus" aria-label="Legg til i fokus">
-                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8m-4-4h8" /></svg>
-                </button>
+            </div>
+            <div class="todo-actions">
+              <button class="todo-action-btn" type="button" data-action="move-next" title="Flytt fremover" aria-label="Flytt oppgave fremover">
+                <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+              </button>
+              <button class="todo-action-btn" type="button" data-action="open-focus" title="Åpne i fokus" aria-label="Åpne i fokus">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8m-4-4h8" /></svg>
+              </button>
+            </div>
+          </article>
+
+          <article class="todo-card" data-todo-card data-todo-id="progress-2">
+            <div class="todo-main">
+              <input class="todo-checkbox" type="checkbox" aria-label="Beregne margin for Q3/Q4" />
+              <div class="todo-copy">
+                <p class="todo-text" data-editable tabindex="0">Beregne margin for Q3/Q4 med nye satser</p>
+                <p class="todo-note">Gjerdrumcase – prismodell skisse</p>
               </div>
-            </li>
-            <li>
-              <div class="todo-content">
-                <input class="todo-checkbox" type="checkbox" aria-label="Beregne margin" />
-                <p class="todo-text">Beregne margin for Q3/Q4 med nye satser</p>
+            </div>
+            <div class="todo-actions">
+              <button class="todo-action-btn" type="button" data-action="move-next" title="Flytt fremover" aria-label="Flytt oppgave fremover">
+                <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+              </button>
+              <button class="todo-action-btn" type="button" data-action="open-focus" title="Åpne i fokus" aria-label="Åpne i fokus">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8m-4-4h8" /></svg>
+              </button>
+            </div>
+          </article>
+
+          <article class="todo-card" data-todo-card data-todo-id="progress-3">
+            <div class="todo-main">
+              <input class="todo-checkbox" type="checkbox" aria-label="Backlog eier Torger" />
+              <div class="todo-copy">
+                <p class="todo-text" data-editable tabindex="0">Backlog: eier: Torger</p>
+                <p class="todo-note">Kontrollerbarhet</p>
               </div>
-              <div class="todo-actions" aria-hidden="true">
-                <button class="todo-action-btn" title="Flytt fremover" aria-label="Flytt oppgave fremover">
-                  <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
-                </button>
-                <button class="todo-action-btn" title="Sett forfallsdato" aria-label="Sett forfallsdato">
-                  <svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="16" rx="2" /><path d="M8 3.5v4" /><path d="M16 3.5v4" /><path d="M3.5 9.5h17" /><path d="m9 13 2 2 4-4" /></svg>
-                </button>
-                <button class="todo-action-btn" title="Legg til i fokus" aria-label="Legg til i fokus">
-                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8m-4-4h8" /></svg>
-                </button>
+            </div>
+            <div class="todo-actions">
+              <button class="todo-action-btn" type="button" data-action="move-next" title="Flytt fremover" aria-label="Flytt oppgave fremover">
+                <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+              </button>
+              <button class="todo-action-btn" type="button" data-action="open-focus" title="Åpne i fokus" aria-label="Åpne i fokus">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8m-4-4h8" /></svg>
+              </button>
+            </div>
+          </article>
+
+          <article class="todo-card" data-todo-card data-todo-id="progress-4">
+            <div class="todo-main">
+              <input class="todo-checkbox" type="checkbox" aria-label="Check-in business controlling" />
+              <div class="todo-copy">
+                <p class="todo-text" data-editable tabindex="0">Check-in business controlling</p>
+                <p class="todo-note">Kontrollerbarhet</p>
               </div>
-            </li>
-          </ul>
-        </div>
-        <div class="todo-card">
-          <p class="todo-title">Kontrollerbarhet</p>
-          <ul class="todo-list">
-            <li>
-              <div class="todo-content">
-                <input class="todo-checkbox" type="checkbox" aria-label="Backlog eier" />
-                <p class="todo-text">Backlog: eier: Torger</p>
+            </div>
+            <div class="todo-actions">
+              <button class="todo-action-btn" type="button" data-action="move-next" title="Flytt fremover" aria-label="Flytt oppgave fremover">
+                <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+              </button>
+              <button class="todo-action-btn" type="button" data-action="open-focus" title="Åpne i fokus" aria-label="Åpne i fokus">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8m-4-4h8" /></svg>
+              </button>
+            </div>
+          </article>
+
+          <article class="todo-card" data-todo-card data-todo-id="progress-5">
+            <div class="todo-main">
+              <input class="todo-checkbox" type="checkbox" aria-label="Gjenbesøk møte med Ida" />
+              <div class="todo-copy">
+                <p class="todo-text" data-editable tabindex="0">Gjenbesøk i morgen – møte med Ida 10:30</p>
+                <p class="todo-note">Kontrollerbarhet</p>
               </div>
-              <div class="todo-actions" aria-hidden="true">
-                <button class="todo-action-btn" title="Flytt fremover" aria-label="Flytt oppgave fremover">
-                  <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
-                </button>
-                <button class="todo-action-btn" title="Sett forfallsdato" aria-label="Sett forfallsdato">
-                  <svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="16" rx="2" /><path d="M8 3.5v4" /><path d="M16 3.5v4" /><path d="M3.5 9.5h17" /><path d="m9 13 2 2 4-4" /></svg>
-                </button>
-                <button class="todo-action-btn" title="Legg til i fokus" aria-label="Legg til i fokus">
-                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8m-4-4h8" /></svg>
-                </button>
+            </div>
+            <div class="todo-actions">
+              <button class="todo-action-btn" type="button" data-action="move-next" title="Flytt fremover" aria-label="Flytt oppgave fremover">
+                <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+              </button>
+              <button class="todo-action-btn" type="button" data-action="open-focus" title="Åpne i fokus" aria-label="Åpne i fokus">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8m-4-4h8" /></svg>
+              </button>
+            </div>
+          </article>
+
+          <article class="todo-card" data-todo-card data-todo-id="progress-6">
+            <div class="todo-main">
+              <input class="todo-checkbox" type="checkbox" aria-label="Julebord 14. desember" />
+              <div class="todo-copy">
+                <p class="todo-text" data-editable tabindex="0">Julebord 14/12</p>
+                <p class="todo-note">Kontrollerbarhet</p>
               </div>
-            </li>
-            <li>
-              <div class="todo-content">
-                <input class="todo-checkbox" type="checkbox" aria-label="Check in" />
-                <p class="todo-text">Check-in business controlling</p>
+            </div>
+            <div class="todo-actions">
+              <button class="todo-action-btn" type="button" data-action="move-next" title="Flytt fremover" aria-label="Flytt oppgave fremover">
+                <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+              </button>
+              <button class="todo-action-btn" type="button" data-action="open-focus" title="Åpne i fokus" aria-label="Åpne i fokus">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8m-4-4h8" /></svg>
+              </button>
+            </div>
+          </article>
+
+          <article class="todo-card" data-todo-card data-todo-id="progress-7">
+            <div class="todo-main">
+              <input class="todo-checkbox" type="checkbox" aria-label="Jobb over jul" />
+              <div class="todo-copy">
+                <p class="todo-text" data-editable tabindex="0">Jobb over jul</p>
+                <p class="todo-note">Kontrollerbarhet</p>
               </div>
-              <div class="todo-actions" aria-hidden="true">
-                <button class="todo-action-btn" title="Flytt fremover" aria-label="Flytt oppgave fremover">
-                  <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
-                </button>
-                <button class="todo-action-btn" title="Sett forfallsdato" aria-label="Sett forfallsdato">
-                  <svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="16" rx="2" /><path d="M8 3.5v4" /><path d="M16 3.5v4" /><path d="M3.5 9.5h17" /><path d="m9 13 2 2 4-4" /></svg>
-                </button>
-                <button class="todo-action-btn" title="Legg til i fokus" aria-label="Legg til i fokus">
-                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8m-4-4h8" /></svg>
-                </button>
-              </div>
-            </li>
-            <li>
-              <div class="todo-content">
-                <input class="todo-checkbox" type="checkbox" aria-label="Gjennomgang møte" />
-                <p class="todo-text">Gjenbesøk i morgen – møte med Ida 10:30</p>
-              </div>
-              <div class="todo-actions" aria-hidden="true">
-                <button class="todo-action-btn" title="Flytt fremover" aria-label="Flytt oppgave fremover">
-                  <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
-                </button>
-                <button class="todo-action-btn" title="Sett forfallsdato" aria-label="Sett forfallsdato">
-                  <svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="16" rx="2" /><path d="M8 3.5v4" /><path d="M16 3.5v4" /><path d="M3.5 9.5h17" /><path d="m9 13 2 2 4-4" /></svg>
-                </button>
-                <button class="todo-action-btn" title="Legg til i fokus" aria-label="Legg til i fokus">
-                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8m-4-4h8" /></svg>
-                </button>
-              </div>
-            </li>
-            <li>
-              <div class="todo-content">
-                <input class="todo-checkbox" type="checkbox" aria-label="Julebord" />
-                <p class="todo-text">Julebord 14/12</p>
-              </div>
-              <div class="todo-actions" aria-hidden="true">
-                <button class="todo-action-btn" title="Flytt fremover" aria-label="Flytt oppgave fremover">
-                  <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
-                </button>
-                <button class="todo-action-btn" title="Sett forfallsdato" aria-label="Sett forfallsdato">
-                  <svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="16" rx="2" /><path d="M8 3.5v4" /><path d="M16 3.5v4" /><path d="M3.5 9.5h17" /><path d="m9 13 2 2 4-4" /></svg>
-                </button>
-                <button class="todo-action-btn" title="Legg til i fokus" aria-label="Legg til i fokus">
-                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8m-4-4h8" /></svg>
-                </button>
-              </div>
-            </li>
-            <li>
-              <div class="todo-content">
-                <input class="todo-checkbox" type="checkbox" aria-label="Jobb over jul" />
-                <p class="todo-text">Jobb over jul</p>
-              </div>
-              <div class="todo-actions" aria-hidden="true">
-                <button class="todo-action-btn" title="Flytt fremover" aria-label="Flytt oppgave fremover">
-                  <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
-                </button>
-                <button class="todo-action-btn" title="Sett forfallsdato" aria-label="Sett forfallsdato">
-                  <svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="16" rx="2" /><path d="M8 3.5v4" /><path d="M16 3.5v4" /><path d="M3.5 9.5h17" /><path d="m9 13 2 2 4-4" /></svg>
-                </button>
-                <button class="todo-action-btn" title="Legg til i fokus" aria-label="Legg til i fokus">
-                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8m-4-4h8" /></svg>
-                </button>
-              </div>
-            </li>
-          </ul>
+            </div>
+            <div class="todo-actions">
+              <button class="todo-action-btn" type="button" data-action="move-next" title="Flytt fremover" aria-label="Flytt oppgave fremover">
+                <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+              </button>
+              <button class="todo-action-btn" type="button" data-action="open-focus" title="Åpne i fokus" aria-label="Åpne i fokus">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8m-4-4h8" /></svg>
+              </button>
+            </div>
+          </article>
         </div>
       </article>
 
-      <article class="task-column" style="--accent: var(--follow-up)">
+      <article class="task-column" style="--accent: var(--follow-up)" data-column>
         <div class="column-header">
-          <h2>Follow Up / Delegated Tasks</h2>
+          <h2>Follow up / Delegated</h2>
           <p>Oppgaver som er delegert eller krever oppfølging.</p>
         </div>
-        <div class="todo-card">
-          <p class="todo-title">DSO / DPO</p>
-          <ul class="follow-up-list">
-            <li>
-              <span>Informasjonsplikt – Business Case medfører at <strong>Kari</strong> må godkjenne.</span>
-              <div class="todo-actions" aria-hidden="true">
-                <button class="todo-action-btn" title="Flytt fremover" aria-label="Flytt oppgave fremover">
-                  <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
-                </button>
-                <button class="todo-action-btn" title="Sett forfallsdato" aria-label="Sett forfallsdato">
-                  <svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="16" rx="2" /><path d="M8 3.5v4" /><path d="M16 3.5v4" /><path d="M3.5 9.5h17" /><path d="m9 13 2 2 4-4" /></svg>
-                </button>
-                <button class="todo-action-btn" title="Legg til i fokus" aria-label="Legg til i fokus">
-                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8m-4-4h8" /></svg>
-                </button>
+        <div class="column-body" data-column-body>
+          <article class="todo-card" data-todo-card data-todo-id="follow-1">
+            <div class="todo-main">
+              <input class="todo-checkbox" type="checkbox" aria-label="Informasjonsplikt godkjenne Kari" />
+              <div class="todo-copy">
+                <p class="todo-text" data-editable tabindex="0">Informasjonsplikt – Business Case medfører at Kari må godkjenne.</p>
+                <div class="todo-meta">
+                  <span>Delegert til Kari</span>
+                </div>
               </div>
-            </li>
-            <li>
-              <span>Kan skiftesporet outsource ledere // følge opp T.</span>
-              <div class="todo-actions" aria-hidden="true">
-                <button class="todo-action-btn" title="Flytt fremover" aria-label="Flytt oppgave fremover">
-                  <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
-                </button>
-                <button class="todo-action-btn" title="Sett forfallsdato" aria-label="Sett forfallsdato">
-                  <svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="16" rx="2" /><path d="M8 3.5v4" /><path d="M16 3.5v4" /><path d="M3.5 9.5h17" /><path d="m9 13 2 2 4-4" /></svg>
-                </button>
-                <button class="todo-action-btn" title="Legg til i fokus" aria-label="Legg til i fokus">
-                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8m-4-4h8" /></svg>
-                </button>
+            </div>
+            <div class="todo-actions">
+              <button class="todo-action-btn" type="button" data-action="move-next" title="Flytt fremover" aria-label="Flytt oppgave fremover">
+                <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+              </button>
+              <button class="todo-action-btn" type="button" data-action="open-focus" title="Åpne i fokus" aria-label="Åpne i fokus">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8m-4-4h8" /></svg>
+              </button>
+            </div>
+          </article>
+
+          <article class="todo-card" data-todo-card data-todo-id="follow-2">
+            <div class="todo-main">
+              <input class="todo-checkbox" type="checkbox" aria-label="Kan skiftesporet outsource ledere" />
+              <div class="todo-copy">
+                <p class="todo-text" data-editable tabindex="0">Kan skiftesporet outsource ledere – følge opp T.</p>
+                <div class="todo-meta">
+                  <span>Oppfølging</span>
+                </div>
               </div>
-            </li>
-            <li>
-              <span>Gjør status mot partnerne innen fredag.</span>
-              <div class="todo-actions" aria-hidden="true">
-                <button class="todo-action-btn" title="Flytt fremover" aria-label="Flytt oppgave fremover">
-                  <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
-                </button>
-                <button class="todo-action-btn" title="Sett forfallsdato" aria-label="Sett forfallsdato">
-                  <svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="16" rx="2" /><path d="M8 3.5v4" /><path d="M16 3.5v4" /><path d="M3.5 9.5h17" /><path d="m9 13 2 2 4-4" /></svg>
-                </button>
-                <button class="todo-action-btn" title="Legg til i fokus" aria-label="Legg til i fokus">
-                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8m-4-4h8" /></svg>
-                </button>
+            </div>
+            <div class="todo-actions">
+              <button class="todo-action-btn" type="button" data-action="move-next" title="Flytt fremover" aria-label="Flytt oppgave fremover">
+                <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+              </button>
+              <button class="todo-action-btn" type="button" data-action="open-focus" title="Åpne i fokus" aria-label="Åpne i fokus">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8m-4-4h8" /></svg>
+              </button>
+            </div>
+          </article>
+
+          <article class="todo-card" data-todo-card data-todo-id="follow-3">
+            <div class="todo-main">
+              <input class="todo-checkbox" type="checkbox" aria-label="Gjør status mot partnerne" />
+              <div class="todo-copy">
+                <p class="todo-text" data-editable tabindex="0">Gjør status mot partnerne innen fredag.</p>
+                <div class="todo-meta">
+                  <span>Frist: Fredag</span>
+                </div>
               </div>
-            </li>
-          </ul>
+            </div>
+            <div class="todo-actions">
+              <button class="todo-action-btn" type="button" data-action="move-next" title="Flytt fremover" aria-label="Flytt oppgave fremover">
+                <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+              </button>
+              <button class="todo-action-btn" type="button" data-action="open-focus" title="Åpne i fokus" aria-label="Åpne i fokus">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8m-4-4h8" /></svg>
+              </button>
+            </div>
+          </article>
         </div>
       </article>
     </section>
+    <div class="todo-menu" data-todo-menu aria-hidden="true">
+      <div class="menu-header">
+        <span>Oppgaveinnstillinger</span>
+        <button type="button" data-menu-close aria-label="Lukk menyen">×</button>
+      </div>
+      <form autocomplete="off">
+        <label>
+          <span>Forfallsdato</span>
+          <input type="date" name="due-date" />
+        </label>
+        <label>
+          <span>Filter</span>
+          <select name="filter">
+            <option value="none">Ingen filter</option>
+            <option value="arbeid">Arbeid</option>
+            <option value="privat">Privat</option>
+          </select>
+        </label>
+        <div class="menu-actions">
+          <button type="button" data-save-todo>Lagre endring</button>
+          <a href="fokus.html" data-menu-focus>Åpne fokusrom</a>
+        </div>
+      </form>
+    </div>
   </main>
   <script type="module" src="supabase-client.js"></script>
   <script type="module">
@@ -773,6 +866,238 @@
     }
 
     enforceSession();
+
+    const board = document.querySelector('.board');
+    const columns = Array.from(document.querySelectorAll('.task-column[data-column]'));
+    const todoMenu = document.querySelector('[data-todo-menu]');
+    const closeMenuButton = todoMenu?.querySelector('[data-menu-close]');
+    const saveMenuButton = todoMenu?.querySelector('[data-save-todo]');
+    let activeCard = null;
+    let activeEditable = null;
+
+    columns.forEach((column, index) => {
+      column.dataset.columnIndex = String(index);
+    });
+
+    function moveCardToNextColumn(card) {
+      const currentColumn = card.closest('.task-column');
+      if (!currentColumn) {
+        return;
+      }
+
+      const currentIndex = Number(currentColumn.dataset.columnIndex ?? -1);
+      const nextColumn = columns[currentIndex + 1];
+
+      if (!nextColumn) {
+        return;
+      }
+
+      const targetBody = nextColumn.querySelector('[data-column-body]');
+      if (targetBody) {
+        targetBody.appendChild(card);
+      }
+
+      if (activeCard === card) {
+        closeEditing();
+      }
+    }
+
+    function placeCaretAtEnd(element) {
+      const selection = window.getSelection();
+      const range = document.createRange();
+      range.selectNodeContents(element);
+      range.collapse(false);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+
+    function showMenu(card) {
+      if (!todoMenu) {
+        return;
+      }
+
+      todoMenu.setAttribute('data-open', 'true');
+      todoMenu.setAttribute('aria-hidden', 'false');
+      todoMenu.dataset.activeTodo = card.dataset.todoId ?? '';
+
+      requestAnimationFrame(() => {
+        positionMenu(card);
+      });
+    }
+
+    function hideMenu() {
+      if (!todoMenu) {
+        return;
+      }
+
+      todoMenu.removeAttribute('data-open');
+      todoMenu.setAttribute('aria-hidden', 'true');
+      todoMenu.style.left = '';
+      todoMenu.style.top = '';
+      delete todoMenu.dataset.activeTodo;
+    }
+
+    function positionMenu(card) {
+      if (!todoMenu || !todoMenu.hasAttribute('data-open')) {
+        return;
+      }
+
+      const rect = card.getBoundingClientRect();
+      const menuRect = todoMenu.getBoundingClientRect();
+      const margin = 16;
+      let left = rect.right + margin;
+      let top = rect.top + window.scrollY;
+
+      if (left + menuRect.width > window.innerWidth - margin) {
+        left = Math.max(margin, window.innerWidth - menuRect.width - margin);
+      }
+
+      if (top + menuRect.height > window.scrollY + window.innerHeight - margin) {
+        top = Math.max(window.scrollY + margin, window.scrollY + window.innerHeight - menuRect.height - margin);
+      }
+
+      todoMenu.style.left = `${left}px`;
+      todoMenu.style.top = `${top}px`;
+    }
+
+    function closeEditing() {
+      if (!activeCard) {
+        hideMenu();
+        return;
+      }
+
+      if (activeEditable) {
+        const trimmed = activeEditable.textContent?.trim() ?? '';
+        activeEditable.textContent = trimmed;
+        activeEditable.removeAttribute('contenteditable');
+        activeEditable = null;
+      }
+
+      activeCard.classList.remove('is-editing');
+      activeCard = null;
+      hideMenu();
+    }
+
+    function activateEditing(card) {
+      if (activeCard === card) {
+        return;
+      }
+
+      closeEditing();
+      activeCard = card;
+      card.classList.add('is-editing');
+
+      const editable = card.querySelector('[data-editable]');
+      if (editable) {
+        editable.setAttribute('contenteditable', 'true');
+        editable.focus({ preventScroll: true });
+        placeCaretAtEnd(editable);
+        activeEditable = editable;
+      }
+
+      showMenu(card);
+    }
+
+    function handleBoardClick(event) {
+      const actionButton = event.target.closest('.todo-action-btn');
+      if (actionButton) {
+        event.stopPropagation();
+        const card = actionButton.closest('.todo-card');
+        if (!card) {
+          return;
+        }
+
+        const action = actionButton.dataset.action;
+        if (action === 'move-next') {
+          moveCardToNextColumn(card);
+        }
+
+        if (action === 'open-focus') {
+          window.location.href = 'fokus.html';
+        }
+
+        return;
+      }
+
+      if (event.target.closest('.todo-checkbox')) {
+        return;
+      }
+
+      const card = event.target.closest('.todo-card');
+      if (card) {
+        event.preventDefault();
+        activateEditing(card);
+      }
+    }
+
+    function handleBoardKeydown(event) {
+      if (!activeEditable || event.target !== activeEditable) {
+        return;
+      }
+
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        closeEditing();
+      }
+    }
+
+    function handleBoardInput(event) {
+      if (!activeEditable || event.target !== activeEditable || !activeCard) {
+        return;
+      }
+
+      positionMenu(activeCard);
+    }
+
+    function handleGlobalClick(event) {
+      if (!activeCard) {
+        return;
+      }
+
+      if (event.target.closest('.todo-card')) {
+        return;
+      }
+
+      if (event.target.closest('.todo-menu')) {
+        return;
+      }
+
+      closeEditing();
+    }
+
+    function handleViewportChange() {
+      if (activeCard) {
+        positionMenu(activeCard);
+      }
+    }
+
+    if (board) {
+      board.addEventListener('click', handleBoardClick);
+      board.addEventListener('keydown', handleBoardKeydown);
+      board.addEventListener('input', handleBoardInput);
+    }
+
+    document.addEventListener('click', handleGlobalClick);
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        closeEditing();
+      }
+    });
+
+    window.addEventListener('resize', handleViewportChange);
+    window.addEventListener('scroll', handleViewportChange, { passive: true });
+
+    closeMenuButton?.addEventListener('click', () => {
+      closeEditing();
+    });
+
+    saveMenuButton?.addEventListener('click', () => {
+      closeEditing();
+    });
+
+    todoMenu?.addEventListener('click', (event) => {
+      event.stopPropagation();
+    });
   </script>
 </body>
 </html>
