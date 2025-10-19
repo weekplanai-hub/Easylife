@@ -15,7 +15,7 @@
       --text-primary: #0f1c2e;
       --text-secondary: rgba(15, 28, 46, 0.7);
       --board-bg: #f5f2eb;
-      --column-gap: clamp(16px, 1.8vw, 28px);
+      --column-gap: clamp(12px, 1.2vw, 20px);
       --column-radius: 28px;
       --important: #e87a74;
       --less-important: #b6c6db;
@@ -108,12 +108,26 @@
       padding: 48px clamp(32px, 4vw, 64px);
       display: flex;
       flex-direction: column;
-      gap: 32px;
+      gap: 24px;
       overflow-x: hidden;
     }
 
+    header {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
     header h1 {
-      margin: 0 0 8px;
+      margin: 0;
       font-size: clamp(2rem, 2vw + 1rem, 2.75rem);
     }
 
@@ -122,6 +136,51 @@
       color: var(--text-secondary);
       max-width: 520px;
       line-height: 1.6;
+    }
+
+    .history-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(15, 28, 46, 0.12);
+      background: rgba(255, 255, 255, 0.9);
+      color: inherit;
+      font-weight: 500;
+      cursor: pointer;
+      transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease;
+    }
+
+    .history-button:hover,
+    .history-button:focus-visible {
+      transform: translateY(-1px);
+      background: #ffffff;
+      box-shadow: 0 8px 20px rgba(15, 28, 46, 0.14);
+      outline: none;
+    }
+
+    .history-button img {
+      width: 22px;
+      height: 22px;
+    }
+
+    .history-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 24px;
+      height: 24px;
+      padding: 0 6px;
+      border-radius: 999px;
+      background: rgba(15, 28, 46, 0.08);
+      font-size: 0.8rem;
+      font-weight: 600;
+      line-height: 1;
+    }
+
+    .history-count[hidden] {
+      display: none;
     }
 
     .board {
@@ -133,10 +192,10 @@
     .task-column {
       background: rgba(255, 255, 255, 0.55);
       border-radius: var(--column-radius);
-      padding: 24px 24px 32px;
+      padding: 20px 20px 28px;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 16px;
       border: 1px solid rgba(15, 28, 46, 0.08);
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.75);
       position: relative;
@@ -207,15 +266,15 @@
     .column-body {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
     }
 
     .todo-card {
       position: relative;
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 6px 0;
+      gap: 10px;
+      padding: 4px 0;
       border-bottom: 1px solid rgba(15, 28, 46, 0.12);
     }
 
@@ -232,7 +291,8 @@
 
     .todo-text {
       margin: 0;
-      line-height: 1.5;
+      font-size: 0.95rem;
+      line-height: 1.45;
       color: var(--text-primary);
       flex: 1;
       min-width: 0;
@@ -250,6 +310,38 @@
       opacity: 0;
       pointer-events: none;
       transition: opacity 150ms ease;
+    }
+
+    .todo-check-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 8px;
+      border: 1px solid rgba(15, 28, 46, 0.18);
+      background: rgba(255, 255, 255, 0.9);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 150ms ease, background 150ms ease, box-shadow 150ms ease;
+      flex-shrink: 0;
+    }
+
+    .todo-check-btn:hover,
+    .todo-check-btn:focus-visible {
+      transform: translateY(-1px);
+      background: #ffffff;
+      box-shadow: 0 6px 14px rgba(15, 28, 46, 0.12);
+      outline: none;
+    }
+
+    .todo-check-btn svg {
+      width: 14px;
+      height: 14px;
+      stroke: #0f1c2e;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
     }
 
     .todo-card:hover .todo-actions,
@@ -408,6 +500,106 @@
       border-color: rgba(232, 122, 116, 0.6);
     }
 
+    .history-panel {
+      align-self: flex-end;
+      width: min(360px, 100%);
+      background: rgba(255, 255, 255, 0.92);
+      border-radius: 24px;
+      border: 1px solid rgba(15, 28, 46, 0.08);
+      box-shadow: 0 24px 60px rgba(15, 28, 46, 0.16);
+      padding: 22px 24px;
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .history-panel[data-open='true'] {
+      display: flex;
+    }
+
+    .history-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .history-header h2 {
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+
+    .history-close-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid rgba(15, 28, 46, 0.12);
+      background: rgba(255, 255, 255, 0.9);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .history-close-btn:hover,
+    .history-close-btn:focus-visible {
+      background: #ffffff;
+      box-shadow: 0 6px 14px rgba(15, 28, 46, 0.12);
+      outline: none;
+    }
+
+    .history-empty {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .history-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .history-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .history-item .history-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 6px;
+      background: rgba(15, 28, 46, 0.1);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      flex-shrink: 0;
+    }
+
+    .history-item .history-content {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .history-item .history-content p {
+      margin: 0;
+      font-size: 0.92rem;
+    }
+
+    .history-item .history-content time {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+    }
+
     @media (max-width: 1024px) {
       body {
         flex-direction: column;
@@ -434,6 +626,11 @@
       main {
         padding: 32px 24px 48px;
       }
+
+      .history-panel {
+        width: 100%;
+        align-self: stretch;
+      }
     }
 
     @media (max-width: 640px) {
@@ -445,6 +642,10 @@
 
       .todo-actions {
         justify-content: flex-end;
+      }
+
+      .todo-check-btn {
+        align-self: flex-start;
       }
 
       .todo-menu {
@@ -471,13 +672,28 @@
   </aside>
   <main>
     <header>
-      <h1>Todo</h1>
+      <div class="header-top">
+        <h1>Todo</h1>
+        <button class="history-button" type="button" data-history-toggle aria-expanded="false" aria-controls="history-panel">
+          <img src="images/Icon_history.svg" alt="" aria-hidden="true" />
+          <span class="history-button-label">Historikk</span>
+          <span class="history-count" data-history-count hidden>0</span>
+        </button>
+      </div>
       <p>
         Førsteutkast til oppgaveoversikt med kolonner for backlog, neste steg,
         pågående oppgaver og oppfølging/delegerte oppgaver. Kortene kan utvides
         med dynamisk funksjonalitet senere.
       </p>
     </header>
+    <section class="history-panel" id="history-panel" data-history-panel aria-hidden="true">
+      <div class="history-header">
+        <h2>Historikk</h2>
+        <button class="history-close-btn" type="button" data-history-close aria-label="Lukk historikk">×</button>
+      </div>
+      <p class="history-empty" data-history-empty>Ingen oppgaver er fullført ennå.</p>
+      <ul class="history-list" data-history-list hidden></ul>
+    </section>
     <section class="board" aria-label="Oppgaveoversikt">
       <article class="task-column" style="--accent: var(--important)" data-column>
         <div class="column-header">
@@ -489,6 +705,9 @@
         </div>
         <div class="column-body" data-column-body>
           <article class="todo-card" data-todo-card data-todo-id="backlog-1">
+            <button class="todo-check-btn" type="button" aria-label="Marker oppgave som ferdig">
+              <svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" /></svg>
+            </button>
             <p class="todo-text" data-editable tabindex="0">Strategier · Hevn hva oversikt // Reg strategisk fokus.</p>
             <div class="todo-actions">
               <button class="todo-action-btn" type="button" data-action="move-next" title="Flytt fremover" aria-label="Flytt oppgave fremover">
@@ -498,6 +717,9 @@
           </article>
 
           <article class="todo-card" data-todo-card data-todo-id="backlog-2">
+            <button class="todo-check-btn" type="button" aria-label="Marker oppgave som ferdig">
+              <svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" /></svg>
+            </button>
             <p class="todo-text" data-editable tabindex="0">Lag styresak // Hvem tar oversikt? Reg strategi fokus</p>
             <div class="todo-actions">
               <button class="todo-action-btn" type="button" data-action="move-next" title="Flytt fremover" aria-label="Flytt oppgave fremover">
@@ -507,6 +729,9 @@
           </article>
 
           <article class="todo-card" data-todo-card data-todo-id="backlog-3">
+            <button class="todo-check-btn" type="button" aria-label="Marker oppgave som ferdig">
+              <svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" /></svg>
+            </button>
             <p class="todo-text" data-editable tabindex="0">Godkjenne kontrakter på key accounts.</p>
             <div class="todo-actions">
               <button class="todo-action-btn" type="button" data-action="move-next" title="Flytt fremover" aria-label="Flytt oppgave fremover">
@@ -516,6 +741,9 @@
           </article>
 
           <article class="todo-card" data-todo-card data-todo-id="backlog-4">
+            <button class="todo-check-btn" type="button" aria-label="Marker oppgave som ferdig">
+              <svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" /></svg>
+            </button>
             <p class="todo-text" data-editable tabindex="0">Loven om å glemme permisjon inkl. adekvans.</p>
             <div class="todo-actions">
               <button class="todo-action-btn" type="button" data-action="move-next" title="Flytt fremover" aria-label="Flytt oppgave fremover">
@@ -525,6 +753,9 @@
           </article>
 
           <article class="todo-card" data-todo-card data-todo-id="backlog-5">
+            <button class="todo-check-btn" type="button" aria-label="Marker oppgave som ferdig">
+              <svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" /></svg>
+            </button>
             <p class="todo-text" data-editable tabindex="0">Oppdatere sikkerhetsplan for kundereiser.</p>
             <div class="todo-actions">
               <button class="todo-action-btn" type="button" data-action="move-next" title="Flytt fremover" aria-label="Flytt oppgave fremover">
@@ -545,6 +776,9 @@
         </div>
         <div class="column-body" data-column-body>
           <article class="todo-card" data-todo-card data-todo-id="next-1">
+            <button class="todo-check-btn" type="button" aria-label="Marker oppgave som ferdig">
+              <svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" /></svg>
+            </button>
             <p class="todo-text" data-editable tabindex="0">Oppdater Excel-oversikt med nye titler</p>
             <div class="todo-actions">
               <button class="todo-action-btn" type="button" data-action="move-next" title="Flytt fremover" aria-label="Flytt oppgave fremover">
@@ -554,6 +788,9 @@
           </article>
 
           <article class="todo-card" data-todo-card data-todo-id="next-2">
+            <button class="todo-check-btn" type="button" aria-label="Marker oppgave som ferdig">
+              <svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" /></svg>
+            </button>
             <p class="todo-text" data-editable tabindex="0">Forbered intern kommunikasjon om endringene</p>
             <div class="todo-actions">
               <button class="todo-action-btn" type="button" data-action="move-next" title="Flytt fremover" aria-label="Flytt oppgave fremover">
@@ -574,6 +811,9 @@
         </div>
         <div class="column-body" data-column-body>
           <article class="todo-card" data-todo-card data-todo-id="progress-1">
+            <button class="todo-check-btn" type="button" aria-label="Marker oppgave som ferdig">
+              <svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" /></svg>
+            </button>
             <p class="todo-text" data-editable tabindex="0">Gjennomgå eksisterende kontrakter</p>
             <div class="todo-actions">
               <button class="todo-action-btn" type="button" data-action="move-next" title="Flytt fremover" aria-label="Flytt oppgave fremover">
@@ -583,6 +823,9 @@
           </article>
 
           <article class="todo-card" data-todo-card data-todo-id="progress-2">
+            <button class="todo-check-btn" type="button" aria-label="Marker oppgave som ferdig">
+              <svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" /></svg>
+            </button>
             <p class="todo-text" data-editable tabindex="0">Beregne margin for Q3/Q4 med nye satser</p>
             <div class="todo-actions">
               <button class="todo-action-btn" type="button" data-action="move-next" title="Flytt fremover" aria-label="Flytt oppgave fremover">
@@ -592,6 +835,9 @@
           </article>
 
           <article class="todo-card" data-todo-card data-todo-id="progress-3">
+            <button class="todo-check-btn" type="button" aria-label="Marker oppgave som ferdig">
+              <svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" /></svg>
+            </button>
             <p class="todo-text" data-editable tabindex="0">Backlog: eier: Torger</p>
             <div class="todo-actions">
               <button class="todo-action-btn" type="button" data-action="move-next" title="Flytt fremover" aria-label="Flytt oppgave fremover">
@@ -601,6 +847,9 @@
           </article>
 
           <article class="todo-card" data-todo-card data-todo-id="progress-4">
+            <button class="todo-check-btn" type="button" aria-label="Marker oppgave som ferdig">
+              <svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" /></svg>
+            </button>
             <p class="todo-text" data-editable tabindex="0">Check-in business controlling</p>
             <div class="todo-actions">
               <button class="todo-action-btn" type="button" data-action="move-next" title="Flytt fremover" aria-label="Flytt oppgave fremover">
@@ -610,6 +859,9 @@
           </article>
 
           <article class="todo-card" data-todo-card data-todo-id="progress-5">
+            <button class="todo-check-btn" type="button" aria-label="Marker oppgave som ferdig">
+              <svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" /></svg>
+            </button>
             <p class="todo-text" data-editable tabindex="0">Gjenbesøk i morgen – møte med Ida 10:30</p>
             <div class="todo-actions">
               <button class="todo-action-btn" type="button" data-action="move-next" title="Flytt fremover" aria-label="Flytt oppgave fremover">
@@ -619,6 +871,9 @@
           </article>
 
           <article class="todo-card" data-todo-card data-todo-id="progress-6">
+            <button class="todo-check-btn" type="button" aria-label="Marker oppgave som ferdig">
+              <svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" /></svg>
+            </button>
             <p class="todo-text" data-editable tabindex="0">Julebord 14/12</p>
             <div class="todo-actions">
               <button class="todo-action-btn" type="button" data-action="move-next" title="Flytt fremover" aria-label="Flytt oppgave fremover">
@@ -628,6 +883,9 @@
           </article>
 
           <article class="todo-card" data-todo-card data-todo-id="progress-7">
+            <button class="todo-check-btn" type="button" aria-label="Marker oppgave som ferdig">
+              <svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" /></svg>
+            </button>
             <p class="todo-text" data-editable tabindex="0">Jobb over jul</p>
             <div class="todo-actions">
               <button class="todo-action-btn" type="button" data-action="move-next" title="Flytt fremover" aria-label="Flytt oppgave fremover">
@@ -648,6 +906,9 @@
         </div>
         <div class="column-body" data-column-body>
           <article class="todo-card" data-todo-card data-todo-id="follow-1">
+            <button class="todo-check-btn" type="button" aria-label="Marker oppgave som ferdig">
+              <svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" /></svg>
+            </button>
             <p class="todo-text" data-editable tabindex="0">Informasjonsplikt – Business Case medfører at Kari må godkjenne.</p>
             <div class="todo-actions">
               <button class="todo-action-btn" type="button" data-action="move-next" title="Flytt fremover" aria-label="Flytt oppgave fremover">
@@ -657,6 +918,9 @@
           </article>
 
           <article class="todo-card" data-todo-card data-todo-id="follow-2">
+            <button class="todo-check-btn" type="button" aria-label="Marker oppgave som ferdig">
+              <svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" /></svg>
+            </button>
             <p class="todo-text" data-editable tabindex="0">Kan skiftesporet outsource ledere – følge opp T.</p>
             <div class="todo-actions">
               <button class="todo-action-btn" type="button" data-action="move-next" title="Flytt fremover" aria-label="Flytt oppgave fremover">
@@ -666,6 +930,9 @@
           </article>
 
           <article class="todo-card" data-todo-card data-todo-id="follow-3">
+            <button class="todo-check-btn" type="button" aria-label="Marker oppgave som ferdig">
+              <svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" /></svg>
+            </button>
             <p class="todo-text" data-editable tabindex="0">Gjør status mot partnerne innen fredag.</p>
             <div class="todo-actions">
               <button class="todo-action-btn" type="button" data-action="move-next" title="Flytt fremover" aria-label="Flytt oppgave fremover">
@@ -732,6 +999,13 @@
     const saveMenuButton = todoMenu?.querySelector('[data-save-todo]');
     const deleteMenuButton = todoMenu?.querySelector('[data-delete-todo]');
     const addTodoButtons = document.querySelectorAll('[data-add-todo]');
+    const historyButton = document.querySelector('[data-history-toggle]');
+    const historyPanel = document.querySelector('[data-history-panel]');
+    const historyList = historyPanel?.querySelector('[data-history-list]');
+    const historyEmpty = historyPanel?.querySelector('[data-history-empty]');
+    const historyCloseButton = historyPanel?.querySelector('[data-history-close]');
+    const historyCount = document.querySelector('[data-history-count]');
+    const completedTasks = [];
     let activeCard = null;
     let activeEditable = null;
     let generatedIdCounter = 0;
@@ -742,6 +1016,12 @@
       card.setAttribute('data-todo-card', '');
       const uniqueId = `${columnIndex ?? 'col'}-${Date.now()}-${generatedIdCounter += 1}`;
       card.dataset.todoId = uniqueId;
+
+      const checkButton = document.createElement('button');
+      checkButton.className = 'todo-check-btn';
+      checkButton.type = 'button';
+      checkButton.setAttribute('aria-label', 'Marker oppgave som ferdig');
+      checkButton.innerHTML = '<svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" /></svg>';
 
       const paragraph = document.createElement('p');
       paragraph.className = 'todo-text';
@@ -762,6 +1042,7 @@
 
       actions.appendChild(moveButton);
 
+      card.appendChild(checkButton);
       card.appendChild(paragraph);
       card.appendChild(actions);
 
@@ -793,6 +1074,105 @@
       if (activeCard === card) {
         closeEditing();
       }
+    }
+
+    function updateHistoryVisibility() {
+      const hasItems = completedTasks.length > 0;
+
+      if (historyEmpty) {
+        historyEmpty.hidden = hasItems;
+      }
+
+      if (historyList) {
+        historyList.hidden = !hasItems;
+      }
+
+      if (historyCount) {
+        historyCount.textContent = String(completedTasks.length);
+        historyCount.hidden = !hasItems;
+      }
+    }
+
+    function addToHistory(text) {
+      const entryText = text?.trim() ? text.trim() : 'Fullført oppgave';
+      const completedAt = new Date();
+      completedTasks.unshift({ text: entryText, completedAt });
+
+      if (historyList) {
+        const item = document.createElement('li');
+        item.className = 'history-item';
+
+        const icon = document.createElement('span');
+        icon.className = 'history-icon';
+        icon.textContent = '✓';
+
+        const content = document.createElement('div');
+        content.className = 'history-content';
+
+        const description = document.createElement('p');
+        description.textContent = entryText;
+
+        const time = document.createElement('time');
+        time.dateTime = completedAt.toISOString();
+        time.textContent = completedAt.toLocaleTimeString('no-NO', {
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+
+        content.appendChild(description);
+        content.appendChild(time);
+
+        item.appendChild(icon);
+        item.appendChild(content);
+
+        historyList.prepend(item);
+
+        const maxItems = 50;
+        if (historyList.childElementCount > maxItems) {
+          historyList.removeChild(historyList.lastElementChild);
+        }
+      }
+
+      updateHistoryVisibility();
+    }
+
+    function isHistoryOpen() {
+      return historyPanel?.getAttribute('data-open') === 'true';
+    }
+
+    function openHistory() {
+      if (!historyPanel) {
+        return;
+      }
+
+      historyPanel.setAttribute('data-open', 'true');
+      historyPanel.setAttribute('aria-hidden', 'false');
+      historyButton?.setAttribute('aria-expanded', 'true');
+    }
+
+    function closeHistory() {
+      if (!historyPanel) {
+        return;
+      }
+
+      historyPanel.removeAttribute('data-open');
+      historyPanel.setAttribute('aria-hidden', 'true');
+      historyButton?.setAttribute('aria-expanded', 'false');
+    }
+
+    function completeTask(card) {
+      if (!card) {
+        return;
+      }
+
+      const textContent = card.querySelector('[data-editable]')?.textContent?.trim() ?? 'Fullført oppgave';
+
+      if (activeCard === card) {
+        closeEditing();
+      }
+
+      addToHistory(textContent);
+      card.remove();
     }
 
     function placeCaretAtEnd(element) {
@@ -892,6 +1272,18 @@
     }
 
     function handleBoardClick(event) {
+      const checkButton = event.target.closest('.todo-check-btn');
+      if (checkButton) {
+        event.stopPropagation();
+        const card = checkButton.closest('.todo-card');
+        if (!card) {
+          return;
+        }
+
+        completeTask(card);
+        return;
+      }
+
       const actionButton = event.target.closest('.todo-action-btn');
       if (actionButton) {
         event.stopPropagation();
@@ -935,15 +1327,30 @@
     }
 
     function handleGlobalClick(event) {
+      const target = event.target;
+
+      if (isHistoryOpen()) {
+        const clickedHistoryPanel = target.closest('[data-history-panel]');
+        const clickedHistoryToggle = target.closest('[data-history-toggle]');
+
+        if (!clickedHistoryPanel && !clickedHistoryToggle) {
+          closeHistory();
+        }
+      }
+
       if (!activeCard) {
         return;
       }
 
-      if (event.target.closest('.todo-card')) {
+      if (target.closest('.todo-card')) {
         return;
       }
 
-      if (event.target.closest('.todo-menu')) {
+      if (target.closest('.todo-menu')) {
+        return;
+      }
+
+      if (target.closest('[data-history-panel]')) {
         return;
       }
 
@@ -956,16 +1363,45 @@
       }
     }
 
+    updateHistoryVisibility();
+
     if (board) {
       board.addEventListener('click', handleBoardClick);
       board.addEventListener('keydown', handleBoardKeydown);
       board.addEventListener('input', handleBoardInput);
     }
 
+    historyButton?.addEventListener('click', () => {
+      if (isHistoryOpen()) {
+        closeHistory();
+      } else {
+        openHistory();
+      }
+    });
+
+    historyCloseButton?.addEventListener('click', () => {
+      closeHistory();
+      historyButton?.focus();
+    });
+
     document.addEventListener('click', handleGlobalClick);
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') {
-        closeEditing();
+        let handled = false;
+
+        if (activeCard) {
+          closeEditing();
+          handled = true;
+        }
+
+        if (isHistoryOpen()) {
+          closeHistory();
+          handled = true;
+        }
+
+        if (handled) {
+          event.preventDefault();
+        }
       }
     });
 
@@ -1011,6 +1447,10 @@
     });
 
     todoMenu?.addEventListener('click', (event) => {
+      event.stopPropagation();
+    });
+
+    historyPanel?.addEventListener('click', (event) => {
       event.stopPropagation();
     });
   </script>
