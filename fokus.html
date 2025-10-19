@@ -4,25 +4,23 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Fokusrom · Easylife</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     :root {
-      color-scheme: light;
-      --sidebar-bg: linear-gradient(180deg, #101828 0%, #020617 100%);
-      --sidebar-width: 260px;
-      --text-primary: #0f172a;
-      --text-secondary: rgba(15, 23, 42, 0.72);
-      --surface: rgba(255, 255, 255, 0.66);
-      --surface-border: rgba(148, 163, 184, 0.24);
-      --glass: rgba(255, 255, 255, 0.38);
-      --accent: #6366f1;
-      --accent-soft: rgba(99, 102, 241, 0.16);
-      --accent-strong: rgba(79, 70, 229, 0.85);
-      --glow: 0 24px 60px rgba(99, 102, 241, 0.32);
-      --timer-progress: 0deg;
-      --background-image: radial-gradient(140% 140% at 12% -10%, rgba(99, 102, 241, 0.45) 0%, rgba(14, 165, 233, 0.35) 32%, rgba(244, 244, 255, 0.92) 72%);
+      color-scheme: dark light;
+      --glass-bg: rgba(18, 21, 30, 0.28);
+      --glass-border: rgba(255, 255, 255, 0.22);
+      --glass-blur: 24px;
+      --accent: rgba(255, 255, 255, 0.82);
+      --accent-strong: rgba(255, 255, 255, 0.94);
+      --accent-soft: rgba(255, 255, 255, 0.16);
+      --panel-bg: rgba(12, 15, 24, 0.68);
+      --panel-border: rgba(255, 255, 255, 0.12);
+      --panel-radius: 22px;
+      --background-image: none;
+      font-family: 'SF Pro Display', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
     * {
@@ -32,895 +30,597 @@
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: 'Inter', sans-serif;
-      color: var(--text-primary);
       display: flex;
-      background: #f4f6fb;
+      align-items: center;
+      justify-content: center;
+      background: #05070c;
+      color: #ffffff;
       position: relative;
-      overflow-x: hidden;
+      overflow: hidden;
     }
 
     body::before {
       content: '';
       position: fixed;
       inset: 0;
-      background: var(--background-image);
+      background-image: var(--background-image);
       background-size: cover;
       background-position: center;
-      filter: saturate(0.9);
+      background-repeat: no-repeat;
+      transition: opacity 600ms ease, filter 600ms ease;
       z-index: -2;
+      opacity: 1;
     }
 
     body::after {
       content: '';
       position: fixed;
       inset: 0;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.82) 0%, rgba(248, 250, 255, 0.88) 42%, rgba(241, 245, 249, 0.92) 100%);
+      background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.12), transparent 55%),
+        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.08), transparent 58%);
       z-index: -1;
+      pointer-events: none;
     }
 
-    .sidebar {
-      width: var(--sidebar-width);
-      background: var(--sidebar-bg);
-      color: rgba(255, 255, 255, 0.92);
-      padding: 16px 24px 32px;
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-      position: relative;
-      box-shadow: 12px 0 32px rgba(18, 38, 63, 0.25);
-      z-index: 2;
-    }
-
-    .logo img {
-      width: 160px;
-      height: auto;
-      display: block;
-    }
-
-    .menu {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .menu a {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 12px 16px;
-      border-radius: 14px;
-      color: rgba(255, 255, 255, 0.8);
-      text-decoration: none;
-      font-weight: 500;
-      transition: background 160ms ease, color 160ms ease;
-    }
-
-    .menu a.active,
-    .menu a:hover,
-    .menu a:focus-visible {
-      background: rgba(255, 255, 255, 0.18);
-      color: #ffffff;
-      outline: none;
-    }
-
-    .menu a .icon {
-      display: inline-flex;
-      width: 32px;
-      height: 32px;
-      border-radius: 12px;
-      align-items: center;
-      justify-content: center;
-      background: rgba(15, 23, 42, 0.65);
-    }
-
-    .menu a .icon img {
-      max-width: 20px;
-      max-height: 20px;
-      width: 20px;
-      height: 20px;
-      object-fit: contain;
-    }
-
-    main {
-      flex: 1;
-      padding: 48px clamp(24px, 4vw, 72px);
-      display: flex;
-      flex-direction: column;
-      gap: 40px;
-    }
-
-    .focus-hero {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: clamp(24px, 6vw, 64px);
-      padding: clamp(28px, 6vw, 48px);
-      border-radius: 36px;
-      background: rgba(255, 255, 255, 0.68);
-      border: 1px solid rgba(255, 255, 255, 0.6);
-      box-shadow: 0 30px 60px rgba(15, 23, 42, 0.1);
-      position: relative;
-      overflow: hidden;
-      isolation: isolate;
-    }
-
-    .focus-hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at 20% 20%, rgba(79, 70, 229, 0.24), transparent 55%),
-        radial-gradient(circle at 80% 12%, rgba(14, 165, 233, 0.18), transparent 45%);
-      z-index: -1;
-      opacity: 0.9;
-    }
-
-    .focus-hero__eyebrow {
-      font-weight: 600;
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: rgba(79, 70, 229, 0.78);
-    }
-
-    .focus-hero h1 {
-      margin: 10px 0 16px;
-      font-size: clamp(2.4rem, 3vw + 1rem, 3.4rem);
-      letter-spacing: -0.02em;
-    }
-
-    .focus-hero p {
-      margin: 0;
-      font-size: 1.05rem;
-      line-height: 1.6;
-      color: var(--text-secondary);
-    }
-
-    .focus-hero__actions {
-      margin-top: 28px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-      align-items: center;
-    }
-
-    .button {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 14px 22px;
-      border-radius: 999px;
-      border: none;
-      font-weight: 600;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
-    }
-
-    .button--primary {
-      background: linear-gradient(130deg, rgba(79, 70, 229, 0.92), rgba(99, 102, 241, 0.82));
-      color: #ffffff;
-      box-shadow: var(--glow);
-    }
-
-    .button--primary:hover,
-    .button--primary:focus-visible {
-      transform: translateY(-1px);
-      box-shadow: 0 24px 40px rgba(99, 102, 241, 0.26);
-      outline: none;
-    }
-
-    .button--ghost {
-      background: rgba(99, 102, 241, 0.12);
-      color: var(--accent-strong);
-    }
-
-    .button--ghost:hover,
-    .button--ghost:focus-visible {
-      background: rgba(99, 102, 241, 0.16);
-      transform: translateY(-1px);
-      outline: none;
-    }
-
-    .focus-hero__preview {
-      position: relative;
+    .ui-shell {
+      width: 100%;
+      height: 100vh;
       display: grid;
       place-items: center;
+      position: relative;
+      padding: clamp(18px, 4vw, 36px);
     }
 
-    .preview-card {
-      position: relative;
-      background: rgba(15, 23, 42, 0.78);
-      color: rgba(255, 255, 255, 0.94);
-      padding: 24px 28px;
-      border-radius: 24px;
-      box-shadow: 0 30px 60px rgba(15, 23, 42, 0.22);
+    .background-dots {
+      position: fixed;
+      top: clamp(16px, 3vw, 36px);
+      left: clamp(18px, 3vw, 40px);
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      z-index: 3;
+    }
+
+    .background-dots button {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.38);
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      transition: transform 180ms ease, background 180ms ease;
+    }
+
+    .background-dots button.active {
+      background: #ffffff;
+      transform: scale(1.1);
+      box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.12);
+    }
+
+    .fullscreen-toggle {
+      margin-left: 16px;
+      padding: 10px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(12, 15, 24, 0.48);
+      color: rgba(255, 255, 255, 0.86);
+      font-size: 0.82rem;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: background 200ms ease, border 200ms ease;
       backdrop-filter: blur(12px);
     }
 
-    .preview-card__title {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-weight: 600;
-      margin-bottom: 16px;
-      font-size: 1.05rem;
-    }
-
-    .preview-card__progress {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .preview-card__progress-circle {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background: conic-gradient(#60a5fa 210deg, rgba(255, 255, 255, 0.16) 0deg);
-      display: grid;
-      place-items: center;
-      font-weight: 600;
-      font-size: 0.95rem;
-    }
-
-    .preview-card__progress-list {
-      display: grid;
-      gap: 10px;
-      font-size: 0.95rem;
-      color: rgba(226, 232, 240, 0.85);
-    }
-
-    .preview-pulse {
-      position: absolute;
-      inset: -24px;
-      border-radius: 32px;
-      background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.22), transparent 65%);
-      filter: blur(0px);
-      opacity: 0.8;
-      z-index: -1;
-      animation: pulse 8s infinite alternate;
-    }
-
-    @keyframes pulse {
-      from { opacity: 0.65; transform: scale(0.95); }
-      to { opacity: 0.9; transform: scale(1); }
-    }
-
-    .focus-grid {
-      display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: clamp(20px, 4vw, 36px);
-    }
-
-    .focus-grid__column {
-      display: grid;
-      gap: 24px;
-    }
-
-    .card {
-      border-radius: 28px;
-      background: rgba(255, 255, 255, 0.72);
-      border: 1px solid var(--surface-border);
-      box-shadow: 0 22px 48px rgba(15, 23, 42, 0.08);
-      padding: clamp(24px, 4vw, 36px);
-      display: grid;
-      gap: 24px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .card__header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .card__title {
-      margin: 0;
-      font-size: 1.4rem;
-      letter-spacing: -0.01em;
-    }
-
-    .card__subtitle {
-      margin: 0;
-      color: var(--text-secondary);
-      font-size: 1rem;
-    }
-
-    .focus-timer {
-      display: grid;
-      gap: 20px;
-    }
-
-    .focus-timer__dial {
-      width: min(320px, 100%);
-      aspect-ratio: 1;
-      border-radius: 50%;
-      margin-inline: auto;
-      padding: 28px;
-      background: linear-gradient(145deg, rgba(236, 245, 255, 0.95), rgba(255, 255, 255, 0.6));
-      border: 1px solid rgba(148, 163, 184, 0.22);
-      box-shadow: inset 0 0 0 1px rgba(79, 70, 229, 0.12), 0 18px 40px rgba(148, 163, 184, 0.16);
-      display: grid;
-      place-items: center;
-      position: relative;
-    }
-
-    .focus-timer__dial::before {
-      content: '';
-      position: absolute;
-      inset: 12px;
-      border-radius: 50%;
-      background: conic-gradient(from 270deg, rgba(99, 102, 241, 0.35) var(--timer-progress), rgba(226, 232, 240, 0.32) 0deg);
-      filter: drop-shadow(0 12px 30px rgba(99, 102, 241, 0.25));
-      transition: background 0.4s ease;
-    }
-
-    .focus-timer__time {
-      position: relative;
-      font-size: clamp(2.5rem, 6vw, 3.4rem);
-      font-weight: 700;
-      letter-spacing: 0.08em;
-    }
-
-    .focus-timer__phase {
-      text-transform: uppercase;
-      font-size: 0.85rem;
-      letter-spacing: 0.2em;
-      color: var(--accent-strong);
-      font-weight: 600;
-      text-align: center;
-    }
-
-    .focus-timer__controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      justify-content: center;
-    }
-
-    .focus-timer__controls button {
-      min-width: 140px;
-    }
-
-    .focus-settings {
-      display: grid;
-      gap: 18px;
-    }
-
-    .focus-settings label {
-      font-weight: 600;
-      color: var(--text-secondary);
-    }
-
-    .focus-settings__row {
-      display: flex;
-      gap: 16px;
-      align-items: center;
-    }
-
-    .focus-settings__value {
-      min-width: 48px;
-      font-variant-numeric: tabular-nums;
-      font-weight: 600;
-      color: var(--accent-strong);
-    }
-
-    .focus-settings input[type="range"] {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 100%;
-      height: 6px;
-      border-radius: 999px;
-      background: rgba(148, 163, 184, 0.35);
+    .fullscreen-toggle:hover,
+    .fullscreen-toggle:focus-visible {
+      border-color: rgba(255, 255, 255, 0.42);
+      background: rgba(12, 15, 24, 0.64);
       outline: none;
     }
 
-    .focus-settings input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: var(--accent);
-      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.18);
-      cursor: pointer;
-      border: none;
-    }
-
-    .focus-settings input[type="range"]::-moz-range-thumb {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: var(--accent);
-      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.18);
-      cursor: pointer;
-      border: none;
-    }
-
-    .focus-plan {
+    .timer-shell {
       display: grid;
-      gap: 18px;
+      place-items: center;
+      gap: 24px;
+      padding: clamp(32px, 8vw, 64px);
+      border-radius: 46px;
+      backdrop-filter: blur(var(--glass-blur));
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 40px 120px rgba(0, 0, 0, 0.35);
+      min-width: min(70vw, 420px);
     }
 
-    .focus-plan__item {
-      display: grid;
-      gap: 4px;
-      padding: 18px 20px;
-      border-radius: 20px;
-      background: rgba(99, 102, 241, 0.08);
-      border: 1px solid rgba(99, 102, 241, 0.12);
+    .timer-display {
+      font-size: clamp(3.5rem, 8vw, 6.5rem);
+      letter-spacing: 0.12em;
+      font-weight: 500;
+      color: var(--accent);
+      text-shadow: 0 18px 45px rgba(0, 0, 0, 0.35);
     }
 
-    .focus-plan__meta {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.9rem;
-      color: rgba(15, 23, 42, 0.55);
-    }
-
-    .focus-plan__title {
-      font-weight: 600;
-    }
-
-    .focus-playlists {
-      display: grid;
-      gap: 14px;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    }
-
-    .playlist-card {
-      border-radius: 20px;
-      padding: 18px;
-      background: rgba(15, 23, 42, 0.86);
-      color: rgba(226, 232, 240, 0.92);
-      display: grid;
-      gap: 12px;
-      box-shadow: 0 20px 30px rgba(15, 23, 42, 0.18);
-    }
-
-    .playlist-card__tag {
+    .mode-indicator {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 6px 12px;
+      gap: 10px;
+      padding: 10px 18px;
       border-radius: 999px;
-      background: rgba(99, 102, 241, 0.22);
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #c7d2fe;
+      background: rgba(12, 15, 24, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.76);
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
     }
 
-    .playlist-card__title {
-      margin: 0;
-      font-size: 1.1rem;
-      font-weight: 600;
-    }
-
-    .focus-checkin {
-      display: grid;
-      gap: 18px;
-    }
-
-    .mood-buttons {
+    .timer-controls {
       display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
+      align-items: center;
+      gap: 14px;
     }
 
-    .mood-buttons button {
-      border: none;
-      background: rgba(99, 102, 241, 0.1);
-      color: var(--accent-strong);
-      padding: 10px 16px;
-      border-radius: 12px;
+    .timer-controls button {
+      min-width: 96px;
+      padding: 12px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(12, 15, 24, 0.48);
+      color: rgba(255, 255, 255, 0.88);
+      font-size: 0.94rem;
+      letter-spacing: 0.04em;
       cursor: pointer;
-      font-weight: 500;
-      transition: background 160ms ease, transform 160ms ease;
+      transition: transform 180ms ease, background 180ms ease, border 180ms ease;
+      backdrop-filter: blur(12px);
     }
 
-    .mood-buttons button:is(:hover, :focus-visible) {
-      background: rgba(99, 102, 241, 0.2);
+    .timer-controls button:hover,
+    .timer-controls button:focus-visible {
+      transform: translateY(-1px);
+      border-color: rgba(255, 255, 255, 0.36);
+      background: rgba(12, 15, 24, 0.68);
+      outline: none;
+    }
+
+    .dock {
+      position: fixed;
+      right: clamp(18px, 4vw, 40px);
+      bottom: clamp(18px, 4vw, 40px);
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 16px;
+      z-index: 4;
+    }
+
+    .dock button {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      background: rgba(12, 15, 24, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.9rem;
+      transition: background 200ms ease, border 200ms ease, transform 180ms ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .dock button:hover,
+    .dock button:focus-visible {
+      background: rgba(12, 15, 24, 0.78);
+      border-color: rgba(255, 255, 255, 0.28);
       transform: translateY(-1px);
       outline: none;
     }
 
-    .checklist {
-      display: grid;
-      gap: 12px;
+    .dock-panel {
+      position: fixed;
+      bottom: clamp(82px, 6vw, 110px);
+      right: clamp(18px, 4vw, 40px);
+      width: min(360px, 86vw);
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: var(--panel-radius);
+      padding: 24px;
+      backdrop-filter: blur(18px);
+      color: rgba(255, 255, 255, 0.86);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+      transform-origin: bottom right;
+      transform: scale(0.92) translateY(12px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 200ms ease, transform 200ms ease;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      z-index: 3;
     }
 
-    .checklist label {
+    .dock-panel.open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1) translateY(0);
+    }
+
+    .panel-header {
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 14px 16px;
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.68);
-      border: 1px solid rgba(148, 163, 184, 0.25);
-      font-weight: 500;
-      cursor: pointer;
-    }
-
-    .checklist input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-      border-radius: 6px;
-    }
-
-    .focus-footer {
-      display: flex;
       justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
-      color: rgba(15, 23, 42, 0.55);
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.58);
+    }
+
+    .todo-form {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+    }
+
+    .todo-form input {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 14px;
+      padding: 12px 16px;
+      color: rgba(255, 255, 255, 0.9);
       font-size: 0.95rem;
-      padding-bottom: 24px;
+      backdrop-filter: blur(10px);
     }
 
-    @media (max-width: 1080px) {
-      .focus-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .focus-grid__column:last-child {
-        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      }
+    .todo-form input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
     }
 
-    @media (max-width: 960px) {
-      body {
+    .todo-form button {
+      padding: 12px 18px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(12, 15, 24, 0.58);
+      color: rgba(255, 255, 255, 0.84);
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .todo-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 10px;
+      max-height: 240px;
+      overflow-y: auto;
+    }
+
+    .todo-item {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.92rem;
+    }
+
+    .todo-item.completed {
+      opacity: 0.6;
+      text-decoration: line-through;
+    }
+
+    .todo-item button {
+      border: none;
+      background: none;
+      color: rgba(255, 255, 255, 0.56);
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    @media (max-width: 600px) {
+      .timer-shell {
+        min-width: unset;
+        width: min(90vw, 360px);
+        padding: 32px;
+      }
+
+      .timer-controls {
         flex-direction: column;
+        width: 100%;
       }
 
-      .sidebar {
-        width: auto;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-        padding: 20px 24px;
-        box-shadow: none;
-        gap: 20px;
+      .timer-controls button {
+        width: 100%;
       }
 
-      .menu {
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: 12px;
-      }
-
-      .menu a {
-        padding: 10px 14px;
-      }
-
-      main {
-        padding: 32px 24px;
-      }
-
-      .focus-hero {
-        grid-template-columns: 1fr;
-      }
-
-      .focus-hero__preview {
-        order: -1;
-      }
-    }
-
-    @media (max-width: 640px) {
-      .focus-hero {
-        padding: 24px;
-      }
-
-      .card {
-        padding: 22px;
-        border-radius: 22px;
-      }
-
-      .focus-timer__dial {
-        padding: 22px;
+      .fullscreen-toggle {
+        display: none;
       }
     }
   </style>
 </head>
 <body>
-  <aside class="sidebar">
-    <div class="logo">
-      <img src="images/logo%20white.png" alt="Easylife logo" />
+  <div class="ui-shell">
+    <div class="background-dots" aria-label="Bakgrunnsvelger">
+      <div class="dot-group"></div>
+      <button class="fullscreen-toggle" type="button">Fullskjerm</button>
     </div>
-    <nav class="menu" aria-label="Hovedmeny">
-      <a href="index.html"><span class="icon"><img src="images/Icon_home2.png" alt="Hjem" /></span>Dashboard</a>
-      <a href="mal.html"><span class="icon"><img src="images/Icon_goal2.png" alt="Mål" /></span>Mål</a>
-      <a href="todo.html"><span class="icon"><img src="images/Icon_todo2.png" alt="Todo" /></span>Todo</a>
-      <a href="rutiner.html"><span class="icon"><img src="images/Icon_routine2.png" alt="Rutiner" /></span>Rutiner</a>
-      <a class="active" href="fokus.html"><span class="icon">🧘</span>Fokus</a>
-      <a href="training.html"><span class="icon"><img src="images/Icon_train2.png" alt="Trening" /></span>Training og kostholdsplan</a>
-      <a href="api-manager.html"><span class="icon">🧠</span>API Manager</a>
-      <a href="api-log.html"><span class="icon">📈</span>API-logg</a>
-    </nav>
-  </aside>
-  <main>
-    <header class="focus-hero">
-      <div>
-        <span class="focus-hero__eyebrow">Ny modul</span>
-        <h1>Fokusrommet</h1>
-        <p>Skap et dedikert rom for dyp jobb, pustepauser og mikrovaner. Her samler vi fokusøkter, dagsplan og ritualer i ett visuelt og rolig miljø som spiller sammen med resten av Easylife.</p>
-        <div class="focus-hero__actions">
-          <button class="button button--primary" type="button">Start en fokusøkt</button>
-          <button class="button button--ghost" type="button">Planlegg dagen</button>
-        </div>
+
+    <div class="timer-shell" role="timer" aria-live="polite">
+      <span class="mode-indicator" data-mode></span>
+      <div class="timer-display" data-display>25:00</div>
+      <div class="timer-controls">
+        <button type="button" data-action="toggle">Start</button>
+        <button type="button" data-action="reset">Reset</button>
+        <button type="button" data-action="skip">Neste</button>
       </div>
-      <div class="focus-hero__preview" aria-hidden="true">
-        <div class="preview-card">
-          <div class="preview-card__title">
-            <span>Gjeldende økt</span>
-            <span>45 min</span>
-          </div>
-          <div class="preview-card__progress">
-            <div class="preview-card__progress-circle">72%</div>
-            <div class="preview-card__progress-list">
-              <span>• Dyp jobb: Strategi deck</span>
-              <span>• Pause: Tøye + vann</span>
-              <span>• Neste: Refleksjonslogg</span>
-            </div>
-          </div>
-          <div class="preview-card__footer" style="margin-top:20px;font-size:0.9rem;color:rgba(226,232,240,0.74);">
-            Synkronisert med oppgaver og rutiner for resten av dagen.
-          </div>
-        </div>
-        <div class="preview-pulse" aria-hidden="true"></div>
+    </div>
+
+    <div class="dock">
+      <button type="button" data-panel="settings" aria-label="Åpne innstillinger">⚙︎</button>
+      <button type="button" data-panel="todo" aria-label="Åpne gjøremål">☑︎</button>
+    </div>
+
+    <div class="dock-panel" id="settings-panel" aria-hidden="true">
+      <div class="panel-header">
+        <span>Innstillinger</span>
+        <small>Kommmer</small>
       </div>
-    </header>
+      <p style="margin:0;color:rgba(255,255,255,0.56);font-size:0.9rem;line-height:1.5;">
+        Tilpass fokussonen med varsler, varigheter og flere alternativer. Denne menyen blir utvidet snart.
+      </p>
+    </div>
 
-    <section class="focus-grid">
-      <section class="card focus-timer" aria-labelledby="focus-session-title">
-        <div class="card__header">
-          <div>
-            <h2 class="card__title" id="focus-session-title">Dagens fokusøkt</h2>
-            <p class="card__subtitle">Velg varighet, start når du er klar og følg fremdriften i rolig tempo.</p>
-          </div>
-          <span class="pill" style="background:rgba(99,102,241,0.12);color:var(--accent-strong);padding:8px 14px;border-radius:999px;font-weight:600;">Flowmodus</span>
-        </div>
-        <div class="focus-timer__dial">
-          <span class="focus-timer__time" data-timer-display>45:00</span>
-        </div>
-        <span class="focus-timer__phase" data-session-phase>Fokus</span>
-        <div class="focus-timer__controls">
-          <button class="button button--primary" type="button" data-start-stop>Start</button>
-          <button class="button button--ghost" type="button" data-reset>Nullstill</button>
-        </div>
-        <div class="focus-settings">
-          <div>
-            <label for="session-length">Varighet</label>
-            <div class="focus-settings__row">
-              <input type="range" id="session-length" min="15" max="90" step="5" value="45" />
-              <span class="focus-settings__value" data-length-output>45 min</span>
-            </div>
-          </div>
-          <div>
-            <label for="break-length">Pause etter økt</label>
-            <div class="focus-settings__row">
-              <input type="range" id="break-length" min="5" max="30" step="5" value="10" />
-              <span class="focus-settings__value" data-break-output>10 min</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <div class="focus-grid__column">
-        <section class="card focus-plan" aria-labelledby="focus-plan-title">
-          <div class="card__header">
-            <div>
-              <h2 class="card__title" id="focus-plan-title">Ritual for ettermiddagen</h2>
-              <p class="card__subtitle">Flyt gjennom arbeidsøkten med små milepæler og bevisste avbrekk.</p>
-            </div>
-          </div>
-          <article class="focus-plan__item">
-            <div class="focus-plan__meta">
-              <span>15:00 – 15:10</span>
-              <span>Oppvarming</span>
-            </div>
-            <span class="focus-plan__title">Sjekk energinivå og sett intensjon</span>
-            <p style="margin:0;color:var(--text-secondary);">Åpne loggen fra morgenen og noter hva som er viktigst å få til akkurat nå.</p>
-          </article>
-          <article class="focus-plan__item">
-            <div class="focus-plan__meta">
-              <span>15:10 – 15:55</span>
-              <span>Dyp jobb</span>
-            </div>
-            <span class="focus-plan__title">Arbeid på «Strategi deck»</span>
-            <p style="margin:0;color:var(--text-secondary);">Jobb uten forstyrrelser. Easylife muter varsler og holder styr på tiden.</p>
-          </article>
-          <article class="focus-plan__item">
-            <div class="focus-plan__meta">
-              <span>15:55 – 16:05</span>
-              <span>Pause</span>
-            </div>
-            <span class="focus-plan__title">Pust + vann + bevegelse</span>
-            <p style="margin:0;color:var(--text-secondary);">Kort guidet bevegelsespause. Registreres som oppfylt når du huker av sjekklisten.</p>
-          </article>
-        </section>
-
-        <section class="card focus-checkin" aria-labelledby="focus-checkin-title">
-          <div class="card__header">
-            <div>
-              <h2 class="card__title" id="focus-checkin-title">Før du starter</h2>
-              <p class="card__subtitle">Loggfør dagsform og gjør klar ritualene dine.</p>
-            </div>
-          </div>
-          <div>
-            <h3 style="margin:0 0 12px;font-size:1rem;">Hvordan kjennes energien?</h3>
-            <div class="mood-buttons" role="group" aria-label="Energisjekk">
-              <button type="button">⚡ Superklar</button>
-              <button type="button">😊 God flyt</button>
-              <button type="button">😌 Rolig tempo</button>
-              <button type="button">🌧️ Litt tung</button>
-            </div>
-          </div>
-          <div class="checklist" role="group" aria-label="Forberedelser">
-            <label><input type="checkbox" /> Varsler dempet</label>
-            <label><input type="checkbox" /> Klargjort spilliste / lyd</label>
-            <label><input type="checkbox" /> Vann tilgjengelig</label>
-            <label><input type="checkbox" /> Notatblokk klar</label>
-          </div>
-          <div>
-            <h3 style="margin:0 0 12px;font-size:1rem;">Anbefalte lydspor</h3>
-            <div class="focus-playlists">
-              <article class="playlist-card">
-                <span class="playlist-card__tag">🌊 Flow</span>
-                <h4 class="playlist-card__title">Oceanic focus</h4>
-                <p style="margin:0;font-size:0.9rem;color:rgba(226,232,240,0.75);">Myk ambient med bølgesus og lavfrekvente pads.</p>
-              </article>
-              <article class="playlist-card">
-                <span class="playlist-card__tag">🔥 Tempo</span>
-                <h4 class="playlist-card__title">Deep pulse</h4>
-                <p style="margin:0;font-size:0.9rem;color:rgba(226,232,240,0.75);">Elektronisk fokusmusikk som bygger gradvis energi.</p>
-              </article>
-              <article class="playlist-card">
-                <span class="playlist-card__tag">🌿 Pust</span>
-                <h4 class="playlist-card__title">Calm reset</h4>
-                <p style="margin:0;font-size:0.9rem;color:rgba(226,232,240,0.75);">5 minutters guided breathwork til pausen.</p>
-              </article>
-            </div>
-          </div>
-        </section>
+    <div class="dock-panel" id="todo-panel" aria-hidden="true">
+      <div class="panel-header">
+        <span>Gjøremål</span>
+        <span data-todo-count>0</span>
       </div>
-    </section>
-
-    <footer class="focus-footer">
-      <span>Tipset: Når du lagrer økten synkroniserer vi med mål og todo, og foreslår nye ritualer basert på mønsteret ditt.</span>
-      <span>Bygg videre på demoen ved å koble til Supabase-tabell for fokusøkter.</span>
-    </footer>
-  </main>
+      <form class="todo-form" autocomplete="off">
+        <input type="text" name="todo" placeholder="Legg til gjøremål" aria-label="Nytt gjøremål" />
+        <button type="submit">Legg til</button>
+      </form>
+      <ul class="todo-list" data-todo-list></ul>
+    </div>
+  </div>
 
   <script>
-    const timerDisplay = document.querySelector('[data-timer-display]');
-    const phaseLabel = document.querySelector('[data-session-phase]');
-    const startStopButton = document.querySelector('[data-start-stop]');
-    const resetButton = document.querySelector('[data-reset]');
-    const lengthInput = document.getElementById('session-length');
-    const breakInput = document.getElementById('break-length');
-    const lengthOutput = document.querySelector('[data-length-output]');
-    const breakOutput = document.querySelector('[data-break-output]');
-    const dial = document.querySelector('.focus-timer__dial');
+    const backgrounds = [
+      'Scenery/Beach.png',
+      'Scenery/Cafe.png',
+      'Scenery/Lake.png',
+      'Scenery/Mountain.png'
+    ];
+    const body = document.body;
+    const dotGroup = document.querySelector('.dot-group');
+    const fullscreenButton = document.querySelector('.fullscreen-toggle');
 
-    const timerState = {
-      totalSeconds: Number(lengthInput.value) * 60,
-      remainingSeconds: Number(lengthInput.value) * 60,
-      breakMinutes: Number(breakInput.value),
-      running: false,
-      intervalId: null,
-    };
+    let currentBackground = 0;
 
-    function formatTime(totalSeconds) {
-      const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
-      const seconds = Math.floor(totalSeconds % 60).toString().padStart(2, '0');
-      return `${minutes}:${seconds}`;
+    function setBackground(index) {
+      currentBackground = (index + backgrounds.length) % backgrounds.length;
+      body.style.setProperty('--background-image', `url(${backgrounds[currentBackground]})`);
+      Array.from(dotGroup.children).forEach((button, idx) => {
+        button.classList.toggle('active', idx === currentBackground);
+      });
     }
 
-    function updateDial() {
-      if (!dial || timerState.totalSeconds <= 0) {
-        return;
+    backgrounds.forEach((_, index) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.setAttribute('aria-label', `Bakgrunn ${index + 1}`);
+      button.addEventListener('click', () => setBackground(index));
+      if (index === 0) {
+        button.classList.add('active');
       }
-      const progress = 360 - (timerState.remainingSeconds / timerState.totalSeconds) * 360;
-      dial.style.setProperty('--timer-progress', `${progress}deg`);
+      dotGroup.appendChild(button);
+    });
+
+    setBackground(0);
+
+    fullscreenButton.addEventListener('click', async () => {
+      if (!document.fullscreenElement) {
+        try {
+          await document.documentElement.requestFullscreen();
+          fullscreenButton.textContent = 'Lukk';
+        } catch (error) {
+          console.error('Kunne ikke gå til fullskjerm', error);
+        }
+      } else {
+        await document.exitFullscreen();
+        fullscreenButton.textContent = 'Fullskjerm';
+      }
+    });
+
+    document.addEventListener('fullscreenchange', () => {
+      fullscreenButton.textContent = document.fullscreenElement ? 'Lukk' : 'Fullskjerm';
+    });
+
+    const timerDisplay = document.querySelector('[data-display]');
+    const modeIndicator = document.querySelector('[data-mode]');
+    const controls = document.querySelector('.timer-controls');
+
+    const MODES = [
+      { key: 'focus', label: 'Fokus', duration: 25 * 60 },
+      { key: 'break', label: 'Pause', duration: 5 * 60 }
+    ];
+
+    let modeIndex = 0;
+    let remaining = MODES[modeIndex].duration;
+    let timerId = null;
+    let cycleCount = 0;
+
+    function formatTime(seconds) {
+      const mins = String(Math.floor(seconds / 60)).padStart(2, '0');
+      const secs = String(seconds % 60).padStart(2, '0');
+      return `${mins}:${secs}`;
     }
 
     function updateDisplay() {
-      timerDisplay.textContent = formatTime(timerState.remainingSeconds);
-      lengthOutput.textContent = `${lengthInput.value} min`;
-      breakOutput.textContent = `${breakInput.value} min`;
-      updateDial();
+      timerDisplay.textContent = formatTime(remaining);
+      modeIndicator.textContent = MODES[modeIndex].label;
     }
 
-    function startTimer() {
-      if (timerState.running) {
-        clearInterval(timerState.intervalId);
-        timerState.running = false;
-        startStopButton.textContent = 'Fortsett';
-        phaseLabel.textContent = 'Pause';
+    function switchMode(nextIndex) {
+      modeIndex = nextIndex;
+      remaining = MODES[modeIndex].duration;
+      updateDisplay();
+    }
+
+    function toggleTimer() {
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+        controls.querySelector('[data-action="toggle"]').textContent = 'Start';
         return;
       }
-
-      if (timerState.remainingSeconds <= 0) {
-        timerState.remainingSeconds = timerState.totalSeconds;
-        updateDisplay();
-      }
-
-      timerState.running = true;
-      phaseLabel.textContent = 'Fokus';
-      startStopButton.textContent = 'Pause';
-      timerState.intervalId = setInterval(() => {
-        timerState.remainingSeconds -= 1;
-        if (timerState.remainingSeconds <= 0) {
-          clearInterval(timerState.intervalId);
-          timerState.running = false;
-          timerState.remainingSeconds = 0;
-          phaseLabel.textContent = 'Fullført';
-          startStopButton.textContent = 'Start';
+      controls.querySelector('[data-action="toggle"]').textContent = 'Pause';
+      timerId = setInterval(() => {
+        remaining -= 1;
+        if (remaining <= 0) {
+          clearInterval(timerId);
+          timerId = null;
+          if (MODES[modeIndex].key === 'focus') {
+            cycleCount += 1;
+            const longBreak = cycleCount % 4 === 0;
+            if (longBreak) {
+              MODES[1].duration = 15 * 60;
+            } else {
+              MODES[1].duration = 5 * 60;
+            }
+            switchMode(1);
+          } else {
+            MODES[1].duration = 5 * 60;
+            switchMode(0);
+          }
+          toggleTimer();
+          return;
         }
         updateDisplay();
       }, 1000);
     }
 
     function resetTimer() {
-      clearInterval(timerState.intervalId);
-      timerState.running = false;
-      timerState.totalSeconds = Number(lengthInput.value) * 60;
-      timerState.remainingSeconds = timerState.totalSeconds;
-      phaseLabel.textContent = 'Fokus';
-      startStopButton.textContent = 'Start';
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+      cycleCount = 0;
+      modeIndex = 0;
+      MODES[1].duration = 5 * 60;
+      remaining = MODES[modeIndex].duration;
       updateDisplay();
+      controls.querySelector('[data-action="toggle"]').textContent = 'Start';
     }
 
-    lengthInput.addEventListener('input', () => {
-      if (!timerState.running) {
-        timerState.totalSeconds = Number(lengthInput.value) * 60;
-        timerState.remainingSeconds = timerState.totalSeconds;
-        updateDisplay();
+    function skipMode() {
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+        controls.querySelector('[data-action="toggle"]').textContent = 'Start';
+      }
+      if (MODES[modeIndex].key === 'focus') {
+        switchMode(1);
       } else {
-        lengthOutput.textContent = `${lengthInput.value} min`;
+        MODES[1].duration = 5 * 60;
+        switchMode(0);
+      }
+    }
+
+    controls.addEventListener('click', (event) => {
+      const action = event.target.dataset.action;
+      if (!action) return;
+      if (action === 'toggle') {
+        toggleTimer();
+      }
+      if (action === 'reset') {
+        resetTimer();
+      }
+      if (action === 'skip') {
+        skipMode();
       }
     });
-
-    breakInput.addEventListener('input', () => {
-      timerState.breakMinutes = Number(breakInput.value);
-      breakOutput.textContent = `${breakInput.value} min`;
-    });
-
-    startStopButton.addEventListener('click', startTimer);
-    resetButton.addEventListener('click', resetTimer);
 
     updateDisplay();
-  </script>
 
-  <script type="module">
-    import supabaseClient from './supabase-client.js';
+    const dockButtons = document.querySelectorAll('.dock button[data-panel]');
+    const panels = {
+      settings: document.getElementById('settings-panel'),
+      todo: document.getElementById('todo-panel')
+    };
 
-    async function enforceSession() {
-      try {
-        const { data, error } = await supabaseClient.auth.getSession();
+    dockButtons.forEach((button) => {
+      button.setAttribute('aria-pressed', 'false');
+      button.addEventListener('click', () => {
+        const panelName = button.dataset.panel;
+        const panel = panels[panelName];
+        const isOpen = panel.classList.contains('open');
+        dockButtons.forEach((btn) => btn.setAttribute('aria-pressed', 'false'));
+        Object.values(panels).forEach((p) => {
+          if (p !== panel) {
+            p.classList.remove('open');
+            p.setAttribute('aria-hidden', 'true');
+          }
+        });
+        panel.classList.toggle('open', !isOpen);
+        panel.setAttribute('aria-hidden', String(isOpen));
+        button.setAttribute('aria-pressed', String(!isOpen));
+      });
+    });
 
-        if (error) {
-          throw error;
-        }
+    const todoForm = document.querySelector('.todo-form');
+    const todoInput = todoForm.querySelector('input[name="todo"]');
+    const todoList = document.querySelector('[data-todo-list]');
+    const todoCount = document.querySelector('[data-todo-count]');
 
-        if (!data?.session) {
-          window.location.replace('login.html');
-          return;
-        }
+    const todos = [];
 
-        const emailEl = document.querySelector('[data-user-email]');
-        if (emailEl && data.session?.user?.email) {
-          emailEl.textContent = data.session.user.email;
-        }
-      } catch (authError) {
-        console.error('Feil ved henting av sesjon', authError);
-        window.location.replace('login.html');
-      }
+    function renderTodos() {
+      todoList.innerHTML = '';
+      todos.forEach((item, index) => {
+        const li = document.createElement('li');
+        li.className = `todo-item${item.completed ? ' completed' : ''}`;
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = item.completed;
+        checkbox.addEventListener('change', () => {
+          item.completed = checkbox.checked;
+          renderTodos();
+        });
+
+        const label = document.createElement('span');
+        label.textContent = item.text;
+
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.setAttribute('aria-label', 'Fjern');
+        removeBtn.textContent = '×';
+        removeBtn.addEventListener('click', () => {
+          todos.splice(index, 1);
+          renderTodos();
+        });
+
+        li.append(checkbox, label, removeBtn);
+        todoList.appendChild(li);
+      });
+      todoCount.textContent = todos.filter((todo) => !todo.completed).length;
     }
 
-    enforceSession();
+    todoForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const value = todoInput.value.trim();
+      if (!value) return;
+      todos.push({ text: value, completed: false });
+      todoInput.value = '';
+      renderTodos();
+    });
+
+    renderTodos();
   </script>
 </body>
 </html>
