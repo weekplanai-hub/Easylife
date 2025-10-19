@@ -14,7 +14,7 @@
   <style>
     :root {
       color-scheme: dark light;
-      --glass-bg: rgba(18, 21, 30, 0.18);
+      --glass-bg: rgba(18, 21, 30, 0.12);
       --glass-border: rgba(255, 255, 255, 0.22);
       --glass-blur: 24px;
       --accent: rgba(255, 255, 255, 0.82);
@@ -153,6 +153,7 @@
     }
 
     .timer-shell {
+      position: relative;
       display: grid;
       place-items: center;
       gap: 24px;
@@ -163,6 +164,66 @@
       border: 1px solid var(--glass-border);
       box-shadow: 0 40px 120px rgba(0, 0, 0, 0.35);
       min-width: min(70vw, 420px);
+      transition: transform 260ms ease, top 260ms ease, right 260ms ease, left 260ms ease,
+        bottom 260ms ease, padding 260ms ease, box-shadow 260ms ease;
+    }
+
+    .timer-shell.complete {
+      background: rgba(52, 173, 94, 0.28);
+      border-color: rgba(115, 226, 164, 0.45);
+      box-shadow: 0 44px 130px rgba(35, 121, 66, 0.4);
+    }
+
+    .timer-shell.collapsed {
+      position: fixed;
+      top: calc(clamp(16px, 3vw, 36px) + 86px);
+      right: clamp(18px, 3vw, 40px);
+      left: auto;
+      transform: translateX(0);
+      width: min(340px, 70vw);
+      padding: clamp(24px, 6vw, 40px);
+      gap: 18px;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.3);
+      z-index: 4;
+    }
+
+    .timer-shell.collapsed .timer-display {
+      font-size: clamp(2.4rem, 7vw, 3.8rem);
+      letter-spacing: 0.1em;
+    }
+
+    .timer-shell.collapsed .mode-indicator {
+      font-size: 0.74rem;
+    }
+
+    .timer-collapse {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(12, 15, 24, 0.36);
+      color: rgba(255, 255, 255, 0.85);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      font-size: 1rem;
+      backdrop-filter: blur(10px);
+      transition: background 180ms ease, border 180ms ease, transform 180ms ease;
+    }
+
+    .timer-collapse:hover,
+    .timer-collapse:focus-visible {
+      background: rgba(12, 15, 24, 0.55);
+      border-color: rgba(255, 255, 255, 0.32);
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .timer-shell.collapsed .timer-collapse {
+      background: rgba(12, 15, 24, 0.5);
     }
 
     .timer-display {
@@ -251,7 +312,7 @@
 
     .dock-panel {
       position: fixed;
-      bottom: clamp(82px, 6vw, 110px);
+      bottom: calc(clamp(82px, 6vw, 110px) + 60px);
       right: clamp(18px, 4vw, 40px);
       width: min(360px, 86vw);
       background: var(--panel-bg);
@@ -394,6 +455,12 @@
         padding: 32px;
       }
 
+      .timer-shell.collapsed {
+        left: clamp(16px, 6vw, 24px);
+        right: clamp(16px, 6vw, 24px);
+        width: auto;
+      }
+
       .timer-controls {
         flex-direction: column;
         width: 100%;
@@ -421,6 +488,16 @@
     </div>
 
     <div class="timer-shell" role="timer" aria-live="polite">
+      <button
+        class="timer-collapse"
+        type="button"
+        data-action="collapse"
+        aria-label="Minimer timer"
+        aria-pressed="false"
+        title="Minimer timer"
+      >
+        ⤢
+      </button>
       <span class="mode-indicator" data-mode></span>
       <div class="timer-display" data-display>25:00</div>
       <div class="timer-controls">
@@ -438,11 +515,7 @@
     <div class="dock-panel" id="settings-panel" aria-hidden="true">
       <div class="panel-header">
         <span>Innstillinger</span>
-        <small>Kommmer</small>
       </div>
-      <p style="margin:0;color:rgba(255,255,255,0.56);font-size:0.9rem;line-height:1.5;">
-        Tilpass fokussonen med varsler, varigheter og flere alternativer. Denne menyen blir utvidet snart.
-      </p>
       <div class="timer-lengths" role="group" aria-label="Velg fokustid">
         <button type="button" data-focus-length="15">15 min</button>
         <button type="button" data-focus-length="25">25 min</button>
@@ -527,6 +600,10 @@
     const timerDisplay = document.querySelector('[data-display]');
     const modeIndicator = document.querySelector('[data-mode]');
     const controls = document.querySelector('.timer-controls');
+    const timerShell = document.querySelector('.timer-shell');
+    const collapseButton = document.querySelector('[data-action="collapse"]');
+    const toggleButton = controls.querySelector('[data-action="toggle"]');
+    const skipButton = controls.querySelector('[data-action="skip"]');
 
     const MODES = [
       { key: 'focus', label: 'Fokus', duration: 25 * 60 },
@@ -537,6 +614,24 @@
     let remaining = MODES[modeIndex].duration;
     let timerId = null;
     let cycleCount = 0;
+    let awaitingBreakStart = false;
+    let isCollapsed = false;
+
+    function setCollapsed(state) {
+      if (!collapseButton) return;
+      isCollapsed = state;
+      timerShell.classList.toggle('collapsed', state);
+      collapseButton.setAttribute('aria-pressed', String(state));
+      collapseButton.setAttribute('aria-label', state ? 'Gjenopprett timer' : 'Minimer timer');
+      collapseButton.setAttribute('title', state ? 'Gjenopprett timer' : 'Minimer timer');
+      collapseButton.textContent = state ? '⤴' : '⤢';
+    }
+
+    if (collapseButton) {
+      collapseButton.addEventListener('click', () => {
+        setCollapsed(!isCollapsed);
+      });
+    }
 
     function formatTime(seconds) {
       const mins = String(Math.floor(seconds / 60)).padStart(2, '0');
@@ -555,58 +650,82 @@
       updateDisplay();
     }
 
-    function toggleTimer() {
+    function stopTimer() {
       if (timerId) {
         clearInterval(timerId);
         timerId = null;
-        controls.querySelector('[data-action="toggle"]').textContent = 'Start';
-        return;
       }
-      controls.querySelector('[data-action="toggle"]').textContent = 'Pause';
+      toggleButton.textContent = 'Start';
+    }
+
+    function handleCompletion() {
+      timerShell.classList.add('complete');
+      setCollapsed(false);
+      stopTimer();
+      remaining = 0;
+      updateDisplay();
+
+      if (MODES[modeIndex].key === 'focus') {
+        cycleCount += 1;
+        const longBreak = cycleCount % 4 === 0;
+        const breakMinutes = longBreak ? 15 : 5;
+        MODES[1].duration = breakMinutes * 60;
+        awaitingBreakStart = true;
+        skipButton.textContent = `Pause ${breakMinutes} min`;
+        switchMode(1);
+      } else {
+        MODES[1].duration = 5 * 60;
+        awaitingBreakStart = false;
+        skipButton.textContent = 'Neste';
+        switchMode(0);
+      }
+    }
+
+    function startCountdown() {
+      if (timerId) return;
+      timerShell.classList.remove('complete');
+      awaitingBreakStart = false;
+      skipButton.textContent = 'Neste';
+      toggleButton.textContent = 'Pause';
       timerId = setInterval(() => {
         remaining -= 1;
         if (remaining <= 0) {
-          clearInterval(timerId);
-          timerId = null;
-          if (MODES[modeIndex].key === 'focus') {
-            cycleCount += 1;
-            const longBreak = cycleCount % 4 === 0;
-            if (longBreak) {
-              MODES[1].duration = 15 * 60;
-            } else {
-              MODES[1].duration = 5 * 60;
-            }
-            switchMode(1);
-          } else {
-            MODES[1].duration = 5 * 60;
-            switchMode(0);
-          }
-          toggleTimer();
+          handleCompletion();
           return;
         }
         updateDisplay();
       }, 1000);
     }
 
-    function resetTimer() {
+    function toggleTimer() {
       if (timerId) {
-        clearInterval(timerId);
-        timerId = null;
+        stopTimer();
+        return;
       }
+      startCountdown();
+    }
+
+    function resetTimer() {
+      stopTimer();
       cycleCount = 0;
       modeIndex = 0;
       MODES[1].duration = 5 * 60;
       remaining = MODES[modeIndex].duration;
       updateDisplay();
-      controls.querySelector('[data-action="toggle"]').textContent = 'Start';
+      timerShell.classList.remove('complete');
+      awaitingBreakStart = false;
+      skipButton.textContent = 'Neste';
+      setCollapsed(false);
     }
 
     function skipMode() {
-      if (timerId) {
-        clearInterval(timerId);
-        timerId = null;
-        controls.querySelector('[data-action="toggle"]').textContent = 'Start';
+      stopTimer();
+      if (awaitingBreakStart) {
+        startCountdown();
+        return;
       }
+      timerShell.classList.remove('complete');
+      skipButton.textContent = 'Neste';
       if (MODES[modeIndex].key === 'focus') {
         switchMode(1);
       } else {
