@@ -36,11 +36,17 @@
       color: var(--text-primary);
       min-height: 100vh;
       display: flex;
-      padding-left: var(--sidebar-collapsed-width);
+      --sidebar-current-width: var(--sidebar-collapsed-width);
+      padding-left: var(--sidebar-current-width);
+      transition: padding-left 200ms ease;
+    }
+
+    body.sidebar-expanded {
+      --sidebar-current-width: var(--sidebar-width);
     }
 
     .sidebar {
-      width: var(--sidebar-collapsed-width);
+      width: var(--sidebar-current-width);
       background: var(--sidebar-bg);
       color: rgba(255, 255, 255, 0.92);
       padding: 20px 6px 28px;
@@ -59,34 +65,48 @@
       height: 100vh;
     }
 
-    .sidebar:hover,
-    .sidebar:focus-within {
-      width: var(--sidebar-width);
+    body.sidebar-expanded .sidebar {
       padding: 16px 24px 32px;
     }
 
     .logo {
       display: flex;
-      justify-content: flex-start;
-      transition: margin 200ms ease;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
     }
 
     .logo img {
       display: block;
-      width: 42px;
       max-width: 100%;
       height: auto;
-      transition: width 200ms ease;
+      transition: width 200ms ease, opacity 200ms ease, margin 200ms ease;
     }
 
-    .sidebar:hover .logo,
-    .sidebar:focus-within .logo {
+    .logo .logo-full {
+      width: 0;
+      opacity: 0;
+      margin-left: 0;
+    }
+
+    .logo .logo-mark {
+      width: 42px;
+    }
+
+    body.sidebar-expanded .logo {
       justify-content: flex-start;
     }
 
-    .sidebar:hover .logo img,
-    .sidebar:focus-within .logo img {
+    body.sidebar-expanded .logo .logo-full {
       width: 160px;
+      opacity: 1;
+      margin-left: 0;
+    }
+
+    body.sidebar-expanded .logo .logo-mark {
+      width: 0;
+      opacity: 0;
+      margin: 0;
     }
 
     .menu {
@@ -107,8 +127,8 @@
       transition: background 160ms ease, color 160ms ease;
     }
 
-    .sidebar:not(:hover):not(:focus-within) .menu a {
-      justify-content: flex-start;
+    body:not(.sidebar-expanded) .menu a {
+      justify-content: center;
       gap: 0;
       padding-inline: 0;
     }
@@ -116,7 +136,7 @@
     .menu a.active,
     .menu a:hover,
     .menu a:focus-visible {
-      background: rgba(255, 255, 255, 0.18);
+      background: rgba(242, 210, 131, 0.28);
       color: #ffffff;
       outline: none;
     }
@@ -131,6 +151,12 @@
       background: rgba(8, 14, 26, 0.75);
     }
 
+    .menu a.active .icon,
+    .menu a:hover .icon,
+    .menu a:focus-visible .icon {
+      background: rgba(8, 14, 26, 0.6);
+    }
+
     .menu a .icon img {
       max-width: 20px;
       max-height: 20px;
@@ -142,22 +168,67 @@
     .menu a .label {
       white-space: nowrap;
       transition: opacity 180ms ease;
-    }
-
-    .sidebar:not(:hover):not(:focus-within) .menu a .label {
       opacity: 0;
       pointer-events: none;
       width: 0;
       overflow: hidden;
     }
 
+    body.sidebar-expanded .menu a .label {
+      opacity: 1;
+      pointer-events: auto;
+      width: auto;
+    }
+
+    @media (hover: hover) {
+      .sidebar:hover,
+      .sidebar:focus-within {
+        width: var(--sidebar-width);
+      }
+
+      .sidebar:hover .logo,
+      .sidebar:focus-within .logo {
+        justify-content: flex-start;
+      }
+
+      .sidebar:hover .logo .logo-full,
+      .sidebar:focus-within .logo .logo-full {
+        width: 160px;
+        opacity: 1;
+      }
+
+      .sidebar:hover .logo .logo-mark,
+      .sidebar:focus-within .logo .logo-mark {
+        width: 0;
+        opacity: 0;
+      }
+
+      .sidebar:hover .menu a,
+      .sidebar:focus-within .menu a {
+        justify-content: flex-start;
+        gap: 14px;
+        padding-inline: 12px;
+      }
+
+      .sidebar:hover .menu a .label,
+      .sidebar:focus-within .menu a .label {
+        opacity: 1;
+        pointer-events: auto;
+        width: auto;
+      }
+    }
+
     main {
       flex: 1;
-      padding: 48px clamp(32px, 4vw, 64px);
+      padding: 48px clamp(24px, 4vw, 64px);
       display: flex;
       flex-direction: column;
       gap: 24px;
       overflow-x: hidden;
+    }
+
+    body.sidebar-expanded main {
+      padding-left: clamp(32px, 4vw, 64px);
     }
 
     header {
@@ -728,11 +799,10 @@
 
     @media (hover: none) and (min-width: 769px) {
       body {
-        padding-left: var(--sidebar-width);
+        --sidebar-current-width: var(--sidebar-width);
       }
 
       .sidebar {
-        width: var(--sidebar-width);
         padding: 16px 24px 32px;
         position: fixed;
         height: 100vh;
@@ -742,8 +812,14 @@
         justify-content: flex-start;
       }
 
-      .logo img {
+      .logo .logo-full {
         width: 160px;
+        opacity: 1;
+      }
+
+      .logo .logo-mark {
+        width: 0;
+        opacity: 0;
       }
 
       .menu a .label {
@@ -757,7 +833,8 @@
 <body>
   <aside class="sidebar">
     <div class="logo">
-      <img src="images/logo%20white.png" alt="Easylife logo" />
+      <img class="logo-mark" src="images/logo%20no%20text.png" alt="Easylife ikon" />
+      <img class="logo-full" src="images/logo%20white.png" alt="Easylife logo" />
     </div>
     <nav class="menu" aria-label="Hovedmeny">
       <a href="index.html"><span class="icon"><img src="images/Icon_home2.png" alt="Hjem" /></span><span class="label">Dashboard</span></a>
@@ -1065,6 +1142,63 @@
       </form>
     </div>
   </main>
+  <script>
+    (function () {
+      const body = document.body;
+      const sidebar = document.querySelector('.sidebar');
+
+      if (!sidebar) {
+        return;
+      }
+
+      const expand = () => body.classList.add('sidebar-expanded');
+      const collapse = () => body.classList.remove('sidebar-expanded');
+
+      const handleFocusOut = (event) => {
+        if (!sidebar.contains(event.relatedTarget)) {
+          collapse();
+        }
+      };
+
+      const enableHoverInteractions = () => {
+        sidebar.addEventListener('mouseenter', expand);
+        sidebar.addEventListener('mouseleave', collapse);
+        sidebar.addEventListener('focusin', expand);
+        sidebar.addEventListener('focusout', handleFocusOut);
+      };
+
+      const disableHoverInteractions = () => {
+        sidebar.removeEventListener('mouseenter', expand);
+        sidebar.removeEventListener('mouseleave', collapse);
+        sidebar.removeEventListener('focusin', expand);
+        sidebar.removeEventListener('focusout', handleFocusOut);
+      };
+
+      const hoverMedia = window.matchMedia('(hover: none)');
+
+      const applyMode = (canHover) => {
+        if (canHover) {
+          collapse();
+          enableHoverInteractions();
+        } else {
+          disableHoverInteractions();
+          expand();
+        }
+      };
+
+      applyMode(!hoverMedia.matches);
+
+      const onHoverChange = (event) => {
+        applyMode(!event.matches);
+      };
+
+      if (typeof hoverMedia.addEventListener === 'function') {
+        hoverMedia.addEventListener('change', onHoverChange);
+      } else if (typeof hoverMedia.addListener === 'function') {
+        hoverMedia.addListener(onHoverChange);
+      }
+    })();
+  </script>
   <script type="module" src="supabase-client.js"></script>
   <script type="module">
     import supabaseClient from './supabase-client.js';
