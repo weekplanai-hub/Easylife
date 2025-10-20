@@ -12,7 +12,7 @@
       color-scheme: light;
       --sidebar-bg: linear-gradient(180deg, #101828 0%, #020617 100%);
       --sidebar-width: 260px;
-      --sidebar-collapsed-width: 66px;
+      --sidebar-collapsed-width: 56px;
       --text-primary: #0f1c2e;
       --text-secondary: rgba(15, 28, 46, 0.7);
       --board-bg: #f5f2eb;
@@ -36,13 +36,14 @@
       color: var(--text-primary);
       min-height: 100vh;
       display: flex;
+      padding-left: var(--sidebar-collapsed-width);
     }
 
     .sidebar {
       width: var(--sidebar-collapsed-width);
       background: var(--sidebar-bg);
       color: rgba(255, 255, 255, 0.92);
-      padding: 20px 12px 28px;
+      padding: 20px 6px 28px;
       display: flex;
       flex-direction: column;
       gap: 24px;
@@ -51,6 +52,11 @@
       z-index: 2;
       overflow: hidden;
       transition: width 200ms ease, padding 200ms ease;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      height: 100vh;
     }
 
     .sidebar:hover,
@@ -61,7 +67,7 @@
 
     .logo {
       display: flex;
-      justify-content: center;
+      justify-content: flex-start;
       transition: margin 200ms ease;
     }
 
@@ -93,7 +99,7 @@
       display: flex;
       align-items: center;
       gap: 14px;
-      padding: 12px 14px;
+      padding: 10px 12px;
       border-radius: 14px;
       color: rgba(255, 255, 255, 0.8);
       text-decoration: none;
@@ -102,9 +108,9 @@
     }
 
     .sidebar:not(:hover):not(:focus-within) .menu a {
-      justify-content: center;
+      justify-content: flex-start;
       gap: 0;
-      padding-inline: 12px;
+      padding-inline: 0;
     }
 
     .menu a.active,
@@ -117,9 +123,9 @@
 
     .menu a .icon {
       display: inline-flex;
-      width: 32px;
-      height: 32px;
-      border-radius: 12px;
+      width: 38px;
+      height: 38px;
+      border-radius: 14px;
       align-items: center;
       justify-content: center;
       background: rgba(8, 14, 26, 0.75);
@@ -645,9 +651,11 @@
     @media (max-width: 768px) {
       body {
         flex-direction: column;
+        padding-left: 0;
       }
 
       .sidebar {
+        position: static;
         width: auto;
         flex-direction: row;
         align-items: center;
@@ -656,6 +664,7 @@
         box-shadow: none;
         gap: 20px;
         overflow: visible;
+        height: auto;
       }
 
       .logo img {
@@ -717,10 +726,16 @@
       }
     }
 
-    @media (hover: none) {
+    @media (hover: none) and (min-width: 769px) {
+      body {
+        padding-left: var(--sidebar-width);
+      }
+
       .sidebar {
         width: var(--sidebar-width);
         padding: 16px 24px 32px;
+        position: fixed;
+        height: 100vh;
       }
 
       .logo {
