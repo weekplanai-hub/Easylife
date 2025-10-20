@@ -12,16 +12,17 @@
       color-scheme: light;
       --sidebar-bg: linear-gradient(180deg, #101828 0%, #020617 100%);
       --sidebar-width: 260px;
+      --sidebar-collapsed-width: 88px;
       --text-primary: #0f1c2e;
       --text-secondary: rgba(15, 28, 46, 0.7);
       --board-bg: #f5f2eb;
       --column-gap: clamp(12px, 1.2vw, 20px);
       --column-radius: 28px;
-      --important: #e87a74;
+      --important: #e3d5c3;
       --less-important: #b6c6db;
       --next: #f2d283;
-      --progress: #b9c9f3;
-      --follow-up: #d9c6e9;
+      --progress: #cfe8d5;
+      --follow-up: #cfe0ff;
       --card-bg: #ffffff;
       --card-shadow: 0 10px 30px rgba(15, 28, 46, 0.08);
     }
@@ -38,25 +39,48 @@
     }
 
     .sidebar {
-      width: var(--sidebar-width);
+      width: var(--sidebar-collapsed-width);
       background: var(--sidebar-bg);
       color: rgba(255, 255, 255, 0.92);
-      padding: 16px 24px 32px;
+      padding: 24px 18px 32px;
       display: flex;
       flex-direction: column;
       gap: 24px;
       position: relative;
       box-shadow: 12px 0 32px rgba(18, 38, 63, 0.25);
       z-index: 2;
+      overflow: hidden;
+      transition: width 200ms ease, padding 200ms ease;
     }
 
-    .logo { display: block; }
+    .sidebar:hover,
+    .sidebar:focus-within {
+      width: var(--sidebar-width);
+      padding: 16px 24px 32px;
+    }
+
+    .logo {
+      display: flex;
+      justify-content: center;
+      transition: margin 200ms ease;
+    }
 
     .logo img {
       display: block;
-      width: 160px;
+      width: 56px;
       max-width: 100%;
       height: auto;
+      transition: width 200ms ease;
+    }
+
+    .sidebar:hover .logo,
+    .sidebar:focus-within .logo {
+      justify-content: flex-start;
+    }
+
+    .sidebar:hover .logo img,
+    .sidebar:focus-within .logo img {
+      width: 160px;
     }
 
     .menu {
@@ -69,12 +93,18 @@
       display: flex;
       align-items: center;
       gap: 14px;
-      padding: 12px 16px;
+      padding: 12px 14px;
       border-radius: 14px;
       color: rgba(255, 255, 255, 0.8);
       text-decoration: none;
       font-weight: 500;
       transition: background 160ms ease, color 160ms ease;
+    }
+
+    .sidebar:not(:hover):not(:focus-within) .menu a {
+      justify-content: center;
+      gap: 0;
+      padding-inline: 12px;
     }
 
     .menu a.active,
@@ -101,6 +131,18 @@
       width: 20px;
       height: 20px;
       object-fit: contain;
+    }
+
+    .menu a .label {
+      white-space: nowrap;
+      transition: opacity 180ms ease;
+    }
+
+    .sidebar:not(:hover):not(:focus-within) .menu a .label {
+      opacity: 0;
+      pointer-events: none;
+      width: 0;
+      overflow: hidden;
     }
 
     main {
@@ -185,7 +227,7 @@
 
     .board {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: var(--column-gap);
     }
 
@@ -600,7 +642,7 @@
       color: var(--text-secondary);
     }
 
-    @media (max-width: 1024px) {
+    @media (max-width: 768px) {
       body {
         flex-direction: column;
       }
@@ -613,6 +655,11 @@
         padding: 20px 24px;
         box-shadow: none;
         gap: 20px;
+        overflow: visible;
+      }
+
+      .logo img {
+        width: 140px;
       }
 
       .menu {
@@ -623,6 +670,17 @@
 
       .menu a { padding: 10px 14px; }
 
+      .sidebar:not(:hover):not(:focus-within) .menu a {
+        gap: 10px;
+        padding-inline: 14px;
+      }
+
+      .sidebar:not(:hover):not(:focus-within) .menu a .label {
+        opacity: 1;
+        width: auto;
+        pointer-events: auto;
+      }
+
       main {
         padding: 32px 24px 48px;
       }
@@ -630,6 +688,12 @@
       .history-panel {
         width: 100%;
         align-self: stretch;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .board {
+        grid-template-columns: 1fr;
       }
     }
 
@@ -652,6 +716,27 @@
         min-width: min(260px, calc(100vw - 32px));
       }
     }
+
+    @media (hover: none) {
+      .sidebar {
+        width: var(--sidebar-width);
+        padding: 16px 24px 32px;
+      }
+
+      .logo {
+        justify-content: flex-start;
+      }
+
+      .logo img {
+        width: 160px;
+      }
+
+      .menu a .label {
+        opacity: 1;
+        width: auto;
+        pointer-events: auto;
+      }
+    }
   </style>
 </head>
 <body>
@@ -660,14 +745,14 @@
       <img src="images/logo%20white.png" alt="Easylife logo" />
     </div>
     <nav class="menu" aria-label="Hovedmeny">
-      <a href="index.html"><span class="icon"><img src="images/Icon_home2.png" alt="Hjem" /></span>Dashboard</a>
-      <a href="mal.html"><span class="icon"><img src="images/Icon_goal2.png" alt="Mål" /></span>Mål</a>
-      <a class="active" href="todo.html"><span class="icon"><img src="images/Icon_todo2.png" alt="Todo" /></span>Todo</a>
-      <a href="rutiner.html"><span class="icon"><img src="images/Icon_routine2.png" alt="Rutiner" /></span>Rutiner</a>
-      <a href="fokus.html"><span class="icon">🧘</span>Fokus</a>
-      <a href="training.html"><span class="icon"><img src="images/Icon_train2.png" alt="Trening" /></span>Training og kostholdsplan</a>
-      <a href="api-manager.html"><span class="icon">🧠</span>API Manager</a>
-      <a href="api-log.html"><span class="icon">📈</span>API-logg</a>
+      <a href="index.html"><span class="icon"><img src="images/Icon_home2.png" alt="Hjem" /></span><span class="label">Dashboard</span></a>
+      <a href="mal.html"><span class="icon"><img src="images/Icon_goal2.png" alt="Mål" /></span><span class="label">Mål</span></a>
+      <a class="active" href="todo.html"><span class="icon"><img src="images/Icon_todo2.png" alt="Todo" /></span><span class="label">Todo</span></a>
+      <a href="rutiner.html"><span class="icon"><img src="images/Icon_routine2.png" alt="Rutiner" /></span><span class="label">Rutiner</span></a>
+      <a href="fokus.html"><span class="icon">🧘</span><span class="label">Fokus</span></a>
+      <a href="training.html"><span class="icon"><img src="images/Icon_train2.png" alt="Trening" /></span><span class="label">Training og kostholdsplan</span></a>
+      <a href="api-manager.html"><span class="icon">🧠</span><span class="label">API Manager</span></a>
+      <a href="api-log.html"><span class="icon">📈</span><span class="label">API-logg</span></a>
     </nav>
   </aside>
   <main>
@@ -698,8 +783,7 @@
       <article class="task-column" style="--accent: var(--important)" data-column>
         <div class="column-header">
           <div class="column-title">
-            <h2>Tasks – Backlog</h2>
-            <p>Samle alt som kan være aktuelt å jobbe med.</p>
+            <h2 title="Samle alt som kan være aktuelt å jobbe med.">Tasks – Backlog</h2>
           </div>
           <button class="column-add-btn" type="button" data-add-todo aria-label="Legg til oppgave i Tasks – Backlog">+</button>
         </div>
@@ -769,8 +853,7 @@
       <article class="task-column" style="--accent: var(--next)" data-column>
         <div class="column-header">
           <div class="column-title">
-            <h2>Next Tasks</h2>
-            <p>Oppgaver som er klare til å plukkes opp.</p>
+            <h2 title="Oppgaver som er klare til å plukkes opp.">Next Tasks</h2>
           </div>
           <button class="column-add-btn" type="button" data-add-todo aria-label="Legg til oppgave i Next Tasks">+</button>
         </div>
@@ -804,8 +887,7 @@
       <article class="task-column" style="--accent: var(--progress)" data-column>
         <div class="column-header">
           <div class="column-title">
-            <h2>Tasks In Progress</h2>
-            <p>Pågående arbeid hvor status oppdateres fortløpende.</p>
+            <h2 title="Pågående arbeid hvor status oppdateres fortløpende.">Tasks In Progress</h2>
           </div>
           <button class="column-add-btn" type="button" data-add-todo aria-label="Legg til oppgave i Tasks In Progress">+</button>
         </div>
@@ -899,8 +981,7 @@
       <article class="task-column" style="--accent: var(--follow-up)" data-column>
         <div class="column-header">
           <div class="column-title">
-            <h2>Follow up / Delegated</h2>
-            <p>Oppgaver som er delegert eller krever oppfølging.</p>
+            <h2 title="Oppgaver som er delegert eller krever oppfølging.">Follow up / Delegated</h2>
           </div>
           <button class="column-add-btn" type="button" data-add-todo aria-label="Legg til oppgave i Follow up / Delegated">+</button>
         </div>
