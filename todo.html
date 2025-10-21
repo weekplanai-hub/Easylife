@@ -9,13 +9,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      color-scheme: light;
-      --sidebar-bg: linear-gradient(180deg, #101828 0%, #020617 100%);
-      --sidebar-width: 260px;
-      --sidebar-collapsed-width: 56px;
-      --text-primary: #0f1c2e;
-      --text-secondary: rgba(15, 28, 46, 0.7);
-      --board-bg: #f5f2eb;
+      color-scheme: dark light;
+      --background-image: url('Scenery/Lake.png');
+      --surface-bg: transparent;
+      --surface-border: transparent;
+      --surface-shadow: none;
+      --text-primary: rgba(255, 255, 255, 0.94);
+      --text-secondary: rgba(255, 255, 255, 0.72);
+      --board-bg: transparent;
       --column-gap: clamp(12px, 1.2vw, 20px);
       --column-radius: 28px;
       --important: #e3d5c3;
@@ -23,212 +24,120 @@
       --next: #f2d283;
       --progress: #cfe8d5;
       --follow-up: #cfe0ff;
-      --card-bg: #ffffff;
-      --card-shadow: 0 10px 30px rgba(15, 28, 46, 0.08);
+      --column-base: rgba(12, 15, 24, 0.52);
+      --column-border: rgba(255, 255, 255, 0.18);
+      --column-shadow: 0 36px 120px rgba(5, 7, 12, 0.46);
+      --card-divider: rgba(255, 255, 255, 0.14);
+      --card-hover: rgba(255, 255, 255, 0.06);
+      --action-bg: rgba(12, 15, 24, 0.55);
+      --action-bg-hover: rgba(12, 15, 24, 0.75);
+      --action-border: rgba(255, 255, 255, 0.18);
+      font-family: 'Inter', sans-serif;
     }
 
     *, *::before, *::after { box-sizing: border-box; }
 
     body {
       margin: 0;
-      font-family: 'Inter', sans-serif;
-      background: var(--board-bg);
-      color: var(--text-primary);
       min-height: 100vh;
       display: flex;
-      --sidebar-current-width: var(--sidebar-collapsed-width);
-      padding-left: var(--sidebar-current-width);
-      transition: padding-left 200ms ease;
-    }
-
-    body.sidebar-expanded {
-      --sidebar-current-width: var(--sidebar-width);
-    }
-
-    .sidebar {
-      width: var(--sidebar-current-width);
-      background: var(--sidebar-bg);
-      color: rgba(255, 255, 255, 0.92);
-      padding: 20px 6px 28px;
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
+      align-items: flex-start;
+      justify-content: center;
+      padding: clamp(24px, 5vw, 64px);
+      background: #05070c;
+      color: var(--text-primary);
       position: relative;
-      box-shadow: 12px 0 32px rgba(18, 38, 63, 0.25);
-      z-index: 2;
-      overflow: hidden;
-      transition: width 200ms ease, padding 200ms ease;
+      overflow-x: hidden;
+      overflow-y: auto;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body::before {
+      content: '';
       position: fixed;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      height: 100vh;
+      inset: 0;
+      background-image: var(--background-image);
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 0.94;
+      filter: saturate(1.05);
+      z-index: -2;
     }
 
-    body.sidebar-expanded .sidebar {
-      padding: 16px 24px 32px;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 42px;
-    }
-
-    .logo img {
-      display: block;
-      max-width: 100%;
-      height: auto;
-      transition: width 200ms ease, opacity 200ms ease, margin 200ms ease;
-    }
-
-    .logo .logo-full {
-      width: 0;
-      opacity: 0;
-      margin-left: 0;
-    }
-
-    .logo .logo-mark {
-      width: 42px;
-    }
-
-    body.sidebar-expanded .logo {
-      justify-content: flex-start;
-    }
-
-    body.sidebar-expanded .logo .logo-full {
-      width: 160px;
-      opacity: 1;
-      margin-left: 0;
-    }
-
-    body.sidebar-expanded .logo .logo-mark {
-      width: 0;
-      opacity: 0;
-      margin: 0;
-    }
-
-    .menu {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .menu a {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 10px 12px;
-      border-radius: 14px;
-      color: rgba(255, 255, 255, 0.8);
-      text-decoration: none;
-      font-weight: 500;
-      transition: background 160ms ease, color 160ms ease;
-    }
-
-    body:not(.sidebar-expanded) .menu a {
-      justify-content: center;
-      gap: 0;
-      padding-inline: 0;
-    }
-
-    .menu a.active,
-    .menu a:hover,
-    .menu a:focus-visible {
-      background: rgba(242, 210, 131, 0.28);
-      color: #ffffff;
-      outline: none;
-    }
-
-    .menu a .icon {
-      display: inline-flex;
-      width: 38px;
-      height: 38px;
-      border-radius: 14px;
-      align-items: center;
-      justify-content: center;
-      background: rgba(8, 14, 26, 0.75);
-    }
-
-    .menu a.active .icon,
-    .menu a:hover .icon,
-    .menu a:focus-visible .icon {
-      background: rgba(8, 14, 26, 0.6);
-    }
-
-    .menu a .icon img {
-      max-width: 20px;
-      max-height: 20px;
-      width: 20px;
-      height: 20px;
-      object-fit: contain;
-    }
-
-    .menu a .label {
-      white-space: nowrap;
-      transition: opacity 180ms ease;
-      opacity: 0;
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.12), transparent 55%),
+        radial-gradient(circle at 80% 15%, rgba(255, 255, 255, 0.08), transparent 58%);
+      z-index: -1;
       pointer-events: none;
-      width: 0;
-      overflow: hidden;
-    }
-
-    body.sidebar-expanded .menu a .label {
-      opacity: 1;
-      pointer-events: auto;
-      width: auto;
-    }
-
-    @media (hover: hover) {
-      .sidebar:hover,
-      .sidebar:focus-within {
-        width: var(--sidebar-width);
-      }
-
-      .sidebar:hover .logo,
-      .sidebar:focus-within .logo {
-        justify-content: flex-start;
-      }
-
-      .sidebar:hover .logo .logo-full,
-      .sidebar:focus-within .logo .logo-full {
-        width: 160px;
-        opacity: 1;
-      }
-
-      .sidebar:hover .logo .logo-mark,
-      .sidebar:focus-within .logo .logo-mark {
-        width: 0;
-        opacity: 0;
-      }
-
-      .sidebar:hover .menu a,
-      .sidebar:focus-within .menu a {
-        justify-content: flex-start;
-        gap: 14px;
-        padding-inline: 12px;
-      }
-
-      .sidebar:hover .menu a .label,
-      .sidebar:focus-within .menu a .label {
-        opacity: 1;
-        pointer-events: auto;
-        width: auto;
-      }
     }
 
     main {
-      flex: 1;
-      padding: 48px clamp(24px, 4vw, 64px);
+      width: min(1280px, calc(100vw - clamp(48px, 10vw, 120px)));
+      padding: clamp(28px, 5vw, 56px);
       display: flex;
       flex-direction: column;
-      gap: 24px;
-      overflow-x: hidden;
+      gap: 28px;
+      color: var(--text-primary);
     }
 
-    body.sidebar-expanded main {
-      padding-left: clamp(32px, 4vw, 64px);
+    .home-button {
+      position: fixed;
+      left: clamp(18px, 3vw, 40px);
+      bottom: clamp(18px, 4vw, 40px);
+      width: 52px;
+      height: 52px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(12, 15, 24, 0.6);
+      color: rgba(255, 255, 255, 0.94);
+      text-decoration: none;
+      display: grid;
+      place-items: center;
+      font-size: 1.2rem;
+      transition: background 200ms ease, border 200ms ease, transform 200ms ease;
+      backdrop-filter: blur(12px);
+      z-index: 3;
+    }
+
+    .home-button:hover,
+    .home-button:focus-visible {
+      border-color: rgba(255, 255, 255, 0.28);
+      background: rgba(12, 15, 24, 0.78);
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .home-button svg {
+      width: 22px;
+      height: 22px;
+      fill: currentColor;
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: clamp(18px, 6vw, 32px);
+      }
+
+      main {
+        width: 100%;
+        padding: clamp(22px, 6vw, 38px);
+      }
     }
 
     header {
@@ -261,21 +170,23 @@
       display: inline-flex;
       align-items: center;
       gap: 10px;
-      padding: 8px 14px;
+      padding: 8px 16px;
       border-radius: 18px;
-      border: 1px solid rgba(15, 28, 46, 0.12);
-      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid var(--action-border);
+      background: var(--action-bg);
       color: inherit;
       font-weight: 500;
       cursor: pointer;
-      transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease;
+      transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease, border-color 150ms ease;
+      backdrop-filter: blur(14px);
     }
 
     .history-button:hover,
     .history-button:focus-visible {
       transform: translateY(-1px);
-      background: #ffffff;
-      box-shadow: 0 8px 20px rgba(15, 28, 46, 0.14);
+      background: var(--action-bg-hover);
+      border-color: rgba(255, 255, 255, 0.32);
+      box-shadow: 0 12px 32px rgba(5, 7, 12, 0.4);
       outline: none;
     }
 
@@ -292,7 +203,7 @@
       height: 24px;
       padding: 0 6px;
       border-radius: 999px;
-      background: rgba(15, 28, 46, 0.08);
+      background: rgba(255, 255, 255, 0.18);
       font-size: 0.8rem;
       font-weight: 600;
       line-height: 1;
@@ -309,15 +220,17 @@
     }
 
     .task-column {
-      background: rgba(255, 255, 255, 0.55);
+      position: relative;
       border-radius: var(--column-radius);
-      padding: 20px 20px 28px;
+      padding: 22px 22px 32px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      border: 1px solid rgba(15, 28, 46, 0.08);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.75);
-      position: relative;
+      gap: 18px;
+      border: 1px solid var(--column-border);
+      background: var(--column-base);
+      backdrop-filter: blur(18px);
+      box-shadow: var(--column-shadow);
+      overflow: hidden;
     }
 
     .task-column::before {
@@ -326,8 +239,24 @@
       inset: 0;
       border-radius: inherit;
       pointer-events: none;
-      background: var(--accent, transparent);
-      opacity: 0.18;
+      background: linear-gradient(155deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02) 70%);
+      z-index: 0;
+    }
+
+    .task-column::after {
+      content: '';
+      position: absolute;
+      inset: -12% -20% 30%;
+      border-radius: 42%;
+      pointer-events: none;
+      background: radial-gradient(circle at top, var(--accent-overlay, rgba(255, 255, 255, 0.22)) 0%, transparent 65%);
+      z-index: 0;
+      filter: blur(0.5px);
+    }
+
+    .task-column > * {
+      position: relative;
+      z-index: 1;
     }
 
     .column-header {
@@ -359,11 +288,11 @@
 
     .column-add-btn {
       flex-shrink: 0;
-      width: 36px;
-      height: 36px;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
-      border: 1px solid rgba(15, 28, 46, 0.12);
-      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid var(--action-border);
+      background: var(--action-bg);
       color: var(--text-primary);
       font-size: 1.4rem;
       font-weight: 500;
@@ -371,14 +300,16 @@
       display: grid;
       place-items: center;
       cursor: pointer;
-      transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease;
+      transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease, border-color 150ms ease;
+      backdrop-filter: blur(14px);
     }
 
     .column-add-btn:hover,
     .column-add-btn:focus-visible {
       transform: translateY(-2px);
-      background: #ffffff;
-      box-shadow: 0 8px 20px rgba(15, 28, 46, 0.18);
+      background: var(--action-bg-hover);
+      border-color: rgba(255, 255, 255, 0.32);
+      box-shadow: 0 12px 30px rgba(5, 7, 12, 0.42);
       outline: none;
     }
 
@@ -394,7 +325,7 @@
       align-items: center;
       gap: 10px;
       padding: 4px 0;
-      border-bottom: 1px solid rgba(15, 28, 46, 0.12);
+      border-bottom: 1px solid var(--card-divider);
     }
 
     .column-body > .todo-card:last-child {
@@ -402,7 +333,7 @@
     }
 
     .todo-card.is-editing {
-      background: rgba(15, 28, 46, 0.06);
+      background: var(--card-hover);
       padding: 10px 12px;
       border-radius: 12px;
       border-bottom-color: transparent;
@@ -435,28 +366,29 @@
       width: 24px;
       height: 24px;
       border-radius: 8px;
-      border: 1px solid rgba(15, 28, 46, 0.18);
-      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid var(--action-border);
+      background: var(--action-bg);
       display: inline-flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: transform 150ms ease, background 150ms ease, box-shadow 150ms ease;
+      transition: transform 150ms ease, background 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
       flex-shrink: 0;
     }
 
     .todo-check-btn:hover,
     .todo-check-btn:focus-visible {
       transform: translateY(-1px);
-      background: #ffffff;
-      box-shadow: 0 6px 14px rgba(15, 28, 46, 0.12);
+      background: var(--action-bg-hover);
+      border-color: rgba(255, 255, 255, 0.32);
+      box-shadow: 0 10px 24px rgba(5, 7, 12, 0.38);
       outline: none;
     }
 
     .todo-check-btn svg {
       width: 14px;
       height: 14px;
-      stroke: #0f1c2e;
+      stroke: rgba(255, 255, 255, 0.94);
       stroke-width: 1.8;
       stroke-linecap: round;
       stroke-linejoin: round;
@@ -474,22 +406,23 @@
       width: 32px;
       height: 32px;
       border-radius: 50%;
-      border: 1px solid rgba(15, 28, 46, 0.16);
-      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid var(--action-border);
+      background: var(--action-bg);
       box-shadow: none;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       padding: 0;
       cursor: pointer;
-      transition: transform 150ms ease, background 150ms ease, box-shadow 150ms ease;
+      transition: transform 150ms ease, background 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
     }
 
     .todo-action-btn:hover,
     .todo-action-btn:focus-visible {
       transform: translateY(-2px);
-      background: #ffffff;
-      box-shadow: 0 8px 20px rgba(15, 28, 46, 0.18);
+      background: var(--action-bg-hover);
+      border-color: rgba(255, 255, 255, 0.32);
+      box-shadow: 0 12px 32px rgba(5, 7, 12, 0.42);
       outline: none;
     }
 
@@ -497,7 +430,7 @@
       width: 16px;
       height: 16px;
       fill: none;
-      stroke: #0f1c2e;
+      stroke: rgba(255, 255, 255, 0.94);
       stroke-width: 1.8;
       stroke-linecap: round;
       stroke-linejoin: round;
@@ -622,14 +555,16 @@
     .history-panel {
       align-self: flex-end;
       width: min(360px, 100%);
-      background: rgba(255, 255, 255, 0.92);
+      background: rgba(12, 15, 24, 0.64);
       border-radius: 24px;
-      border: 1px solid rgba(15, 28, 46, 0.08);
-      box-shadow: 0 24px 60px rgba(15, 28, 46, 0.16);
+      border: 1px solid var(--action-border);
+      box-shadow: var(--column-shadow);
       padding: 22px 24px;
       display: none;
       flex-direction: column;
       gap: 16px;
+      backdrop-filter: blur(18px);
+      color: var(--text-primary);
     }
 
     .history-panel[data-open='true'] {
@@ -654,19 +589,22 @@
       width: 28px;
       height: 28px;
       border-radius: 50%;
-      border: 1px solid rgba(15, 28, 46, 0.12);
-      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid var(--action-border);
+      background: var(--action-bg);
       display: inline-flex;
       align-items: center;
       justify-content: center;
       font-size: 1rem;
       cursor: pointer;
+      transition: transform 150ms ease, background 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
     }
 
     .history-close-btn:hover,
     .history-close-btn:focus-visible {
-      background: #ffffff;
-      box-shadow: 0 6px 14px rgba(15, 28, 46, 0.12);
+      transform: translateY(-1px);
+      background: var(--action-bg-hover);
+      border-color: rgba(255, 255, 255, 0.32);
+      box-shadow: 0 10px 24px rgba(5, 7, 12, 0.38);
       outline: none;
     }
 
@@ -695,12 +633,13 @@
       width: 20px;
       height: 20px;
       border-radius: 6px;
-      background: rgba(15, 28, 46, 0.1);
+      background: rgba(255, 255, 255, 0.18);
       display: inline-flex;
       align-items: center;
       justify-content: center;
       font-size: 0.8rem;
       flex-shrink: 0;
+      color: rgba(12, 15, 24, 0.82);
     }
 
     .history-item .history-content {
@@ -719,55 +658,9 @@
       color: var(--text-secondary);
     }
 
-    @media (max-width: 768px) {
-      body {
-        flex-direction: column;
-        padding-left: 0;
-      }
-
-      .sidebar {
-        position: static;
-        width: auto;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-        padding: 20px 24px;
-        box-shadow: none;
-        gap: 20px;
-        overflow: visible;
-        height: auto;
-      }
-
-      .logo img {
-        width: 140px;
-      }
-
-      .menu {
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: 12px;
-      }
-
-      .menu a { padding: 10px 14px; }
-
-      .sidebar:not(:hover):not(:focus-within) .menu a {
-        gap: 10px;
-        padding-inline: 14px;
-      }
-
-      .sidebar:not(:hover):not(:focus-within) .menu a .label {
-        opacity: 1;
-        width: auto;
-        pointer-events: auto;
-      }
-
-      main {
-        padding: 32px 24px 48px;
-      }
-
-      .history-panel {
-        width: 100%;
-        align-self: stretch;
+    @media (max-width: 1200px) {
+      .board {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
 
@@ -797,56 +690,18 @@
       }
     }
 
-    @media (hover: none) and (min-width: 769px) {
-      body {
-        --sidebar-current-width: var(--sidebar-width);
+    @media (max-width: 900px) {
+      header {
+        gap: 16px;
       }
 
-      .sidebar {
-        padding: 16px 24px 32px;
-        position: fixed;
-        height: 100vh;
-      }
-
-      .logo {
-        justify-content: flex-start;
-      }
-
-      .logo .logo-full {
-        width: 160px;
-        opacity: 1;
-      }
-
-      .logo .logo-mark {
-        width: 0;
-        opacity: 0;
-      }
-
-      .menu a .label {
-        opacity: 1;
-        width: auto;
-        pointer-events: auto;
+      .header-top {
+        align-items: flex-start;
       }
     }
   </style>
 </head>
 <body>
-  <aside class="sidebar">
-    <div class="logo">
-      <img class="logo-mark" src="images/logo%20no%20text.png" alt="Easylife ikon" />
-      <img class="logo-full" src="images/logo%20white.png" alt="Easylife logo" />
-    </div>
-    <nav class="menu" aria-label="Hovedmeny">
-      <a href="index.html"><span class="icon"><img src="images/Icon_home2.png" alt="Hjem" /></span><span class="label">Dashboard</span></a>
-      <a href="mal.html"><span class="icon"><img src="images/Icon_goal2.png" alt="Mål" /></span><span class="label">Mål</span></a>
-      <a class="active" href="todo.html"><span class="icon"><img src="images/Icon_todo2.png" alt="Todo" /></span><span class="label">Todo</span></a>
-      <a href="rutiner.html"><span class="icon"><img src="images/Icon_routine2.png" alt="Rutiner" /></span><span class="label">Rutiner</span></a>
-      <a href="fokus.html"><span class="icon">🧘</span><span class="label">Fokus</span></a>
-      <a href="training.html"><span class="icon"><img src="images/Icon_train2.png" alt="Trening" /></span><span class="label">Training og kostholdsplan</span></a>
-      <a href="api-manager.html"><span class="icon">🧠</span><span class="label">API Manager</span></a>
-      <a href="api-log.html"><span class="icon">📈</span><span class="label">API-logg</span></a>
-    </nav>
-  </aside>
   <main>
     <header>
       <div class="header-top">
@@ -872,7 +727,7 @@
       <ul class="history-list" data-history-list hidden></ul>
     </section>
     <section class="board" aria-label="Oppgaveoversikt">
-      <article class="task-column" style="--accent: var(--important)" data-column>
+      <article class="task-column" style="--accent: var(--important); --accent-overlay: rgba(227, 213, 195, 0.42)" data-column>
         <div class="column-header">
           <div class="column-title">
             <h2 title="Samle alt som kan være aktuelt å jobbe med.">Tasks – Backlog</h2>
@@ -942,7 +797,7 @@
         </div>
       </article>
 
-      <article class="task-column" style="--accent: var(--next)" data-column>
+      <article class="task-column" style="--accent: var(--next); --accent-overlay: rgba(242, 210, 131, 0.36)" data-column>
         <div class="column-header">
           <div class="column-title">
             <h2 title="Oppgaver som er klare til å plukkes opp.">Next Tasks</h2>
@@ -976,7 +831,7 @@
         </div>
       </article>
 
-      <article class="task-column" style="--accent: var(--progress)" data-column>
+      <article class="task-column" style="--accent: var(--progress); --accent-overlay: rgba(207, 232, 213, 0.4)" data-column>
         <div class="column-header">
           <div class="column-title">
             <h2 title="Pågående arbeid hvor status oppdateres fortløpende.">Tasks In Progress</h2>
@@ -1070,7 +925,7 @@
         </div>
       </article>
 
-      <article class="task-column" style="--accent: var(--follow-up)" data-column>
+      <article class="task-column" style="--accent: var(--follow-up); --accent-overlay: rgba(207, 224, 255, 0.42)" data-column>
         <div class="column-header">
           <div class="column-title">
             <h2 title="Oppgaver som er delegert eller krever oppfølging.">Follow up / Delegated</h2>
@@ -1142,63 +997,12 @@
       </form>
     </div>
   </main>
-  <script>
-    (function () {
-      const body = document.body;
-      const sidebar = document.querySelector('.sidebar');
-
-      if (!sidebar) {
-        return;
-      }
-
-      const expand = () => body.classList.add('sidebar-expanded');
-      const collapse = () => body.classList.remove('sidebar-expanded');
-
-      const handleFocusOut = (event) => {
-        if (!sidebar.contains(event.relatedTarget)) {
-          collapse();
-        }
-      };
-
-      const enableHoverInteractions = () => {
-        sidebar.addEventListener('mouseenter', expand);
-        sidebar.addEventListener('mouseleave', collapse);
-        sidebar.addEventListener('focusin', expand);
-        sidebar.addEventListener('focusout', handleFocusOut);
-      };
-
-      const disableHoverInteractions = () => {
-        sidebar.removeEventListener('mouseenter', expand);
-        sidebar.removeEventListener('mouseleave', collapse);
-        sidebar.removeEventListener('focusin', expand);
-        sidebar.removeEventListener('focusout', handleFocusOut);
-      };
-
-      const hoverMedia = window.matchMedia('(hover: none)');
-
-      const applyMode = (canHover) => {
-        if (canHover) {
-          collapse();
-          enableHoverInteractions();
-        } else {
-          disableHoverInteractions();
-          expand();
-        }
-      };
-
-      applyMode(!hoverMedia.matches);
-
-      const onHoverChange = (event) => {
-        applyMode(!event.matches);
-      };
-
-      if (typeof hoverMedia.addEventListener === 'function') {
-        hoverMedia.addEventListener('change', onHoverChange);
-      } else if (typeof hoverMedia.addListener === 'function') {
-        hoverMedia.addListener(onHoverChange);
-      }
-    })();
-  </script>
+  <a class="home-button" href="index.html">
+    <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+      <path d="M4 10.75 12 4l8 6.75V20a1 1 0 0 1-1 1h-4.5a1 1 0 0 1-1-1v-4.25h-3V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z" />
+    </svg>
+    <span class="visually-hidden">Til forsiden</span>
+  </a>
   <script type="module" src="supabase-client.js"></script>
   <script type="module">
     import supabaseClient from './supabase-client.js';
