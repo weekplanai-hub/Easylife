@@ -314,15 +314,15 @@
 
     .focus-navigation {
       position: absolute;
-      top: 50%;
+      top: clamp(-48px, -6vw, -24px);
       left: 50%;
       width: calc(100% + clamp(160px, 20vw, 240px));
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: space-between;
       gap: clamp(18px, 4vw, 28px);
       pointer-events: none;
-      transform: translate(-50%, -50%);
+      transform: translateX(-50%);
       z-index: 2;
     }
 
@@ -345,7 +345,12 @@
       text-transform: uppercase;
       color: rgba(255, 255, 255, 0.72);
       text-align: center;
-      white-space: nowrap;
+      white-space: normal;
+      line-height: 1.4;
+      display: block;
+      max-width: clamp(96px, 12vw, 140px);
+      margin: 0 auto;
+      word-break: break-word;
     }
 
     .focus-navigation button {
@@ -380,7 +385,6 @@
 
     .focus-navigation button:hover,
     .focus-navigation button:focus-visible {
-      transform: translateY(-1px);
       border-color: rgba(255, 255, 255, 0.28);
       background: rgba(12, 15, 24, 0.78);
       outline: none;
@@ -394,13 +398,7 @@
     }
 
     .focus-navigation-label {
-      pointer-events: none;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.82);
-      text-align: center;
-      flex: 1 1 auto;
+      display: none;
     }
 
     .board[data-layout='focus'] .focus-navigation {
@@ -910,6 +908,7 @@
         margin-top: 18px;
         flex-direction: column;
         justify-content: center;
+        align-items: center;
         gap: 12px;
       }
 
