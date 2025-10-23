@@ -76,7 +76,7 @@
     }
 
     main {
-      width: min(1280px, calc(100vw - clamp(48px, 10vw, 120px)));
+      width: min(1440px, calc(100vw - clamp(48px, 8vw, 120px)));
       padding: clamp(28px, 5vw, 56px);
       display: flex;
       flex-direction: column;
@@ -283,7 +283,7 @@
 
     .board[data-layout='grid'] {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 
     .board[data-layout='focus'] {
@@ -292,10 +292,15 @@
       align-items: stretch;
       min-height: 100%;
       padding-bottom: 18px;
+      max-width: min(70vw, 420px);
+      width: 100%;
+      margin: 0 auto;
+      position: relative;
     }
 
     .board[data-layout='focus'] .task-column {
       flex: 0 0 100%;
+      max-width: 100%;
       transform: translateX(0);
       opacity: 0;
       pointer-events: none;
@@ -309,13 +314,39 @@
 
     .focus-navigation {
       position: absolute;
-      inset: 0;
-      display: none;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
       align-items: center;
-      justify-content: space-between;
-      padding: 0 clamp(12px, 4vw, 40px);
+      gap: clamp(18px, 4vw, 28px);
+      padding: 0 clamp(12px, 4vw, 36px);
       pointer-events: none;
+      transform: translateY(-50%);
       z-index: 2;
+    }
+
+    .focus-nav-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      pointer-events: auto;
+    }
+
+    .focus-nav-group[hidden] {
+      display: none;
+    }
+
+    .focus-nav-hint {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.72);
+      text-align: center;
+      white-space: nowrap;
     }
 
     .focus-navigation button {
@@ -331,6 +362,11 @@
       cursor: pointer;
       backdrop-filter: blur(12px);
       transition: background 200ms ease, border 200ms ease, transform 200ms ease;
+    }
+
+    .focus-navigation button[disabled] {
+      opacity: 0.4;
+      cursor: default;
     }
 
     .focus-navigation button svg {
@@ -351,6 +387,13 @@
       outline: none;
     }
 
+    .focus-navigation button[disabled]:hover,
+    .focus-navigation button[disabled]:focus-visible {
+      transform: none;
+      border-color: rgba(255, 255, 255, 0.12);
+      background: rgba(12, 15, 24, 0.6);
+    }
+
     .focus-navigation-label {
       pointer-events: none;
       font-weight: 600;
@@ -361,7 +404,7 @@
     }
 
     .board[data-layout='focus'] .focus-navigation {
-      display: flex;
+      display: grid;
     }
 
     .task-column {
@@ -469,7 +512,7 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 4px 0;
+      padding: 4px 48px 4px 0;
       border-bottom: 1px solid var(--card-divider);
     }
 
@@ -479,7 +522,7 @@
 
     .todo-card.is-editing {
       background: var(--card-hover);
-      padding: 10px 12px;
+      padding: 10px 52px 10px 12px;
       border-radius: 12px;
       border-bottom-color: transparent;
     }
@@ -499,11 +542,15 @@
     }
 
     .todo-actions {
+      position: absolute;
+      top: 50%;
+      right: 0;
       display: flex;
       gap: 10px;
       flex-shrink: 0;
       opacity: 0;
       pointer-events: none;
+      transform: translateY(-50%);
       transition: opacity 150ms ease;
     }
 
@@ -803,6 +850,12 @@
       color: var(--text-secondary);
     }
 
+    @media (max-width: 1400px) {
+      .board[data-layout='grid'] {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
     @media (max-width: 1200px) {
       .board[data-layout='grid'] {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -820,10 +873,19 @@
         flex-direction: column;
         align-items: stretch;
         gap: 14px;
+        padding: 10px 12px;
+      }
+
+      .todo-card.is-editing {
+        padding: 12px;
       }
 
       .todo-actions {
+        position: static;
         justify-content: flex-end;
+        opacity: 1;
+        transform: none;
+        pointer-events: auto;
       }
 
       .todo-check-btn {
@@ -832,6 +894,36 @@
 
       .todo-menu {
         min-width: min(260px, calc(100vw - 32px));
+      }
+    }
+
+    @media (max-width: 720px) {
+      .board[data-layout='focus'] {
+        max-width: min(90vw, 420px);
+        overflow: visible;
+      }
+
+      .board[data-layout='focus'] .focus-navigation {
+        top: 100%;
+        transform: none;
+        margin-top: 18px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        padding: 0;
+      }
+
+      .board[data-layout='focus'] .focus-navigation-label {
+        grid-column: 1 / -1;
+        order: -1;
+      }
+
+      .focus-nav-group {
+        flex-direction: row;
+        justify-content: center;
+      }
+
+      .focus-nav-hint {
+        display: none;
       }
     }
 
@@ -1142,17 +1234,23 @@
         </div>
       </article>
       <div class="focus-navigation" data-focus-nav hidden>
-        <button type="button" aria-label="Vis forrige kolonne" data-focus-prev>
-          <svg viewBox="0 0 24 24">
-            <path d="m15 5-6 7 6 7" />
-          </svg>
-        </button>
+        <div class="focus-nav-group" data-focus-prev-group hidden>
+          <span class="focus-nav-hint" data-focus-prev-label></span>
+          <button type="button" aria-label="Vis forrige kolonne" data-focus-prev>
+            <svg viewBox="0 0 24 24">
+              <path d="m15 5-6 7 6 7" />
+            </svg>
+          </button>
+        </div>
         <span class="focus-navigation-label" data-focus-label></span>
-        <button type="button" aria-label="Vis neste kolonne" data-focus-next>
-          <svg viewBox="0 0 24 24">
-            <path d="m9 5 6 7-6 7" />
-          </svg>
-        </button>
+        <div class="focus-nav-group" data-focus-next-group hidden>
+          <span class="focus-nav-hint" data-focus-next-label></span>
+          <button type="button" aria-label="Vis neste kolonne" data-focus-next>
+            <svg viewBox="0 0 24 24">
+              <path d="m9 5 6 7-6 7" />
+            </svg>
+          </button>
+        </div>
       </div>
     </section>
     <div class="todo-menu" data-todo-menu aria-hidden="true">
@@ -1217,6 +1315,10 @@
     const focusPrevButton = focusNavigation?.querySelector('[data-focus-prev]');
     const focusNextButton = focusNavigation?.querySelector('[data-focus-next]');
     const focusLabel = focusNavigation?.querySelector('[data-focus-label]');
+    const focusPrevGroup = focusNavigation?.querySelector('[data-focus-prev-group]');
+    const focusNextGroup = focusNavigation?.querySelector('[data-focus-next-group]');
+    const focusPrevHint = focusNavigation?.querySelector('[data-focus-prev-label]');
+    const focusNextHint = focusNavigation?.querySelector('[data-focus-next-label]');
     const todoMenu = document.querySelector('[data-todo-menu]');
     const closeMenuButton = todoMenu?.querySelector('[data-menu-close]');
     const saveMenuButton = todoMenu?.querySelector('[data-save-todo]');
@@ -1297,8 +1399,55 @@
         return;
       }
 
-      const heading = columns[focusIndex].querySelector('.column-header h2');
-      focusLabel.textContent = heading?.textContent?.trim() ?? '';
+      focusLabel.textContent = getColumnTitle(focusIndex);
+    }
+
+    function getColumnTitle(index) {
+      const column = columns[index];
+      if (!column) {
+        return '';
+      }
+
+      const heading = column.querySelector('.column-header h2');
+      return heading?.textContent?.trim() ?? '';
+    }
+
+    function updateFocusNavigationState() {
+      if (!focusNavigation) {
+        return;
+      }
+
+      const total = columns.length;
+      const previousIndex = focusIndex - 1;
+      const nextIndex = focusIndex + 1;
+
+      if (previousIndex >= 0) {
+        focusPrevGroup?.removeAttribute('hidden');
+        focusPrevButton?.removeAttribute('disabled');
+        if (focusPrevHint) {
+          focusPrevHint.textContent = getColumnTitle(previousIndex);
+        }
+      } else {
+        focusPrevGroup?.setAttribute('hidden', '');
+        focusPrevButton?.setAttribute('disabled', '');
+        if (focusPrevHint) {
+          focusPrevHint.textContent = '';
+        }
+      }
+
+      if (nextIndex < total) {
+        focusNextGroup?.removeAttribute('hidden');
+        focusNextButton?.removeAttribute('disabled');
+        if (focusNextHint) {
+          focusNextHint.textContent = getColumnTitle(nextIndex);
+        }
+      } else {
+        focusNextGroup?.setAttribute('hidden', '');
+        focusNextButton?.setAttribute('disabled', '');
+        if (focusNextHint) {
+          focusNextHint.textContent = '';
+        }
+      }
     }
 
     function resetFocusStyles() {
@@ -1319,11 +1468,11 @@
       }
 
       const total = columns.length;
-      let targetIndex = nextIndex % total;
-      if (targetIndex < 0) {
-        targetIndex += total;
+      if (total === 0) {
+        return;
       }
 
+      const targetIndex = Math.max(0, Math.min(nextIndex, total - 1));
       focusIndex = targetIndex;
 
       columns.forEach((column, index) => {
@@ -1340,6 +1489,7 @@
       });
 
       updateFocusLabel();
+      updateFocusNavigationState();
     }
 
     function applyLayout(layout) {
@@ -1361,6 +1511,16 @@
         setFocusIndex(focusIndex);
       } else {
         focusNavigation?.setAttribute('hidden', '');
+        focusPrevGroup?.setAttribute('hidden', '');
+        focusNextGroup?.setAttribute('hidden', '');
+        focusPrevButton?.setAttribute('disabled', '');
+        focusNextButton?.setAttribute('disabled', '');
+        if (focusPrevHint) {
+          focusPrevHint.textContent = '';
+        }
+        if (focusNextHint) {
+          focusNextHint.textContent = '';
+        }
         resetFocusStyles();
 
         if (layout === 'horizontal') {
