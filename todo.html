@@ -148,10 +148,59 @@
 
     .header-top {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: space-between;
       gap: 16px;
       flex-wrap: wrap;
+    }
+
+    .header-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 12px;
+    }
+
+    .layout-controls {
+      display: inline-flex;
+      gap: 10px;
+    }
+
+    .layout-button {
+      width: 48px;
+      height: 48px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(12, 15, 24, 0.6);
+      color: rgba(255, 255, 255, 0.94);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: background 200ms ease, border 200ms ease, transform 200ms ease;
+      backdrop-filter: blur(12px);
+    }
+
+    .layout-button svg {
+      width: 22px;
+      height: 22px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .layout-button:hover,
+    .layout-button:focus-visible {
+      transform: translateY(-1px);
+      border-color: rgba(255, 255, 255, 0.28);
+      background: rgba(12, 15, 24, 0.78);
+      outline: none;
+    }
+
+    .layout-button.is-active {
+      border-color: rgba(255, 255, 255, 0.38);
+      background: rgba(12, 15, 24, 0.82);
     }
 
     header h1 {
@@ -214,9 +263,105 @@
     }
 
     .board {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      position: relative;
+      width: 100%;
       gap: var(--column-gap);
+    }
+
+    .board[data-layout='horizontal'] {
+      display: flex;
+      flex-wrap: nowrap;
+      align-items: stretch;
+      overflow-x: auto;
+      padding-bottom: 12px;
+    }
+
+    .board[data-layout='horizontal'] .task-column {
+      flex: 1 1 0;
+      min-width: 220px;
+    }
+
+    .board[data-layout='grid'] {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .board[data-layout='focus'] {
+      display: flex;
+      overflow: hidden;
+      align-items: stretch;
+      min-height: 100%;
+      padding-bottom: 18px;
+    }
+
+    .board[data-layout='focus'] .task-column {
+      flex: 0 0 100%;
+      transform: translateX(0);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 260ms ease, opacity 200ms ease;
+    }
+
+    .board[data-layout='focus'] .task-column[data-active='true'] {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .focus-navigation {
+      position: absolute;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(12px, 4vw, 40px);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .focus-navigation button {
+      pointer-events: auto;
+      width: 52px;
+      height: 52px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(12, 15, 24, 0.6);
+      color: rgba(255, 255, 255, 0.94);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      backdrop-filter: blur(12px);
+      transition: background 200ms ease, border 200ms ease, transform 200ms ease;
+    }
+
+    .focus-navigation button svg {
+      width: 22px;
+      height: 22px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .focus-navigation button:hover,
+    .focus-navigation button:focus-visible {
+      transform: translateY(-1px);
+      border-color: rgba(255, 255, 255, 0.28);
+      background: rgba(12, 15, 24, 0.78);
+      outline: none;
+    }
+
+    .focus-navigation-label {
+      pointer-events: none;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.82);
+      text-align: center;
+    }
+
+    .board[data-layout='focus'] .focus-navigation {
+      display: flex;
     }
 
     .task-column {
@@ -659,13 +804,13 @@
     }
 
     @media (max-width: 1200px) {
-      .board {
+      .board[data-layout='grid'] {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
 
     @media (max-width: 768px) {
-      .board {
+      .board[data-layout='grid'] {
         grid-template-columns: 1fr;
       }
     }
@@ -706,11 +851,37 @@
     <header>
       <div class="header-top">
         <h1>Todo</h1>
-        <button class="history-button" type="button" data-history-toggle aria-expanded="false" aria-controls="history-panel">
-          <img src="images/Icon_history.svg" alt="" aria-hidden="true" />
-          <span class="history-button-label">Historikk</span>
-          <span class="history-count" data-history-count hidden>0</span>
-        </button>
+        <div class="header-actions">
+          <div class="layout-controls" role="group" aria-label="Bytt visning for oppgavekolonnene">
+            <button class="layout-button" type="button" data-layout-button data-layout="horizontal" aria-label="Vis kolonner horisontalt" aria-pressed="false">
+              <svg viewBox="0 0 24 24">
+                <rect x="4" y="5" width="4" height="14" rx="1.5" />
+                <rect x="10" y="5" width="4" height="14" rx="1.5" />
+                <rect x="16" y="5" width="4" height="14" rx="1.5" />
+              </svg>
+            </button>
+            <button class="layout-button is-active" type="button" data-layout-button data-layout="grid" aria-label="Vis kolonner i rutenett" aria-pressed="true">
+              <svg viewBox="0 0 24 24">
+                <rect x="4" y="4" width="6" height="6" rx="1.5" />
+                <rect x="14" y="4" width="6" height="6" rx="1.5" />
+                <rect x="4" y="14" width="6" height="6" rx="1.5" />
+                <rect x="14" y="14" width="6" height="6" rx="1.5" />
+              </svg>
+            </button>
+            <button class="layout-button" type="button" data-layout-button data-layout="focus" aria-label="Fokuser på én kolonne" aria-pressed="false">
+              <svg viewBox="0 0 24 24">
+                <rect x="3" y="9" width="4" height="6" rx="1.5" />
+                <rect x="17" y="9" width="4" height="6" rx="1.5" />
+                <rect x="8" y="5" width="8" height="14" rx="2" />
+              </svg>
+            </button>
+          </div>
+          <button class="history-button" type="button" data-history-toggle aria-expanded="false" aria-controls="history-panel">
+            <img src="images/Icon_history.svg" alt="" aria-hidden="true" />
+            <span class="history-button-label">Historikk</span>
+            <span class="history-count" data-history-count hidden>0</span>
+          </button>
+        </div>
       </div>
       <p>
         Førsteutkast til oppgaveoversikt med kolonner for backlog, neste steg,
@@ -726,7 +897,7 @@
       <p class="history-empty" data-history-empty>Ingen oppgaver er fullført ennå.</p>
       <ul class="history-list" data-history-list hidden></ul>
     </section>
-    <section class="board" aria-label="Oppgaveoversikt">
+    <section class="board" aria-label="Oppgaveoversikt" data-layout="grid">
       <article class="task-column" style="--accent: var(--important); --accent-overlay: rgba(227, 213, 195, 0.42)" data-column>
         <div class="column-header">
           <div class="column-title">
@@ -970,6 +1141,19 @@
           </article>
         </div>
       </article>
+      <div class="focus-navigation" data-focus-nav hidden>
+        <button type="button" aria-label="Vis forrige kolonne" data-focus-prev>
+          <svg viewBox="0 0 24 24">
+            <path d="m15 5-6 7 6 7" />
+          </svg>
+        </button>
+        <span class="focus-navigation-label" data-focus-label></span>
+        <button type="button" aria-label="Vis neste kolonne" data-focus-next>
+          <svg viewBox="0 0 24 24">
+            <path d="m9 5 6 7-6 7" />
+          </svg>
+        </button>
+      </div>
     </section>
     <div class="todo-menu" data-todo-menu aria-hidden="true">
       <div class="menu-header">
@@ -1027,7 +1211,12 @@
     enforceSession();
 
     const board = document.querySelector('.board');
-    const columns = Array.from(document.querySelectorAll('.task-column[data-column]'));
+    const columns = Array.from(board?.querySelectorAll('.task-column[data-column]') ?? []);
+    const layoutButtons = document.querySelectorAll('[data-layout-button]');
+    const focusNavigation = board?.querySelector('[data-focus-nav]');
+    const focusPrevButton = focusNavigation?.querySelector('[data-focus-prev]');
+    const focusNextButton = focusNavigation?.querySelector('[data-focus-next]');
+    const focusLabel = focusNavigation?.querySelector('[data-focus-label]');
     const todoMenu = document.querySelector('[data-todo-menu]');
     const closeMenuButton = todoMenu?.querySelector('[data-menu-close]');
     const saveMenuButton = todoMenu?.querySelector('[data-save-todo]');
@@ -1040,6 +1229,14 @@
     const historyCloseButton = historyPanel?.querySelector('[data-history-close]');
     const historyCount = document.querySelector('[data-history-count]');
     const completedTasks = [];
+    const defaultFocusIndex = Math.max(
+      columns.findIndex((column) =>
+        column.querySelector('.column-header h2')?.textContent?.trim().toLowerCase() === 'tasks in progress'
+      ),
+      0
+    );
+    let currentLayout = board?.dataset.layout ?? 'grid';
+    let focusIndex = defaultFocusIndex;
     let activeCard = null;
     let activeEditable = null;
     let generatedIdCounter = 0;
@@ -1086,6 +1283,137 @@
     columns.forEach((column, index) => {
       column.dataset.columnIndex = String(index);
     });
+
+    function updateLayoutButtonState(layout) {
+      layoutButtons.forEach((button) => {
+        const isActive = button.dataset.layout === layout;
+        button.classList.toggle('is-active', isActive);
+        button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+      });
+    }
+
+    function updateFocusLabel() {
+      if (!focusLabel || !columns[focusIndex]) {
+        return;
+      }
+
+      const heading = columns[focusIndex].querySelector('.column-header h2');
+      focusLabel.textContent = heading?.textContent?.trim() ?? '';
+    }
+
+    function resetFocusStyles() {
+      columns.forEach((column) => {
+        column.style.removeProperty('transform');
+        column.removeAttribute('data-active');
+        column.removeAttribute('aria-hidden');
+      });
+
+      if (focusLabel) {
+        focusLabel.textContent = '';
+      }
+    }
+
+    function setFocusIndex(nextIndex) {
+      if (!board || columns.length === 0) {
+        return;
+      }
+
+      const total = columns.length;
+      let targetIndex = nextIndex % total;
+      if (targetIndex < 0) {
+        targetIndex += total;
+      }
+
+      focusIndex = targetIndex;
+
+      columns.forEach((column, index) => {
+        const offset = index - focusIndex;
+        column.style.transform = `translateX(${offset * 100}%)`;
+
+        if (index === focusIndex) {
+          column.dataset.active = 'true';
+          column.setAttribute('aria-hidden', 'false');
+        } else {
+          column.removeAttribute('data-active');
+          column.setAttribute('aria-hidden', 'true');
+        }
+      });
+
+      updateFocusLabel();
+    }
+
+    function applyLayout(layout) {
+      if (!board) {
+        return;
+      }
+
+      currentLayout = layout;
+      board.setAttribute('data-layout', layout);
+      updateLayoutButtonState(layout);
+
+      if (layout === 'focus') {
+        focusNavigation?.removeAttribute('hidden');
+
+        if (focusIndex < 0 || focusIndex >= columns.length) {
+          focusIndex = defaultFocusIndex;
+        }
+
+        setFocusIndex(focusIndex);
+      } else {
+        focusNavigation?.setAttribute('hidden', '');
+        resetFocusStyles();
+
+        if (layout === 'horizontal') {
+          if (typeof board.scrollTo === 'function') {
+            board.scrollTo({ left: 0, behavior: 'smooth' });
+          } else {
+            board.scrollLeft = 0;
+          }
+        }
+      }
+    }
+
+    layoutButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const layout = button.dataset.layout;
+        if (!layout) {
+          return;
+        }
+
+        if (layout === currentLayout) {
+          if (layout === 'focus') {
+            setFocusIndex(focusIndex);
+          }
+          return;
+        }
+
+        applyLayout(layout);
+      });
+    });
+
+    focusPrevButton?.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (board?.dataset.layout !== 'focus') {
+        return;
+      }
+
+      setFocusIndex(focusIndex - 1);
+    });
+
+    focusNextButton?.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (board?.dataset.layout !== 'focus') {
+        return;
+      }
+
+      setFocusIndex(focusIndex + 1);
+    });
+
+    updateLayoutButtonState(currentLayout);
 
     function moveCardToNextColumn(card) {
       const currentColumn = card.closest('.task-column');
@@ -1395,6 +1723,10 @@
       if (activeCard) {
         positionMenu(activeCard);
       }
+
+      if (board?.dataset.layout === 'focus') {
+        setFocusIndex(focusIndex);
+      }
     }
 
     updateHistoryVisibility();
@@ -1420,6 +1752,16 @@
 
     document.addEventListener('click', handleGlobalClick);
     document.addEventListener('keydown', (event) => {
+      if (board?.dataset.layout === 'focus' && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
+        event.preventDefault();
+        if (event.key === 'ArrowLeft') {
+          setFocusIndex(focusIndex - 1);
+        } else {
+          setFocusIndex(focusIndex + 1);
+        }
+        return;
+      }
+
       if (event.key === 'Escape') {
         let handled = false;
 
