@@ -288,7 +288,7 @@
 
     .board[data-layout='focus'] {
       display: flex;
-      overflow: hidden;
+      overflow: visible;
       align-items: stretch;
       min-height: 100%;
       padding-bottom: 18px;
@@ -315,15 +315,14 @@
     .focus-navigation {
       position: absolute;
       top: 50%;
-      left: 0;
-      width: 100%;
-      display: grid;
-      grid-template-columns: auto 1fr auto;
+      left: 50%;
+      width: calc(100% + clamp(160px, 20vw, 240px));
+      display: flex;
       align-items: center;
+      justify-content: space-between;
       gap: clamp(18px, 4vw, 28px);
-      padding: 0 clamp(12px, 4vw, 36px);
       pointer-events: none;
-      transform: translateY(-50%);
+      transform: translate(-50%, -50%);
       z-index: 2;
     }
 
@@ -401,10 +400,11 @@
       text-transform: uppercase;
       color: rgba(255, 255, 255, 0.82);
       text-align: center;
+      flex: 1 1 auto;
     }
 
     .board[data-layout='focus'] .focus-navigation {
-      display: grid;
+      display: flex;
     }
 
     .task-column {
@@ -904,16 +904,16 @@
       }
 
       .board[data-layout='focus'] .focus-navigation {
-        top: 100%;
+        position: static;
+        width: 100%;
         transform: none;
         margin-top: 18px;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        flex-direction: column;
+        justify-content: center;
         gap: 12px;
-        padding: 0;
       }
 
       .board[data-layout='focus'] .focus-navigation-label {
-        grid-column: 1 / -1;
         order: -1;
       }
 
@@ -925,6 +925,15 @@
       .focus-nav-hint {
         display: none;
       }
+    }
+
+    main[data-history-open='true'] .board {
+      display: none;
+    }
+
+    main[data-history-open='true'] .history-panel {
+      align-self: center;
+      margin: 0 auto;
     }
 
     @media (max-width: 900px) {
@@ -1308,6 +1317,7 @@
 
     enforceSession();
 
+    const main = document.querySelector('main');
     const board = document.querySelector('.board');
     const columns = Array.from(board?.querySelectorAll('.task-column[data-column]') ?? []);
     const layoutButtons = document.querySelectorAll('[data-layout-button]');
@@ -1455,6 +1465,7 @@
         column.style.removeProperty('transform');
         column.removeAttribute('data-active');
         column.removeAttribute('aria-hidden');
+        column.style.removeProperty('display');
       });
 
       if (focusLabel) {
@@ -1477,14 +1488,25 @@
 
       columns.forEach((column, index) => {
         const offset = index - focusIndex;
+        const isActive = index === focusIndex;
         column.style.transform = `translateX(${offset * 100}%)`;
 
-        if (index === focusIndex) {
+        if (isActive) {
           column.dataset.active = 'true';
           column.setAttribute('aria-hidden', 'false');
         } else {
           column.removeAttribute('data-active');
           column.setAttribute('aria-hidden', 'true');
+        }
+
+        if (board?.dataset.layout === 'focus') {
+          if (isActive) {
+            column.style.removeProperty('display');
+          } else {
+            column.style.display = 'none';
+          }
+        } else {
+          column.style.removeProperty('display');
         }
       });
 
@@ -1670,6 +1692,8 @@
       historyPanel.setAttribute('data-open', 'true');
       historyPanel.setAttribute('aria-hidden', 'false');
       historyButton?.setAttribute('aria-expanded', 'true');
+      main?.setAttribute('data-history-open', 'true');
+      board?.setAttribute('aria-hidden', 'true');
     }
 
     function closeHistory() {
@@ -1680,6 +1704,8 @@
       historyPanel.removeAttribute('data-open');
       historyPanel.setAttribute('aria-hidden', 'true');
       historyButton?.setAttribute('aria-expanded', 'false');
+      main?.removeAttribute('data-history-open');
+      board?.removeAttribute('aria-hidden');
     }
 
     function completeTask(card) {
