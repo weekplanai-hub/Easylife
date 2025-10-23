@@ -314,7 +314,7 @@
 
     .focus-navigation {
       position: absolute;
-      top: clamp(-48px, -6vw, -24px);
+      top: 0;
       left: 50%;
       width: calc(100% + clamp(160px, 20vw, 240px));
       display: flex;
@@ -322,7 +322,7 @@
       justify-content: space-between;
       gap: clamp(18px, 4vw, 28px);
       pointer-events: none;
-      transform: translateX(-50%);
+      transform: translate(-50%, 0);
       z-index: 2;
     }
 
@@ -332,6 +332,10 @@
       align-items: center;
       gap: 10px;
       pointer-events: auto;
+    }
+
+    .focus-nav-group[data-focus-next-group] {
+      margin-left: auto;
     }
 
     .focus-nav-group[hidden] {
@@ -349,7 +353,7 @@
       line-height: 1.4;
       display: block;
       max-width: clamp(96px, 12vw, 140px);
-      margin: 0 auto;
+      margin: 6px auto 0;
       word-break: break-word;
     }
 
@@ -919,6 +923,7 @@
       .focus-nav-group {
         flex-direction: row;
         justify-content: center;
+        margin-left: 0;
       }
 
       .focus-nav-hint {
@@ -983,11 +988,6 @@
           </button>
         </div>
       </div>
-      <p>
-        Førsteutkast til oppgaveoversikt med kolonner for backlog, neste steg,
-        pågående oppgaver og oppfølging/delegerte oppgaver. Kortene kan utvides
-        med dynamisk funksjonalitet senere.
-      </p>
     </header>
     <section class="history-panel" id="history-panel" data-history-panel aria-hidden="true">
       <div class="history-header">
@@ -1243,21 +1243,21 @@
       </article>
       <div class="focus-navigation" data-focus-nav hidden>
         <div class="focus-nav-group" data-focus-prev-group hidden>
-          <span class="focus-nav-hint" data-focus-prev-label></span>
           <button type="button" aria-label="Vis forrige kolonne" data-focus-prev>
             <svg viewBox="0 0 24 24">
               <path d="m15 5-6 7 6 7" />
             </svg>
           </button>
+          <span class="focus-nav-hint" data-focus-prev-label></span>
         </div>
         <span class="focus-navigation-label" data-focus-label></span>
         <div class="focus-nav-group" data-focus-next-group hidden>
-          <span class="focus-nav-hint" data-focus-next-label></span>
           <button type="button" aria-label="Vis neste kolonne" data-focus-next>
             <svg viewBox="0 0 24 24">
               <path d="m9 5 6 7-6 7" />
             </svg>
           </button>
+          <span class="focus-nav-hint" data-focus-next-label></span>
         </div>
       </div>
     </section>
