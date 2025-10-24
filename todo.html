@@ -340,95 +340,45 @@
     }
 
     .project-shortcuts-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: clamp(12px, 2vw, 20px);
-    }
-
-    .project-card {
-      position: relative;
-      border-radius: 22px;
-      border: 1px solid var(--column-border);
-      background: rgba(12, 15, 24, 0.52);
-      padding: 18px;
       display: flex;
-      flex-direction: column;
-      gap: 10px;
-      cursor: pointer;
-      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+      flex-wrap: wrap;
+      gap: clamp(8px, 1.6vw, 16px);
     }
 
-    .project-card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      background: linear-gradient(155deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02) 70%);
-      opacity: 0;
-      transition: opacity 160ms ease;
-      pointer-events: none;
-    }
-
-    .project-card:hover,
-    .project-card:focus-visible {
-      transform: translateY(-2px);
-      border-color: rgba(255, 255, 255, 0.32);
-      background: rgba(12, 15, 24, 0.68);
-      outline: none;
-    }
-
-    .project-card:hover::before,
-    .project-card:focus-visible::before {
-      opacity: 1;
-    }
-
-    .project-card-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .project-card-name {
-      font-weight: 600;
-      font-size: 1.05rem;
-    }
-
-    .project-card-summary {
-      margin: 0;
-      color: var(--text-secondary);
-      font-size: 0.9rem;
-      line-height: 1.4;
-    }
-
-    .project-favorite-badge {
+    .project-chip {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 4px 10px;
+      gap: 8px;
+      padding: 10px 18px;
       border-radius: 999px;
-      background: rgba(255, 214, 102, 0.16);
-      color: #ffe9a8;
-      font-size: 0.8rem;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
+      border: 1px solid var(--action-border);
+      background: rgba(12, 15, 24, 0.62);
+      color: inherit;
+      font-weight: 500;
+      cursor: pointer;
+      transition: transform 150ms ease, background 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+      backdrop-filter: blur(14px);
     }
 
-    .project-favorite-badge svg {
-      width: 14px;
-      height: 14px;
-      fill: currentColor;
+    .project-chip:hover,
+    .project-chip:focus-visible {
+      transform: translateY(-1px);
+      background: rgba(12, 15, 24, 0.82);
+      border-color: rgba(255, 255, 255, 0.32);
+      outline: none;
+      box-shadow: 0 12px 32px rgba(5, 7, 12, 0.4);
     }
 
-    .project-card-meta {
-      display: flex;
+    .project-chip .project-chip-label {
+      line-height: 1.2;
+    }
+
+    .project-favorite-icon {
+      color: #ffd86f;
+      font-size: 1rem;
+      line-height: 1;
+      display: inline-flex;
       align-items: center;
-      gap: 12px;
-      color: var(--text-secondary);
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
     }
 
     .project-panel {
@@ -499,6 +449,7 @@
       cursor: pointer;
       transition: transform 150ms ease, border-color 150ms ease, background 150ms ease;
       text-align: left;
+      position: relative;
     }
 
     .project-list-item:hover,
@@ -509,8 +460,43 @@
       background: rgba(20, 24, 34, 0.74);
     }
 
-    .project-list-item .project-list-name {
+    .project-list-name {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .project-list-name .project-name-label {
+      display: inline-block;
+    }
+
+    .project-list-summary {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: 0.82rem;
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .project-list-summary[contenteditable='true'] {
+      cursor: text;
+      outline: none;
+      display: block;
+      -webkit-line-clamp: initial;
+      white-space: pre-wrap;
+      max-height: 10.5em;
+      overflow-y: auto;
+    }
+
+    .project-list-summary[data-placeholder]:empty::before {
+      content: attr(data-placeholder);
+      color: rgba(255, 255, 255, 0.6);
     }
 
     .project-list-item .project-list-meta {
@@ -596,8 +582,7 @@
 
     .project-list-content,
     .project-deadlines,
-    .project-milestones,
-    .project-stickies {
+    .project-milestones {
       margin: 0;
       padding: 0;
       list-style: none;
@@ -606,7 +591,6 @@
       gap: 10px;
     }
 
-    .project-list-content li,
     .project-deadlines li,
     .project-milestones li {
       padding: 10px 12px;
@@ -630,15 +614,85 @@
       margin-bottom: 4px;
     }
 
+    .project-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .project-sticky-add {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid var(--action-border);
+      background: var(--action-bg);
+      color: var(--text-primary);
+      font-size: 1.4rem;
+      line-height: 1;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: transform 150ms ease, background 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+      backdrop-filter: blur(14px);
+    }
+
+    .project-sticky-add:hover,
+    .project-sticky-add:focus-visible {
+      transform: translateY(-1px);
+      background: var(--action-bg-hover);
+      border-color: rgba(255, 255, 255, 0.32);
+      box-shadow: 0 12px 30px rgba(5, 7, 12, 0.38);
+      outline: none;
+    }
+
+    .project-list-content {
+      gap: 8px;
+    }
+
+    .project-todo-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: 16px;
+      border: 1px solid var(--column-border);
+      background: rgba(20, 24, 34, 0.62);
+      color: var(--text-primary);
+      line-height: 1.45;
+    }
+
+    .project-todo-check {
+      width: 26px;
+      height: 26px;
+      border-radius: 10px;
+      border: 1px solid var(--action-border);
+      background: var(--action-bg);
+      display: grid;
+      place-items: center;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .project-todo-text {
+      flex: 1;
+      min-width: 0;
+    }
+
     .project-stickies {
+      margin: 0;
+      padding: 0;
+      list-style: none;
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
       gap: 12px;
     }
 
-    .project-stickies li {
+    .project-sticky-note {
+      position: relative;
       border-radius: 16px;
-      padding: 16px;
+      padding: 18px;
       background: rgba(255, 255, 255, 0.12);
       color: #111;
       font-weight: 600;
@@ -646,15 +700,64 @@
       box-shadow: 0 18px 30px rgba(5, 7, 12, 0.36);
       transform: rotate(var(--tilt, -1.5deg));
       transition: transform 160ms ease, box-shadow 160ms ease;
+      display: flex;
     }
 
-    .project-stickies li:nth-child(even) {
+    .project-sticky-note:nth-of-type(even) {
       --tilt: 1.5deg;
       background: rgba(255, 249, 208, 0.92);
     }
 
-    .project-stickies li:nth-child(odd) {
+    .project-sticky-note:nth-of-type(odd) {
       background: rgba(255, 223, 186, 0.92);
+    }
+
+    .project-sticky-text {
+      flex: 1;
+      margin: 0;
+      line-height: 1.45;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .project-sticky-text:empty::before {
+      content: 'Skriv notat…';
+      color: rgba(17, 17, 17, 0.55);
+    }
+
+    .project-sticky-text[contenteditable='true'] {
+      outline: none;
+      cursor: text;
+    }
+
+    .project-sticky-delete {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(0, 0, 0, 0.24);
+      color: inherit;
+      font-size: 1rem;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 140ms ease, transform 140ms ease;
+    }
+
+    .project-sticky-delete:hover,
+    .project-sticky-delete:focus-visible {
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .project-sticky-note.is-editing .project-sticky-delete {
+      opacity: 1;
+      pointer-events: auto;
     }
 
     .project-stickies li.project-section-empty {
@@ -667,8 +770,8 @@
       transform: none;
     }
 
-    .project-stickies li:hover,
-    .project-stickies li:focus-visible {
+    .project-sticky-note:hover,
+    .project-sticky-note:focus-visible {
       transform: translateY(-2px) rotate(0deg);
       box-shadow: 0 22px 36px rgba(5, 7, 12, 0.42);
       outline: none;
@@ -677,6 +780,10 @@
     .project-section-empty {
       color: var(--text-secondary);
       font-size: 0.9rem;
+    }
+
+    main[data-project-open='true'] .project-shortcuts {
+      display: none;
     }
 
     main[data-project-open='true'] .board {
@@ -1421,8 +1528,7 @@
     <section class="project-shortcuts" data-project-shortcuts>
       <div class="project-shortcuts-header">
         <div class="project-shortcuts-heading">
-          <h2>Prosjekt snarveier</h2>
-          <p>Favoritter og rask tilgang til aktive initiativ.</p>
+          <h2>Prosjekt</h2>
         </div>
         <div class="project-shortcuts-actions">
           <button class="project-action-btn" type="button" data-project-add>
@@ -1753,8 +1859,11 @@
                   <li class="project-section-empty">Ingen notater registrert.</li>
                 </ul>
               </article>
-              <article class="project-section">
-                <h3>Sticking notes</h3>
+              <article class="project-section project-stickies-section">
+                <div class="project-section-header">
+                  <h3>Sticky notes</h3>
+                  <button type="button" class="project-sticky-add" data-sticky-add aria-label="Legg til notat">+</button>
+                </div>
                 <ul class="project-stickies" data-project-stickies>
                   <li class="project-section-empty">Ingen notater enda.</li>
                 </ul>
@@ -1857,6 +1966,7 @@
     const projectDeadlines = projectPanel?.querySelector('[data-project-deadlines]');
     const projectMilestones = projectPanel?.querySelector('[data-project-milestones]');
     const projectStickies = projectPanel?.querySelector('[data-project-stickies]');
+    const projectStickyAddButton = projectPanel?.querySelector('[data-sticky-add]');
     const completedTasks = [];
     const projects = [
       {
@@ -1933,6 +2043,8 @@
     let activeEditable = null;
     let generatedIdCounter = 0;
     let activeProjectId = null;
+    let activeSummaryElement = null;
+    let activeStickyElement = null;
 
     function getNextDeadline(project) {
       if (!project?.deadlines?.length) {
@@ -1982,12 +2094,20 @@
         return;
       }
 
-      items.forEach((item) => {
-        const element = renderItem(item);
+      items.forEach((item, index) => {
+        const element = renderItem(item, index);
         if (element) {
           container.appendChild(element);
         }
       });
+    }
+
+    function findProject(projectId) {
+      if (!projectId) {
+        return null;
+      }
+
+      return projects.find((entry) => entry.id === projectId) ?? null;
     }
 
     function renderProjectShortcuts() {
@@ -2007,72 +2127,30 @@
       }
 
       favorites.forEach((project) => {
-        const card = document.createElement('article');
-        card.className = 'project-card';
-        card.dataset.projectId = project.id;
-        card.tabIndex = 0;
-        card.setAttribute('role', 'button');
-        card.setAttribute('aria-label', `Åpne prosjektet ${project.name}`);
-
-        const header = document.createElement('div');
-        header.className = 'project-card-header';
-
-        const name = document.createElement('div');
-        name.className = 'project-card-name';
-        name.textContent = project.name;
-        header.appendChild(name);
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'project-chip';
+        chip.dataset.projectId = project.id;
+        chip.setAttribute('aria-label', `Åpne prosjektet ${project.name}`);
 
         if (project.favorite) {
-          const badge = document.createElement('span');
-          badge.className = 'project-favorite-badge';
-          badge.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.47 5 5.53.8-4 3.9.94 5.47L12 15.77 7.06 18.17 8 12.7 4 8.8l5.53-.8Z" /></svg>Favoritt';
-          header.appendChild(badge);
+          const star = document.createElement('span');
+          star.className = 'project-favorite-icon';
+          star.textContent = '★';
+          star.setAttribute('aria-hidden', 'true');
+          chip.appendChild(star);
         }
 
-        card.appendChild(header);
+        const label = document.createElement('span');
+        label.className = 'project-chip-label';
+        label.textContent = project.name;
+        chip.appendChild(label);
 
-        if (project.summary) {
-          const summary = document.createElement('p');
-          summary.className = 'project-card-summary';
-          summary.textContent = project.summary;
-          card.appendChild(summary);
-        }
-
-        const meta = document.createElement('div');
-        meta.className = 'project-card-meta';
-
-        if (project.status) {
-          meta.appendChild(document.createTextNode(project.status));
-        }
-
-        const nextDeadline = getNextDeadline(project);
-        if (nextDeadline?.date) {
-          if (meta.childNodes.length > 0) {
-            meta.appendChild(document.createTextNode(' · '));
-          }
-          meta.appendChild(document.createTextNode(`Neste frist ${formatDate(nextDeadline.date)}`));
-        }
-
-        if (meta.childNodes.length > 0) {
-          card.appendChild(meta);
-        }
-
-        function openFromShortcut(event) {
-          if (event.type === 'keydown' && event.key !== 'Enter' && event.key !== ' ') {
-            return;
-          }
-
-          if (event.type === 'keydown') {
-            event.preventDefault();
-          }
-
+        chip.addEventListener('click', () => {
           openProjectArea(project.id);
-        }
+        });
 
-        card.addEventListener('click', openFromShortcut);
-        card.addEventListener('keydown', openFromShortcut);
-
-        projectShortcutsList.appendChild(card);
+        projectShortcutsList.appendChild(chip);
       });
     }
 
@@ -2092,27 +2170,49 @@
       }
 
       projects.forEach((project) => {
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.className = 'project-list-item';
-        button.dataset.projectId = project.id;
+        const item = document.createElement('article');
+        item.className = 'project-list-item';
+        item.dataset.projectId = project.id;
+        item.tabIndex = 0;
+        item.setAttribute('role', 'button');
+        item.setAttribute('aria-pressed', project.id === activeProjectId ? 'true' : 'false');
 
         if (project.id === activeProjectId) {
-          button.classList.add('is-active');
+          item.classList.add('is-active');
         }
 
-        const name = document.createElement('span');
+        const name = document.createElement('div');
         name.className = 'project-list-name';
-        name.textContent = project.name;
-        button.appendChild(name);
+
+        if (project.favorite) {
+          const star = document.createElement('span');
+          star.className = 'project-favorite-icon';
+          star.textContent = '★';
+          star.setAttribute('aria-hidden', 'true');
+          name.appendChild(star);
+        }
+
+        const label = document.createElement('span');
+        label.className = 'project-name-label';
+        label.textContent = project.name;
+        name.appendChild(label);
+
+        item.appendChild(name);
+
+        const summary = document.createElement('p');
+        summary.className = 'project-list-summary';
+        summary.dataset.projectId = project.id;
+        summary.dataset.placeholder = 'Legg til beskrivelse…';
+        summary.tabIndex = 0;
+        summary.setAttribute('contenteditable', 'false');
+        if (project.summary) {
+          summary.textContent = project.summary;
+        }
+        item.appendChild(summary);
 
         const metaParts = [];
         if (project.status) {
           metaParts.push(project.status);
-        }
-
-        if (project.favorite) {
-          metaParts.push('★ Favoritt');
         }
 
         const nextDeadline = getNextDeadline(project);
@@ -2124,15 +2224,266 @@
           const meta = document.createElement('span');
           meta.className = 'project-list-meta';
           meta.textContent = metaParts.join(' · ');
-          button.appendChild(meta);
+          item.appendChild(meta);
         }
 
-        button.addEventListener('click', () => {
+        item.addEventListener('click', (event) => {
+          if (event.target.closest('.project-list-summary')) {
+            return;
+          }
+
           showProject(project.id);
         });
 
-        projectList.appendChild(button);
+        item.addEventListener('keydown', (event) => {
+          const isEditingSummary = summary.getAttribute('contenteditable') === 'true';
+          if (!isEditingSummary && (event.key === 'Enter' || event.key === ' ')) {
+            event.preventDefault();
+            showProject(project.id);
+          }
+        });
+
+        attachProjectSummaryHandlers(summary, project.id);
+
+        projectList.appendChild(item);
       });
+    }
+
+    function attachProjectSummaryHandlers(element, projectId) {
+      if (!element) {
+        return;
+      }
+
+      element.addEventListener('click', (event) => {
+        event.stopPropagation();
+        startProjectSummaryEditing(projectId, element);
+      });
+
+      element.addEventListener('keydown', (event) => {
+        const isEditing = element.getAttribute('contenteditable') === 'true';
+
+        if (!isEditing && (event.key === 'Enter' || event.key === ' ')) {
+          event.preventDefault();
+          event.stopPropagation();
+          startProjectSummaryEditing(projectId, element);
+          return;
+        }
+
+        if (!isEditing) {
+          return;
+        }
+
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          event.stopPropagation();
+          element.blur();
+        } else if (event.key === 'Escape') {
+          event.preventDefault();
+          event.stopPropagation();
+          stopProjectSummaryEditing(element, false);
+          element.blur();
+        }
+      });
+
+      element.addEventListener('blur', () => {
+        stopProjectSummaryEditing(element, true);
+      });
+    }
+
+    function startProjectSummaryEditing(projectId, element) {
+      if (!element || element.getAttribute('contenteditable') === 'true') {
+        return;
+      }
+
+      if (activeSummaryElement && activeSummaryElement !== element) {
+        stopProjectSummaryEditing(activeSummaryElement, true);
+      }
+
+      element.dataset.projectId = projectId ?? '';
+      const project = findProject(projectId);
+      element.dataset.originalValue = project?.summary ?? '';
+      element.setAttribute('contenteditable', 'true');
+      element.classList.add('is-editing');
+      activeSummaryElement = element;
+
+      requestAnimationFrame(() => {
+        element.focus({ preventScroll: true });
+        placeCaretAtEnd(element);
+      });
+    }
+
+    function stopProjectSummaryEditing(element, shouldSave = true) {
+      if (!element || element.getAttribute('contenteditable') !== 'true') {
+        return;
+      }
+
+      const projectId = element.dataset.projectId ?? '';
+      const project = findProject(projectId);
+      const originalValue = element.dataset.originalValue ?? '';
+      let nextValue = element.textContent ?? '';
+
+      if (!shouldSave) {
+        nextValue = originalValue;
+      }
+
+      nextValue = nextValue.trim();
+
+      element.setAttribute('contenteditable', 'false');
+      element.classList.remove('is-editing');
+      delete element.dataset.originalValue;
+      activeSummaryElement = null;
+
+      if (project) {
+        if (shouldSave) {
+          project.summary = nextValue;
+        } else {
+          nextValue = project.summary ?? '';
+        }
+
+        if (project.id === activeProjectId) {
+          if (projectSummary) {
+            projectSummary.textContent = project.summary
+              ? project.summary
+              : 'Ingen beskrivelse lagt til ennå.';
+          }
+
+          updateProjectContent(project);
+        }
+      }
+
+      element.textContent = nextValue;
+    }
+
+    function attachStickyHandlers(element, projectId, index) {
+      if (!element) {
+        return;
+      }
+
+      element.addEventListener('click', (event) => {
+        event.stopPropagation();
+        startStickyEditing(projectId, index, element);
+      });
+
+      element.addEventListener('keydown', (event) => {
+        const isEditing = element.getAttribute('contenteditable') === 'true';
+
+        if (!isEditing && (event.key === 'Enter' || event.key === ' ')) {
+          event.preventDefault();
+          event.stopPropagation();
+          startStickyEditing(projectId, index, element);
+          return;
+        }
+
+        if (!isEditing) {
+          return;
+        }
+
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          event.stopPropagation();
+          element.blur();
+        } else if (event.key === 'Escape') {
+          event.preventDefault();
+          event.stopPropagation();
+          stopStickyEditing(element, false);
+          element.blur();
+        }
+      });
+
+      element.addEventListener('blur', () => {
+        stopStickyEditing(element, true);
+      });
+    }
+
+    function startStickyEditing(projectId, index, element) {
+      if (!element || element.getAttribute('contenteditable') === 'true') {
+        return;
+      }
+
+      if (activeStickyElement && activeStickyElement !== element) {
+        stopStickyEditing(activeStickyElement, true);
+      }
+
+      element.dataset.projectId = projectId ?? '';
+      element.dataset.stickyIndex = String(index);
+      const project = findProject(projectId);
+      element.dataset.originalValue = project?.stickies?.[index] ?? '';
+      element.setAttribute('contenteditable', 'true');
+      element.classList.add('is-editing');
+      const container = element.closest('.project-sticky-note');
+      container?.classList.add('is-editing');
+      activeStickyElement = element;
+
+      requestAnimationFrame(() => {
+        element.focus({ preventScroll: true });
+        placeCaretAtEnd(element);
+      });
+    }
+
+    function stopStickyEditing(element, shouldSave = true) {
+      if (!element || element.getAttribute('contenteditable') !== 'true') {
+        return;
+      }
+
+      const projectId = element.dataset.projectId ?? '';
+      const project = findProject(projectId);
+      const index = Number(element.dataset.stickyIndex ?? -1);
+      const originalValue = element.dataset.originalValue ?? '';
+      let nextValue = element.textContent ?? '';
+
+      if (!shouldSave) {
+        nextValue = originalValue;
+      }
+
+      nextValue = nextValue.trim();
+
+      element.setAttribute('contenteditable', 'false');
+      element.classList.remove('is-editing');
+      const container = element.closest('.project-sticky-note');
+      container?.classList.remove('is-editing');
+      delete element.dataset.originalValue;
+      activeStickyElement = null;
+
+      if (!project || Number.isNaN(index) || index < 0 || !Array.isArray(project.stickies)) {
+        element.textContent = nextValue;
+        return;
+      }
+
+      if (!shouldSave) {
+        element.textContent = originalValue;
+        if (project.id === activeProjectId) {
+          updateProjectContent(project);
+        }
+        return;
+      }
+
+      project.stickies[index] = nextValue;
+      element.textContent = nextValue;
+
+      if (project.id === activeProjectId) {
+        updateProjectContent(project);
+      }
+    }
+
+    function removeSticky(projectId, index) {
+      const project = findProject(projectId);
+
+      if (!project || !Array.isArray(project.stickies) || index < 0 || index >= project.stickies.length) {
+        return;
+      }
+
+      if (activeStickyElement && activeStickyElement.dataset.projectId === projectId) {
+        const activeIndex = Number(activeStickyElement.dataset.stickyIndex ?? -1);
+        if (activeIndex === index) {
+          activeStickyElement = null;
+        }
+      }
+
+      project.stickies.splice(index, 1);
+
+      if (project.id === activeProjectId) {
+        updateProjectContent(project);
+      }
     }
 
     function updateProjectContent(project) {
@@ -2163,7 +2514,18 @@
         'Ingen oppgaver registrert.',
         (todo) => {
           const item = document.createElement('li');
-          item.textContent = todo;
+          item.className = 'project-todo-item';
+
+          const indicator = document.createElement('span');
+          indicator.className = 'project-todo-check';
+          indicator.textContent = '✓';
+          item.appendChild(indicator);
+
+          const text = document.createElement('span');
+          text.className = 'project-todo-text';
+          text.textContent = todo;
+          item.appendChild(text);
+
           return item;
         }
       );
@@ -2216,9 +2578,34 @@
         projectStickies,
         project.stickies,
         'Ingen notater enda.',
-        (sticky) => {
+        (sticky, index) => {
           const item = document.createElement('li');
-          item.textContent = sticky;
+          item.className = 'project-sticky-note';
+          item.dataset.stickyIndex = String(index);
+          item.dataset.projectId = project.id;
+
+          const text = document.createElement('div');
+          text.className = 'project-sticky-text';
+          text.textContent = sticky;
+          text.tabIndex = 0;
+          text.dataset.projectId = project.id;
+          text.dataset.stickyIndex = String(index);
+          text.setAttribute('contenteditable', 'false');
+          item.appendChild(text);
+
+          const removeButton = document.createElement('button');
+          removeButton.type = 'button';
+          removeButton.className = 'project-sticky-delete';
+          removeButton.setAttribute('aria-label', 'Slett notat');
+          removeButton.textContent = '×';
+          removeButton.addEventListener('click', (event) => {
+            event.stopPropagation();
+            removeSticky(project.id, index);
+          });
+          item.appendChild(removeButton);
+
+          attachStickyHandlers(text, project.id, index);
+
           return item;
         }
       );
@@ -2283,6 +2670,14 @@
     function closeProjectArea() {
       if (!projectPanel) {
         return;
+      }
+
+      if (activeSummaryElement && activeSummaryElement.getAttribute('contenteditable') === 'true') {
+        stopProjectSummaryEditing(activeSummaryElement, true);
+      }
+
+      if (activeStickyElement && activeStickyElement.getAttribute('contenteditable') === 'true') {
+        stopStickyEditing(activeStickyElement, true);
       }
 
       projectPanel.removeAttribute('data-open');
@@ -2896,6 +3291,32 @@
       renderProjectShortcuts();
       renderProjectList();
       openProjectArea(newProject.id);
+    });
+
+    projectStickyAddButton?.addEventListener('click', () => {
+      if (!activeProjectId) {
+        return;
+      }
+
+      const project = findProject(activeProjectId);
+      if (!project) {
+        return;
+      }
+
+      if (!Array.isArray(project.stickies)) {
+        project.stickies = [];
+      }
+
+      project.stickies.push('');
+      updateProjectContent(project);
+
+      requestAnimationFrame(() => {
+        const latest = projectStickies?.querySelector('.project-sticky-note:last-of-type .project-sticky-text');
+        if (latest) {
+          const newIndex = project.stickies.length - 1;
+          startStickyEditing(project.id, newIndex, latest);
+        }
+      });
     });
 
     projectOpenButton?.addEventListener('click', () => {
