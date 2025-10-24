@@ -262,6 +262,435 @@
       display: none;
     }
 
+    .project-shortcuts {
+      border-radius: 28px;
+      border: 1px solid var(--column-border);
+      background: rgba(12, 15, 24, 0.48);
+      backdrop-filter: blur(18px);
+      padding: clamp(20px, 3vw, 28px);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(16px, 3vw, 24px);
+      box-shadow: var(--column-shadow);
+    }
+
+    .project-shortcuts-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: clamp(12px, 2vw, 18px);
+      flex-wrap: wrap;
+    }
+
+    .project-shortcuts-header h2 {
+      margin: 0;
+      font-size: clamp(1.4rem, 1.2vw + 1rem, 1.8rem);
+    }
+
+    .project-shortcuts-header p {
+      margin: 4px 0 0;
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    .project-shortcuts-heading {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .project-shortcuts-actions {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .project-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      border-radius: 18px;
+      border: 1px solid var(--action-border);
+      background: var(--action-bg);
+      color: inherit;
+      font-weight: 500;
+      cursor: pointer;
+      transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease, border-color 150ms ease;
+      backdrop-filter: blur(14px);
+    }
+
+    .project-action-btn svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .project-action-btn:hover,
+    .project-action-btn:focus-visible {
+      transform: translateY(-1px);
+      background: var(--action-bg-hover);
+      border-color: rgba(255, 255, 255, 0.32);
+      box-shadow: 0 12px 32px rgba(5, 7, 12, 0.4);
+      outline: none;
+    }
+
+    .project-shortcuts-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: clamp(12px, 2vw, 20px);
+    }
+
+    .project-card {
+      position: relative;
+      border-radius: 22px;
+      border: 1px solid var(--column-border);
+      background: rgba(12, 15, 24, 0.52);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      cursor: pointer;
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
+
+    .project-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(155deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02) 70%);
+      opacity: 0;
+      transition: opacity 160ms ease;
+      pointer-events: none;
+    }
+
+    .project-card:hover,
+    .project-card:focus-visible {
+      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.32);
+      background: rgba(12, 15, 24, 0.68);
+      outline: none;
+    }
+
+    .project-card:hover::before,
+    .project-card:focus-visible::before {
+      opacity: 1;
+    }
+
+    .project-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .project-card-name {
+      font-weight: 600;
+      font-size: 1.05rem;
+    }
+
+    .project-card-summary {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    .project-favorite-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(255, 214, 102, 0.16);
+      color: #ffe9a8;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .project-favorite-badge svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+    }
+
+    .project-card-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .project-panel {
+      display: none;
+      flex-direction: column;
+      gap: clamp(18px, 3vw, 28px);
+      border-radius: 28px;
+      border: 1px solid var(--column-border);
+      background: rgba(12, 15, 24, 0.6);
+      backdrop-filter: blur(20px);
+      padding: clamp(24px, 3vw, 32px);
+      box-shadow: var(--column-shadow);
+    }
+
+    .project-panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .project-panel-header h2 {
+      margin: 0;
+      font-size: clamp(1.4rem, 1.2vw + 1rem, 2rem);
+    }
+
+    .project-panel-body {
+      display: flex;
+      align-items: stretch;
+      gap: clamp(18px, 3vw, 28px);
+      flex-wrap: wrap;
+    }
+
+    .project-list {
+      flex: 0 0 clamp(240px, 24vw, 320px);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: clamp(16px, 2vw, 22px);
+      border-radius: 22px;
+      border: 1px solid var(--column-border);
+      background: rgba(12, 15, 24, 0.55);
+      max-height: min(70vh, 720px);
+      overflow-y: auto;
+    }
+
+    .project-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .project-list::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.18);
+      border-radius: 999px;
+    }
+
+    .project-list-item {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+      border: 1px solid transparent;
+      border-radius: 16px;
+      padding: 12px 14px;
+      background: rgba(20, 24, 34, 0.58);
+      color: inherit;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: transform 150ms ease, border-color 150ms ease, background 150ms ease;
+      text-align: left;
+    }
+
+    .project-list-item:hover,
+    .project-list-item:focus-visible {
+      transform: translateX(2px);
+      border-color: rgba(255, 255, 255, 0.32);
+      outline: none;
+      background: rgba(20, 24, 34, 0.74);
+    }
+
+    .project-list-item .project-list-name {
+      font-weight: 600;
+    }
+
+    .project-list-item .project-list-meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .project-list-item.is-active {
+      border-color: rgba(255, 255, 255, 0.38);
+      background: rgba(28, 32, 45, 0.82);
+      box-shadow: 0 16px 42px rgba(5, 7, 12, 0.46);
+    }
+
+    .project-workspace {
+      flex: 1 1 320px;
+      min-height: clamp(320px, 40vh, 520px);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(18px, 3vw, 24px);
+    }
+
+    .project-workspace-header {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .project-workspace-title {
+      margin: 0;
+      font-size: clamp(1.2rem, 1vw + 1rem, 1.8rem);
+    }
+
+    .project-workspace-summary {
+      margin: 0;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .project-empty {
+      margin: auto;
+      max-width: 420px;
+      text-align: center;
+      color: var(--text-secondary);
+      padding: clamp(24px, 4vw, 32px);
+      border-radius: 22px;
+      border: 1px dashed rgba(255, 255, 255, 0.18);
+      background: rgba(12, 15, 24, 0.45);
+    }
+
+    .project-content {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(18px, 3vw, 24px);
+    }
+
+    .project-sections {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: clamp(16px, 2.4vw, 24px);
+    }
+
+    .project-section {
+      border-radius: 20px;
+      border: 1px solid var(--column-border);
+      background: rgba(12, 15, 24, 0.48);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 160px;
+    }
+
+    .project-section h3 {
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: 0.02em;
+    }
+
+    .project-list-content,
+    .project-deadlines,
+    .project-milestones,
+    .project-stickies {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .project-list-content li,
+    .project-deadlines li,
+    .project-milestones li {
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(20, 24, 34, 0.6);
+      color: var(--text-primary);
+      line-height: 1.4;
+    }
+
+    .project-deadlines time {
+      display: block;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      margin-top: 4px;
+    }
+
+    .project-milestones strong {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .project-stickies {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+    }
+
+    .project-stickies li {
+      border-radius: 16px;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.12);
+      color: #111;
+      font-weight: 600;
+      min-height: 110px;
+      box-shadow: 0 18px 30px rgba(5, 7, 12, 0.36);
+      transform: rotate(var(--tilt, -1.5deg));
+      transition: transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    .project-stickies li:nth-child(even) {
+      --tilt: 1.5deg;
+      background: rgba(255, 249, 208, 0.92);
+    }
+
+    .project-stickies li:nth-child(odd) {
+      background: rgba(255, 223, 186, 0.92);
+    }
+
+    .project-stickies li.project-section-empty {
+      background: none;
+      color: var(--text-secondary);
+      font-weight: 500;
+      box-shadow: none;
+      min-height: auto;
+      padding: 0;
+      transform: none;
+    }
+
+    .project-stickies li:hover,
+    .project-stickies li:focus-visible {
+      transform: translateY(-2px) rotate(0deg);
+      box-shadow: 0 22px 36px rgba(5, 7, 12, 0.42);
+      outline: none;
+    }
+
+    .project-section-empty {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    main[data-project-open='true'] .board {
+      display: none;
+    }
+
+    main[data-project-open='true'] .project-panel {
+      display: flex;
+    }
+
+    main[data-project-open='true'] .history-panel {
+      display: none;
+    }
+
     .board {
       position: relative;
       width: 100%;
@@ -989,6 +1418,27 @@
         </div>
       </div>
     </header>
+    <section class="project-shortcuts" data-project-shortcuts>
+      <div class="project-shortcuts-header">
+        <div class="project-shortcuts-heading">
+          <h2>Prosjekt snarveier</h2>
+          <p>Favoritter og rask tilgang til aktive initiativ.</p>
+        </div>
+        <div class="project-shortcuts-actions">
+          <button class="project-action-btn" type="button" data-project-add>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14m-7-7h14" /></svg>
+            <span>Legg til prosjekt</span>
+          </button>
+          <button class="project-action-btn" type="button" data-project-open aria-expanded="false" aria-controls="project-panel">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+            <span>Gå til prosjektområdet</span>
+          </button>
+        </div>
+      </div>
+      <div class="project-shortcuts-list" data-project-shortcut-list>
+        <p class="project-section-empty">Ingen favorittprosjekter er merket ennå.</p>
+      </div>
+    </section>
     <section class="history-panel" id="history-panel" data-history-panel aria-hidden="true">
       <div class="history-header">
         <h2>Historikk</h2>
@@ -1261,6 +1711,59 @@
         </div>
       </div>
     </section>
+    <section class="project-panel" id="project-panel" data-project-panel aria-hidden="true">
+      <div class="project-panel-header">
+        <h2>Prosjektområde</h2>
+        <div class="project-shortcuts-actions">
+          <button class="project-action-btn" type="button" data-project-close aria-label="Lukk prosjektområdet">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-6 7 6 7" /></svg>
+            <span>Tilbake til oppgaver</span>
+          </button>
+        </div>
+      </div>
+      <div class="project-panel-body">
+        <aside class="project-list" data-project-list>
+          <p class="project-section-empty">Ingen prosjekter er tilgjengelige ennå.</p>
+        </aside>
+        <div class="project-workspace" data-project-workspace>
+          <div class="project-empty" data-project-empty>
+            Velg et prosjekt fra listen for å se detaljer og arbeidsflater.
+          </div>
+          <div class="project-content" data-project-content hidden>
+            <div class="project-workspace-header">
+              <h3 class="project-workspace-title" data-project-title></h3>
+              <p class="project-workspace-summary" data-project-summary></p>
+            </div>
+            <div class="project-sections">
+              <article class="project-section">
+                <h3>Todo liste</h3>
+                <ul class="project-list-content" data-project-todos>
+                  <li class="project-section-empty">Ingen oppgaver registrert.</li>
+                </ul>
+              </article>
+              <article class="project-section">
+                <h3>Vesentlige frister</h3>
+                <ul class="project-deadlines" data-project-deadlines>
+                  <li class="project-section-empty">Ingen frister lagt inn.</li>
+                </ul>
+              </article>
+              <article class="project-section">
+                <h3>Notater og milepæler</h3>
+                <ul class="project-milestones" data-project-milestones>
+                  <li class="project-section-empty">Ingen notater registrert.</li>
+                </ul>
+              </article>
+              <article class="project-section">
+                <h3>Sticking notes</h3>
+                <ul class="project-stickies" data-project-stickies>
+                  <li class="project-section-empty">Ingen notater enda.</li>
+                </ul>
+              </article>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
     <div class="todo-menu" data-todo-menu aria-hidden="true">
       <div class="menu-header">
         <span>Oppgaveinnstillinger</span>
@@ -1339,7 +1842,85 @@
     const historyEmpty = historyPanel?.querySelector('[data-history-empty]');
     const historyCloseButton = historyPanel?.querySelector('[data-history-close]');
     const historyCount = document.querySelector('[data-history-count]');
+    const projectShortcuts = document.querySelector('[data-project-shortcuts]');
+    const projectShortcutsList = projectShortcuts?.querySelector('[data-project-shortcut-list]');
+    const projectAddButton = projectShortcuts?.querySelector('[data-project-add]');
+    const projectOpenButton = projectShortcuts?.querySelector('[data-project-open]');
+    const projectPanel = document.querySelector('[data-project-panel]');
+    const projectCloseButton = projectPanel?.querySelector('[data-project-close]');
+    const projectList = projectPanel?.querySelector('[data-project-list]');
+    const projectEmpty = projectPanel?.querySelector('[data-project-empty]');
+    const projectContent = projectPanel?.querySelector('[data-project-content]');
+    const projectTitle = projectPanel?.querySelector('[data-project-title]');
+    const projectSummary = projectPanel?.querySelector('[data-project-summary]');
+    const projectTodos = projectPanel?.querySelector('[data-project-todos]');
+    const projectDeadlines = projectPanel?.querySelector('[data-project-deadlines]');
+    const projectMilestones = projectPanel?.querySelector('[data-project-milestones]');
+    const projectStickies = projectPanel?.querySelector('[data-project-stickies]');
     const completedTasks = [];
+    const projects = [
+      {
+        id: 'lansering-q4',
+        name: 'Lansering Q4',
+        summary: 'Koordiner lansering av produktlinjen og markedsaktiviteter i fjerde kvartal.',
+        favorite: true,
+        status: 'I rute',
+        todos: [
+          'Finpuss produktpresentasjon',
+          'Brief salgsteamet på USP-er',
+          'Avklar budsjett med finans'
+        ],
+        deadlines: [
+          { title: 'Budsjett godkjent', date: '2024-09-02' },
+          { title: 'Lanseringsdato', date: '2024-10-15' }
+        ],
+        milestones: [
+          { title: 'Pilotgruppe', note: 'Fullfør beta-test og samle tilbakemeldinger.' },
+          { title: 'Go-to-market', note: 'Finaliser kampanjeplan og mediafordeling.' }
+        ],
+        stickies: ['Husk demo med salgsteamet', 'Oppdater pressekit']
+      },
+      {
+        id: 'kundereise',
+        name: 'Kundereise 2025',
+        summary: 'Kartlegg forbedringspunkter i kundereisen og planlegg tiltak.',
+        favorite: true,
+        status: 'Planlegging',
+        todos: [
+          'Analyse av supporthenvendelser',
+          'Workshops med kundeteamet',
+          'Prioriter tiltak for Q1'
+        ],
+        deadlines: [
+          { title: 'Intervjuer ferdig', date: '2024-08-19' },
+          { title: 'Roadmap klar', date: '2024-09-30' }
+        ],
+        milestones: [
+          { title: 'Innsiktsrapport', note: 'Oppsummer funn og forslag til forbedringer.' },
+          { title: 'MVP-definisjon', note: 'Avklar scope for første leveranse.' }
+        ],
+        stickies: ['Sikre deltakelse fra kundesenteret', 'Book møte med produktteamet']
+      },
+      {
+        id: 'internhub',
+        name: 'Intern Hub redesign',
+        summary: 'Oppdater intranettet med fokus på navigasjon og selvbetjening.',
+        favorite: false,
+        status: 'Oppstart',
+        todos: [
+          'Samle krav fra avdelingene',
+          'Utarbeid wireframes',
+          'Planlegg migrering av innhold'
+        ],
+        deadlines: [
+          { title: 'Design sign-off', date: '2024-11-05' }
+        ],
+        milestones: [
+          { title: 'Innholdsoversikt', note: 'Kartlegg eiere og ansvar.' }
+        ],
+        stickies: ['Sett opp testmiljø', 'Vurder søkefunksjonalitet']
+      }
+    ];
     const defaultFocusIndex = Math.max(
       columns.findIndex((column) =>
         column.querySelector('.column-header h2')?.textContent?.trim().toLowerCase() === 'tasks in progress'
@@ -1351,6 +1932,373 @@
     let activeCard = null;
     let activeEditable = null;
     let generatedIdCounter = 0;
+    let activeProjectId = null;
+
+    function getNextDeadline(project) {
+      if (!project?.deadlines?.length) {
+        return null;
+      }
+
+      const deadlines = [...project.deadlines];
+      deadlines.sort((a, b) => {
+        const first = new Date(a.date ?? '').getTime();
+        const second = new Date(b.date ?? '').getTime();
+        return first - second;
+      });
+
+      return deadlines[0];
+    }
+
+    function formatDate(dateString) {
+      if (!dateString) {
+        return '';
+      }
+
+      const parsed = new Date(dateString);
+
+      if (Number.isNaN(parsed.getTime())) {
+        return dateString;
+      }
+
+      return parsed.toLocaleDateString('no-NO', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+      });
+    }
+
+    function populateList(container, items, emptyText, renderItem) {
+      if (!container) {
+        return;
+      }
+
+      container.innerHTML = '';
+
+      if (!items || items.length === 0) {
+        const empty = document.createElement('li');
+        empty.className = 'project-section-empty';
+        empty.textContent = emptyText;
+        container.appendChild(empty);
+        return;
+      }
+
+      items.forEach((item) => {
+        const element = renderItem(item);
+        if (element) {
+          container.appendChild(element);
+        }
+      });
+    }
+
+    function renderProjectShortcuts() {
+      if (!projectShortcutsList) {
+        return;
+      }
+
+      projectShortcutsList.innerHTML = '';
+      const favorites = projects.filter((project) => project.favorite);
+
+      if (favorites.length === 0) {
+        const empty = document.createElement('p');
+        empty.className = 'project-section-empty';
+        empty.textContent = 'Ingen favorittprosjekter er merket ennå.';
+        projectShortcutsList.appendChild(empty);
+        return;
+      }
+
+      favorites.forEach((project) => {
+        const card = document.createElement('article');
+        card.className = 'project-card';
+        card.dataset.projectId = project.id;
+        card.tabIndex = 0;
+        card.setAttribute('role', 'button');
+        card.setAttribute('aria-label', `Åpne prosjektet ${project.name}`);
+
+        const header = document.createElement('div');
+        header.className = 'project-card-header';
+
+        const name = document.createElement('div');
+        name.className = 'project-card-name';
+        name.textContent = project.name;
+        header.appendChild(name);
+
+        if (project.favorite) {
+          const badge = document.createElement('span');
+          badge.className = 'project-favorite-badge';
+          badge.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.47 5 5.53.8-4 3.9.94 5.47L12 15.77 7.06 18.17 8 12.7 4 8.8l5.53-.8Z" /></svg>Favoritt';
+          header.appendChild(badge);
+        }
+
+        card.appendChild(header);
+
+        if (project.summary) {
+          const summary = document.createElement('p');
+          summary.className = 'project-card-summary';
+          summary.textContent = project.summary;
+          card.appendChild(summary);
+        }
+
+        const meta = document.createElement('div');
+        meta.className = 'project-card-meta';
+
+        if (project.status) {
+          meta.appendChild(document.createTextNode(project.status));
+        }
+
+        const nextDeadline = getNextDeadline(project);
+        if (nextDeadline?.date) {
+          if (meta.childNodes.length > 0) {
+            meta.appendChild(document.createTextNode(' · '));
+          }
+          meta.appendChild(document.createTextNode(`Neste frist ${formatDate(nextDeadline.date)}`));
+        }
+
+        if (meta.childNodes.length > 0) {
+          card.appendChild(meta);
+        }
+
+        function openFromShortcut(event) {
+          if (event.type === 'keydown' && event.key !== 'Enter' && event.key !== ' ') {
+            return;
+          }
+
+          if (event.type === 'keydown') {
+            event.preventDefault();
+          }
+
+          openProjectArea(project.id);
+        }
+
+        card.addEventListener('click', openFromShortcut);
+        card.addEventListener('keydown', openFromShortcut);
+
+        projectShortcutsList.appendChild(card);
+      });
+    }
+
+    function renderProjectList() {
+      if (!projectList) {
+        return;
+      }
+
+      projectList.innerHTML = '';
+
+      if (projects.length === 0) {
+        const empty = document.createElement('p');
+        empty.className = 'project-section-empty';
+        empty.textContent = 'Ingen prosjekter er tilgjengelige ennå.';
+        projectList.appendChild(empty);
+        return;
+      }
+
+      projects.forEach((project) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'project-list-item';
+        button.dataset.projectId = project.id;
+
+        if (project.id === activeProjectId) {
+          button.classList.add('is-active');
+        }
+
+        const name = document.createElement('span');
+        name.className = 'project-list-name';
+        name.textContent = project.name;
+        button.appendChild(name);
+
+        const metaParts = [];
+        if (project.status) {
+          metaParts.push(project.status);
+        }
+
+        if (project.favorite) {
+          metaParts.push('★ Favoritt');
+        }
+
+        const nextDeadline = getNextDeadline(project);
+        if (nextDeadline?.date) {
+          metaParts.push(`Neste: ${formatDate(nextDeadline.date)}`);
+        }
+
+        if (metaParts.length > 0) {
+          const meta = document.createElement('span');
+          meta.className = 'project-list-meta';
+          meta.textContent = metaParts.join(' · ');
+          button.appendChild(meta);
+        }
+
+        button.addEventListener('click', () => {
+          showProject(project.id);
+        });
+
+        projectList.appendChild(button);
+      });
+    }
+
+    function updateProjectContent(project) {
+      if (!projectContent || !projectEmpty) {
+        return;
+      }
+
+      if (!project) {
+        projectContent.hidden = true;
+        projectEmpty.hidden = false;
+        return;
+      }
+
+      projectEmpty.hidden = true;
+      projectContent.hidden = false;
+
+      if (projectTitle) {
+        projectTitle.textContent = project.name;
+      }
+
+      if (projectSummary) {
+        projectSummary.textContent = project.summary || 'Ingen beskrivelse lagt til ennå.';
+      }
+
+      populateList(
+        projectTodos,
+        project.todos,
+        'Ingen oppgaver registrert.',
+        (todo) => {
+          const item = document.createElement('li');
+          item.textContent = todo;
+          return item;
+        }
+      );
+
+      populateList(
+        projectDeadlines,
+        project.deadlines,
+        'Ingen frister lagt inn.',
+        (deadline) => {
+          const item = document.createElement('li');
+          const title = document.createElement('span');
+          title.textContent = deadline.title ?? 'Frist';
+          item.appendChild(title);
+
+          if (deadline.date) {
+            const time = document.createElement('time');
+            const parsed = new Date(deadline.date);
+            if (!Number.isNaN(parsed.getTime())) {
+              time.dateTime = parsed.toISOString();
+            }
+            time.textContent = formatDate(deadline.date);
+            item.appendChild(time);
+          }
+
+          return item;
+        }
+      );
+
+      populateList(
+        projectMilestones,
+        project.milestones,
+        'Ingen notater registrert.',
+        (milestone) => {
+          const item = document.createElement('li');
+          if (milestone.title) {
+            const title = document.createElement('strong');
+            title.textContent = milestone.title;
+            item.appendChild(title);
+          }
+          if (milestone.note) {
+            const note = document.createElement('span');
+            note.textContent = milestone.note;
+            item.appendChild(note);
+          }
+          return item;
+        }
+      );
+
+      populateList(
+        projectStickies,
+        project.stickies,
+        'Ingen notater enda.',
+        (sticky) => {
+          const item = document.createElement('li');
+          item.textContent = sticky;
+          return item;
+        }
+      );
+    }
+
+    function showProject(projectId) {
+      if (projects.length === 0) {
+        activeProjectId = null;
+        renderProjectList();
+        updateProjectContent(null);
+        return;
+      }
+
+      const fallback = projects[0];
+      const project = projects.find((entry) => entry.id === projectId) ?? fallback;
+
+      if (!project) {
+        activeProjectId = null;
+        renderProjectList();
+        updateProjectContent(null);
+        return;
+      }
+
+      activeProjectId = project.id;
+      renderProjectList();
+      updateProjectContent(project);
+    }
+
+    function isProjectAreaOpen() {
+      return projectPanel?.getAttribute('data-open') === 'true';
+    }
+
+    function openProjectArea(projectId) {
+      if (!projectPanel) {
+        return;
+      }
+
+      if (isProjectAreaOpen() && projectId) {
+        showProject(projectId);
+        return;
+      }
+
+      closeHistory();
+      closeEditing();
+
+      const targetProjectId =
+        projectId ?? activeProjectId ?? (projects.find((project) => project.favorite) ?? projects[0])?.id ?? null;
+
+      main?.setAttribute('data-project-open', 'true');
+      projectPanel.setAttribute('data-open', 'true');
+      projectPanel.setAttribute('aria-hidden', 'false');
+      board?.setAttribute('aria-hidden', 'true');
+      projectOpenButton?.setAttribute('aria-expanded', 'true');
+
+      if (targetProjectId) {
+        showProject(targetProjectId);
+      } else {
+        updateProjectContent(null);
+      }
+    }
+
+    function closeProjectArea() {
+      if (!projectPanel) {
+        return;
+      }
+
+      projectPanel.removeAttribute('data-open');
+      projectPanel.setAttribute('aria-hidden', 'true');
+      main?.removeAttribute('data-project-open');
+      board?.removeAttribute('aria-hidden');
+      projectOpenButton?.setAttribute('aria-expanded', 'false');
+    }
+
+    if (projects.length > 0) {
+      const defaultProject = projects.find((project) => project.favorite) ?? projects[0];
+      activeProjectId = defaultProject?.id ?? null;
+    }
+
+    renderProjectShortcuts();
+    renderProjectList();
 
     function createTodoCard(text, columnIndex) {
       const card = document.createElement('article');
@@ -1901,6 +2849,10 @@
         return;
       }
 
+      if (target.closest('[data-project-panel]')) {
+        return;
+      }
+
       closeEditing();
     }
 
@@ -1916,6 +2868,45 @@
 
     updateHistoryVisibility();
 
+    projectAddButton?.addEventListener('click', () => {
+      const projectName = window.prompt('Hva skal prosjektet hete?');
+      if (!projectName) {
+        return;
+      }
+
+      const trimmedName = projectName.trim();
+      if (!trimmedName) {
+        return;
+      }
+
+      const newProject = {
+        id: `project-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+        name: trimmedName,
+        summary: '',
+        favorite: false,
+        status: 'Nytt',
+        todos: [],
+        deadlines: [],
+        milestones: [],
+        stickies: [],
+      };
+
+      projects.push(newProject);
+      activeProjectId = newProject.id;
+      renderProjectShortcuts();
+      renderProjectList();
+      openProjectArea(newProject.id);
+    });
+
+    projectOpenButton?.addEventListener('click', () => {
+      openProjectArea();
+    });
+
+    projectCloseButton?.addEventListener('click', () => {
+      closeProjectArea();
+      projectOpenButton?.focus();
+    });
+
     if (board) {
       board.addEventListener('click', handleBoardClick);
       board.addEventListener('keydown', handleBoardKeydown);
@@ -1923,6 +2914,10 @@
     }
 
     historyButton?.addEventListener('click', () => {
+      if (isProjectAreaOpen()) {
+        closeProjectArea();
+      }
+
       if (isHistoryOpen()) {
         closeHistory();
       } else {
@@ -1937,6 +2932,14 @@
 
     document.addEventListener('click', handleGlobalClick);
     document.addEventListener('keydown', (event) => {
+      if (isProjectAreaOpen()) {
+        if (event.key === 'Escape') {
+          closeProjectArea();
+          event.preventDefault();
+        }
+        return;
+      }
+
       if (board?.dataset.layout === 'focus' && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
         event.preventDefault();
         if (event.key === 'ArrowLeft') {
@@ -2008,6 +3011,10 @@
     });
 
     todoMenu?.addEventListener('click', (event) => {
+      event.stopPropagation();
+    });
+
+    projectPanel?.addEventListener('click', (event) => {
       event.stopPropagation();
     });
 
