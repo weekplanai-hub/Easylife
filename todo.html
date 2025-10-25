@@ -482,8 +482,24 @@
       align-items: center;
     }
 
-    .project-panel {
+    .project-area {
       display: none;
+      width: 100%;
+      grid-template-columns: clamp(240px, 24vw, 320px) minmax(0, 1fr);
+      grid-template-rows: auto 1fr;
+      column-gap: clamp(18px, 3vw, 28px);
+      row-gap: clamp(18px, 3vw, 28px);
+      align-items: start;
+    }
+
+    .project-back-button {
+      grid-column: 1 / -1;
+      justify-self: flex-end;
+      margin-bottom: clamp(8px, 1.5vw, 16px);
+    }
+
+    .project-panel {
+      display: flex;
       flex-direction: column;
       gap: clamp(18px, 3vw, 28px);
       border-radius: 28px;
@@ -509,9 +525,8 @@
 
     .project-panel-body {
       display: flex;
-      align-items: stretch;
+      flex-direction: column;
       gap: clamp(18px, 3vw, 28px);
-      flex-wrap: wrap;
     }
 
     .project-list {
@@ -891,8 +906,8 @@
       display: none;
     }
 
-    main[data-project-open='true'] .project-panel {
-      display: flex;
+    main[data-project-open='true'] .project-area {
+      display: grid;
     }
 
     main[data-project-open='true'] .history-panel {
@@ -1591,6 +1606,16 @@
         align-items: flex-start;
       }
     }
+
+    @media (max-width: 1080px) {
+      .project-area {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .project-back-button {
+        justify-self: flex-end;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1929,62 +1954,62 @@
         </div>
       </div>
     </section>
-    <section class="project-panel" id="project-panel" data-project-panel aria-hidden="true">
-      <div class="project-panel-header">
-        <h2>Prosjektområde</h2>
-        <div class="project-shortcuts-actions">
-          <button class="project-action-btn" type="button" data-project-close aria-label="Lukk prosjektområdet">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-6 7 6 7" /></svg>
-            <span>Tilbake til oppgaver</span>
-          </button>
+    <div class="project-area" data-project-area aria-hidden="true">
+      <button class="project-action-btn project-back-button" type="button" data-project-close aria-label="Lukk prosjektområdet">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-6 7 6 7" /></svg>
+        <span>Tilbake til oppgaver</span>
+      </button>
+      <aside class="project-list" data-project-list>
+        <p class="project-section-empty">Ingen prosjekter er tilgjengelige ennå.</p>
+      </aside>
+      <section class="project-panel" id="project-panel" data-project-panel aria-hidden="true">
+        <div class="project-panel-header">
+          <h2>Prosjektområde</h2>
         </div>
-      </div>
-      <div class="project-panel-body">
-        <aside class="project-list" data-project-list>
-          <p class="project-section-empty">Ingen prosjekter er tilgjengelige ennå.</p>
-        </aside>
-        <div class="project-workspace" data-project-workspace>
-          <div class="project-empty" data-project-empty>
-            Velg et prosjekt fra listen for å se detaljer og arbeidsflater.
-          </div>
-          <div class="project-content" data-project-content hidden>
-            <div class="project-workspace-header">
-              <h3 class="project-workspace-title" data-project-title></h3>
-              <p class="project-workspace-summary" data-project-summary></p>
+        <div class="project-panel-body">
+          <div class="project-workspace" data-project-workspace>
+            <div class="project-empty" data-project-empty>
+              Velg et prosjekt fra listen for å se detaljer og arbeidsflater.
             </div>
-            <div class="project-sections">
-              <article class="project-section">
-                <h3>Todo liste</h3>
-                <ul class="project-list-content" data-project-todos>
-                  <li class="project-section-empty">Ingen oppgaver registrert.</li>
-                </ul>
-              </article>
-              <article class="project-section">
-                <h3>Vesentlige frister</h3>
-                <ul class="project-deadlines" data-project-deadlines>
-                  <li class="project-section-empty">Ingen frister lagt inn.</li>
-                </ul>
-              </article>
-              <article class="project-section">
-                <h3>Notater og milepæler</h3>
-                <ul class="project-milestones" data-project-milestones>
-                  <li class="project-section-empty">Ingen notater registrert.</li>
-                </ul>
-              </article>
-              <article class="project-section project-stickies-section">
-                <div class="project-section-header">
-                  <h3>Sticky notes</h3>
-                  <button type="button" class="project-sticky-add" data-sticky-add aria-label="Legg til notat">+</button>
-                </div>
-                <ul class="project-stickies" data-project-stickies>
-                  <li class="project-section-empty">Ingen notater enda.</li>
-                </ul>
-              </article>
+            <div class="project-content" data-project-content hidden>
+              <div class="project-workspace-header">
+                <h3 class="project-workspace-title" data-project-title></h3>
+                <p class="project-workspace-summary" data-project-summary></p>
+              </div>
+              <div class="project-sections">
+                <article class="project-section">
+                  <h3>Todo liste</h3>
+                  <ul class="project-list-content" data-project-todos>
+                    <li class="project-section-empty">Ingen oppgaver registrert.</li>
+                  </ul>
+                </article>
+                <article class="project-section">
+                  <h3>Vesentlige frister</h3>
+                  <ul class="project-deadlines" data-project-deadlines>
+                    <li class="project-section-empty">Ingen frister lagt inn.</li>
+                  </ul>
+                </article>
+                <article class="project-section">
+                  <h3>Notater og milepæler</h3>
+                  <ul class="project-milestones" data-project-milestones>
+                    <li class="project-section-empty">Ingen notater registrert.</li>
+                  </ul>
+                </article>
+                <article class="project-section project-stickies-section">
+                  <div class="project-section-header">
+                    <h3>Sticky notes</h3>
+                    <button type="button" class="project-sticky-add" data-sticky-add aria-label="Legg til notat">+</button>
+                  </div>
+                  <ul class="project-stickies" data-project-stickies>
+                    <li class="project-section-empty">Ingen notater enda.</li>
+                  </ul>
+                </article>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
     <div class="todo-menu" data-todo-menu aria-hidden="true">
       <div class="menu-header">
         <span>Oppgaveinnstillinger</span>
@@ -2068,9 +2093,10 @@
     const projectShortcutsList = projectShortcuts?.querySelector('[data-project-shortcut-list]');
     const projectAddButton = projectShortcuts?.querySelector('[data-project-add]');
     const projectOpenButton = projectShortcuts?.querySelector('[data-project-open]');
-    const projectPanel = document.querySelector('[data-project-panel]');
-    const projectCloseButton = projectPanel?.querySelector('[data-project-close]');
-    const projectList = projectPanel?.querySelector('[data-project-list]');
+    const projectArea = document.querySelector('[data-project-area]');
+    const projectPanel = projectArea?.querySelector('[data-project-panel]');
+    const projectCloseButton = projectArea?.querySelector('[data-project-close]');
+    const projectList = projectArea?.querySelector('[data-project-list]');
     const projectEmpty = projectPanel?.querySelector('[data-project-empty]');
     const projectContent = projectPanel?.querySelector('[data-project-content]');
     const projectTitle = projectPanel?.querySelector('[data-project-title]');
@@ -2748,11 +2774,11 @@
     }
 
     function isProjectAreaOpen() {
-      return projectPanel?.getAttribute('data-open') === 'true';
+      return projectArea?.getAttribute('data-open') === 'true';
     }
 
     function openProjectArea(projectId) {
-      if (!projectPanel) {
+      if (!projectArea || !projectPanel) {
         return;
       }
 
@@ -2768,6 +2794,8 @@
         projectId ?? activeProjectId ?? (projects.find((project) => project.favorite) ?? projects[0])?.id ?? null;
 
       main?.setAttribute('data-project-open', 'true');
+      projectArea.setAttribute('data-open', 'true');
+      projectArea.setAttribute('aria-hidden', 'false');
       projectPanel.setAttribute('data-open', 'true');
       projectPanel.setAttribute('aria-hidden', 'false');
       board?.setAttribute('aria-hidden', 'true');
@@ -2784,7 +2812,7 @@
     }
 
     function closeProjectArea() {
-      if (!projectPanel) {
+      if (!projectArea || !projectPanel) {
         return;
       }
 
@@ -2798,6 +2826,8 @@
 
       projectPanel.removeAttribute('data-open');
       projectPanel.setAttribute('aria-hidden', 'true');
+      projectArea.removeAttribute('data-open');
+      projectArea.setAttribute('aria-hidden', 'true');
       main?.removeAttribute('data-project-open');
       board?.removeAttribute('aria-hidden');
       projectOpenButton?.setAttribute('aria-expanded', 'false');
