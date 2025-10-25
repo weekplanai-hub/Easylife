@@ -285,10 +285,10 @@
       border: 1px solid var(--column-border);
       background: var(--column-base);
       backdrop-filter: blur(18px);
-      padding: clamp(20px, 3vw, 28px);
+      padding: clamp(18px, 2.8vw, 24px);
       display: flex;
       flex-direction: column;
-      gap: clamp(16px, 3vw, 24px);
+      gap: clamp(12px, 2.5vw, 18px);
       box-shadow: var(--column-shadow);
       overflow: hidden;
     }
@@ -320,37 +320,25 @@
     }
 
     .project-shortcuts-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: flex-start;
       gap: clamp(12px, 2vw, 18px);
-      flex-wrap: wrap;
     }
 
     .project-shortcuts-header h2 {
       margin: 0;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: 600;
-      letter-spacing: 0.01em;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-    }
-
-    .project-shortcuts-header p {
-      margin: 4px 0 0;
-      color: var(--text-secondary);
-      font-size: 0.95rem;
-    }
-
-    .project-shortcuts-heading {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
     }
 
     .project-shortcuts-actions {
       display: inline-flex;
       flex-wrap: wrap;
       gap: 10px;
+      justify-self: end;
     }
 
     .project-action-btn {
@@ -463,10 +451,10 @@
       border: 1px solid var(--column-border);
       background: rgba(12, 15, 24, 0.6);
       backdrop-filter: blur(18px);
-      padding: clamp(20px, 3vw, 28px);
+      padding: clamp(18px, 2.8vw, 24px);
       display: flex;
       flex-direction: column;
-      gap: clamp(16px, 3vw, 24px);
+      gap: clamp(12px, 2.5vw, 18px);
       box-shadow: var(--column-shadow);
       overflow: hidden;
     }
@@ -498,71 +486,94 @@
       z-index: 1;
     }
 
+    .filter-panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
     .filter-panel-header h2 {
       margin: 0;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: 600;
-      letter-spacing: 0.01em;
-      text-transform: uppercase;
-    }
-
-    .filter-panel-content {
-      position: relative;
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: clamp(16px, 3vw, 28px);
-      padding-top: 6px;
-    }
-
-    .filter-panel-content::after {
-      content: '';
-      position: absolute;
-      top: 10%;
-      bottom: 10%;
-      left: 50%;
-      width: 1px;
-      transform: translateX(-50%);
-      background: rgba(255, 255, 255, 0.18);
-    }
-
-    .filter-group {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .filter-group-title {
-      margin: 0;
-      font-size: 0.75rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: var(--text-secondary);
     }
 
-    .filter-chip {
+    .filter-reset-button {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 10px 18px;
-      border-radius: 18px;
-      border: 1px solid var(--action-border);
-      background: rgba(12, 15, 24, 0.6);
-      color: var(--text-primary);
-      font-weight: 500;
-      text-transform: capitalize;
-      letter-spacing: 0.01em;
+      width: 34px;
+      height: 34px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(12, 15, 24, 0.55);
+      color: rgba(255, 255, 255, 0.86);
       cursor: pointer;
-      transition: transform 150ms ease, background 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
-      backdrop-filter: blur(14px);
+      transition: background 150ms ease, border-color 150ms ease, transform 150ms ease;
     }
 
-    .filter-chip:hover,
-    .filter-chip:focus-visible {
+    .filter-reset-button svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+    }
+
+    .filter-reset-button:hover,
+    .filter-reset-button:focus-visible {
       transform: translateY(-1px);
-      background: rgba(12, 15, 24, 0.78);
-      border-color: rgba(255, 255, 255, 0.32);
-      box-shadow: 0 12px 32px rgba(5, 7, 12, 0.4);
+      background: rgba(12, 15, 24, 0.72);
+      border-color: rgba(255, 255, 255, 0.28);
       outline: none;
+    }
+
+    .filter-panel-content {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(12px, 2.5vw, 18px);
+    }
+
+    .filter-tag-group {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .filter-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+    }
+
+    .filter-tag:hover,
+    .filter-tag:focus-visible {
+      background: rgba(255, 255, 255, 0.14);
+      border-color: rgba(255, 255, 255, 0.22);
+      color: rgba(255, 255, 255, 0.92);
+      outline: none;
+    }
+
+    .filter-tag.is-active {
+      background: rgba(255, 255, 255, 0.26);
+      border-color: rgba(255, 255, 255, 0.38);
+      color: #0b101a;
     }
 
     .project-shortcuts-list {
@@ -1287,6 +1298,10 @@
       display: grid;
     }
 
+    main[data-project-open='true'] .filter-panel {
+      display: none;
+    }
+
     main[data-project-open='true'] .history-panel {
       display: none;
     }
@@ -1541,6 +1556,20 @@
       display: flex;
       flex-direction: column;
       gap: 6px;
+      position: relative;
+    }
+
+    .task-column.is-filter-empty .column-body::after {
+      content: attr(data-empty-message);
+      display: block;
+      margin: 12px 0;
+      padding: 12px;
+      border-radius: 16px;
+      border: 1px dashed rgba(255, 255, 255, 0.16);
+      background: rgba(12, 15, 24, 0.35);
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      text-align: center;
     }
 
     .todo-card {
@@ -1988,10 +2017,6 @@
       .filter-panel-content {
         grid-template-columns: minmax(0, 1fr);
       }
-
-      .filter-panel-content::after {
-        display: none;
-      }
     }
 
     @media (max-width: 1080px) {
@@ -2046,10 +2071,7 @@
     <div class="overview-panels">
       <section class="project-shortcuts" data-project-shortcuts>
         <div class="project-shortcuts-header">
-          <div class="project-shortcuts-heading">
-            <h2>Prosjekt</h2>
-            <p>Favoritter og aktive prosjekter samlet på ett sted.</p>
-          </div>
+          <h2>Prosjekt</h2>
           <div class="project-shortcuts-actions">
             <button
               class="project-action-btn project-action-btn--icon"
@@ -2080,18 +2102,71 @@
       <section class="filter-panel" aria-labelledby="filter-panel-title">
         <div class="filter-panel-header">
           <h2 id="filter-panel-title">Filtrer</h2>
+          <button
+            type="button"
+            class="filter-reset-button"
+            data-filter-reset
+            aria-label="Nullstill filter"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 12a9 9 0 0 1 15.65-5.65L21 4v6h-6l2.22-2.22A7 7 0 1 0 12 19a6.94 6.94 0 0 0 4.9-2" />
+            </svg>
+          </button>
         </div>
         <div class="filter-panel-content">
-          <div class="filter-group">
-            <p class="filter-group-title">Etiketter</p>
-            <button type="button" class="filter-chip">Work</button>
-            <button type="button" class="filter-chip">Private</button>
+          <div class="filter-tag-group" role="group" aria-label="Filtrer etter etikett">
+            <button
+              type="button"
+              class="filter-tag"
+              data-filter-tag
+              data-filter-type="label"
+              data-filter-value="work"
+              aria-pressed="false"
+            >
+              Work
+            </button>
+            <button
+              type="button"
+              class="filter-tag"
+              data-filter-tag
+              data-filter-type="label"
+              data-filter-value="private"
+              aria-pressed="false"
+            >
+              Private
+            </button>
           </div>
-          <div class="filter-group">
-            <p class="filter-group-title">Forfallsdato</p>
-            <button type="button" class="filter-chip">I dag</button>
-            <button type="button" class="filter-chip">Neste 3 dager</button>
-            <button type="button" class="filter-chip">Neste 7 dager</button>
+          <div class="filter-tag-group" role="group" aria-label="Filtrer etter forfallsdato">
+            <button
+              type="button"
+              class="filter-tag"
+              data-filter-tag
+              data-filter-type="due"
+              data-filter-value="today"
+              aria-pressed="false"
+            >
+              I dag
+            </button>
+            <button
+              type="button"
+              class="filter-tag"
+              data-filter-tag
+              data-filter-type="due"
+              data-filter-value="next-3"
+              aria-pressed="false"
+            >
+              Neste 3 dager
+            </button>
+            <button
+              type="button"
+              class="filter-tag"
+              data-filter-tag
+              data-filter-type="due"
+              data-filter-value="next-7"
+              aria-pressed="false"
+            >
+              Neste 7 dager
+            </button>
           </div>
         </div>
       </section>
@@ -2112,8 +2187,8 @@
           </div>
           <button class="column-add-btn" type="button" data-add-todo aria-label="Legg til oppgave i Tasks – Backlog">+</button>
         </div>
-        <div class="column-body" data-column-body>
-          <article class="todo-card" data-todo-card data-todo-id="backlog-1">
+        <div class="column-body" data-column-body data-empty-message="Ingen oppgaver matcher filteret">
+          <article class="todo-card" data-todo-card data-todo-id="backlog-1" data-labels="work" data-due="next-7">
             <button class="todo-check-btn" type="button" aria-label="Marker oppgave som ferdig">
               <svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" /></svg>
             </button>
@@ -2125,7 +2200,7 @@
             </div>
           </article>
 
-          <article class="todo-card" data-todo-card data-todo-id="backlog-2">
+          <article class="todo-card" data-todo-card data-todo-id="backlog-2" data-labels="work" data-due="next-7">
             <button class="todo-check-btn" type="button" aria-label="Marker oppgave som ferdig">
               <svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" /></svg>
             </button>
@@ -2137,7 +2212,7 @@
             </div>
           </article>
 
-          <article class="todo-card" data-todo-card data-todo-id="backlog-3">
+          <article class="todo-card" data-todo-card data-todo-id="backlog-3" data-labels="work" data-due="next-3">
             <button class="todo-check-btn" type="button" aria-label="Marker oppgave som ferdig">
               <svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" /></svg>
             </button>
@@ -2149,7 +2224,7 @@
             </div>
           </article>
 
-          <article class="todo-card" data-todo-card data-todo-id="backlog-4">
+          <article class="todo-card" data-todo-card data-todo-id="backlog-4" data-labels="work" data-due="next-7">
             <button class="todo-check-btn" type="button" aria-label="Marker oppgave som ferdig">
               <svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" /></svg>
             </button>
@@ -2161,7 +2236,7 @@
             </div>
           </article>
 
-          <article class="todo-card" data-todo-card data-todo-id="backlog-5">
+          <article class="todo-card" data-todo-card data-todo-id="backlog-5" data-labels="work" data-due="next-3">
             <button class="todo-check-btn" type="button" aria-label="Marker oppgave som ferdig">
               <svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" /></svg>
             </button>
@@ -2182,8 +2257,8 @@
           </div>
           <button class="column-add-btn" type="button" data-add-todo aria-label="Legg til oppgave i Next Tasks">+</button>
         </div>
-        <div class="column-body" data-column-body>
-          <article class="todo-card" data-todo-card data-todo-id="next-1">
+        <div class="column-body" data-column-body data-empty-message="Ingen oppgaver matcher filteret">
+          <article class="todo-card" data-todo-card data-todo-id="next-1" data-labels="work" data-due="today">
             <button class="todo-check-btn" type="button" aria-label="Marker oppgave som ferdig">
               <svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" /></svg>
             </button>
@@ -2195,7 +2270,7 @@
             </div>
           </article>
 
-          <article class="todo-card" data-todo-card data-todo-id="next-2">
+          <article class="todo-card" data-todo-card data-todo-id="next-2" data-labels="work" data-due="next-3">
             <button class="todo-check-btn" type="button" aria-label="Marker oppgave som ferdig">
               <svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" /></svg>
             </button>
@@ -2216,8 +2291,8 @@
           </div>
           <button class="column-add-btn" type="button" data-add-todo aria-label="Legg til oppgave i Tasks In Progress">+</button>
         </div>
-        <div class="column-body" data-column-body>
-          <article class="todo-card" data-todo-card data-todo-id="progress-1">
+        <div class="column-body" data-column-body data-empty-message="Ingen oppgaver matcher filteret">
+          <article class="todo-card" data-todo-card data-todo-id="progress-1" data-labels="work" data-due="next-3">
             <button class="todo-check-btn" type="button" aria-label="Marker oppgave som ferdig">
               <svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" /></svg>
             </button>
@@ -2229,7 +2304,7 @@
             </div>
           </article>
 
-          <article class="todo-card" data-todo-card data-todo-id="progress-2">
+          <article class="todo-card" data-todo-card data-todo-id="progress-2" data-labels="work" data-due="next-7">
             <button class="todo-check-btn" type="button" aria-label="Marker oppgave som ferdig">
               <svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" /></svg>
             </button>
@@ -2241,7 +2316,7 @@
             </div>
           </article>
 
-          <article class="todo-card" data-todo-card data-todo-id="progress-3">
+          <article class="todo-card" data-todo-card data-todo-id="progress-3" data-labels="work" data-due="none">
             <button class="todo-check-btn" type="button" aria-label="Marker oppgave som ferdig">
               <svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" /></svg>
             </button>
@@ -2253,7 +2328,7 @@
             </div>
           </article>
 
-          <article class="todo-card" data-todo-card data-todo-id="progress-4">
+          <article class="todo-card" data-todo-card data-todo-id="progress-4" data-labels="work" data-due="next-7">
             <button class="todo-check-btn" type="button" aria-label="Marker oppgave som ferdig">
               <svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" /></svg>
             </button>
@@ -2265,7 +2340,7 @@
             </div>
           </article>
 
-          <article class="todo-card" data-todo-card data-todo-id="progress-5">
+          <article class="todo-card" data-todo-card data-todo-id="progress-5" data-labels="work" data-due="today">
             <button class="todo-check-btn" type="button" aria-label="Marker oppgave som ferdig">
               <svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" /></svg>
             </button>
@@ -2277,7 +2352,7 @@
             </div>
           </article>
 
-          <article class="todo-card" data-todo-card data-todo-id="progress-6">
+          <article class="todo-card" data-todo-card data-todo-id="progress-6" data-labels="private" data-due="next-7">
             <button class="todo-check-btn" type="button" aria-label="Marker oppgave som ferdig">
               <svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" /></svg>
             </button>
@@ -2289,7 +2364,7 @@
             </div>
           </article>
 
-          <article class="todo-card" data-todo-card data-todo-id="progress-7">
+          <article class="todo-card" data-todo-card data-todo-id="progress-7" data-labels="private" data-due="next-7">
             <button class="todo-check-btn" type="button" aria-label="Marker oppgave som ferdig">
               <svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" /></svg>
             </button>
@@ -2310,8 +2385,8 @@
           </div>
           <button class="column-add-btn" type="button" data-add-todo aria-label="Legg til oppgave i Follow up / Delegated">+</button>
         </div>
-        <div class="column-body" data-column-body>
-          <article class="todo-card" data-todo-card data-todo-id="follow-1">
+        <div class="column-body" data-column-body data-empty-message="Ingen oppgaver matcher filteret">
+          <article class="todo-card" data-todo-card data-todo-id="follow-1" data-labels="work" data-due="next-3">
             <button class="todo-check-btn" type="button" aria-label="Marker oppgave som ferdig">
               <svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" /></svg>
             </button>
@@ -2323,7 +2398,7 @@
             </div>
           </article>
 
-          <article class="todo-card" data-todo-card data-todo-id="follow-2">
+          <article class="todo-card" data-todo-card data-todo-id="follow-2" data-labels="work" data-due="next-7">
             <button class="todo-check-btn" type="button" aria-label="Marker oppgave som ferdig">
               <svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" /></svg>
             </button>
@@ -2335,7 +2410,7 @@
             </div>
           </article>
 
-          <article class="todo-card" data-todo-card data-todo-id="follow-3">
+          <article class="todo-card" data-todo-card data-todo-id="follow-3" data-labels="work" data-due="today">
             <button class="todo-check-btn" type="button" aria-label="Marker oppgave som ferdig">
               <svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" /></svg>
             </button>
@@ -2566,6 +2641,9 @@
     const historyEmpty = historyPanel?.querySelector('[data-history-empty]');
     const historyCloseButton = historyPanel?.querySelector('[data-history-close]');
     const historyCount = document.querySelector('[data-history-count]');
+    const filterPanel = document.querySelector('.filter-panel');
+    const filterTags = Array.from(filterPanel?.querySelectorAll('[data-filter-tag]') ?? []);
+    const filterResetButton = filterPanel?.querySelector('[data-filter-reset]');
     const projectShortcuts = document.querySelector('[data-project-shortcuts]');
     const projectShortcutsList = projectShortcuts?.querySelector('[data-project-shortcut-list]');
     const projectAddButton = projectShortcuts?.querySelector('[data-project-add]');
@@ -2593,6 +2671,7 @@
     const projectFavoriteToggle = projectPanel?.querySelector('[data-project-favorite]');
     const projectStickyAddButton = projectPanel?.querySelector('[data-sticky-add]');
     const completedTasks = [];
+    const activeFilters = { label: null, due: null };
     const projects = [
       {
         id: 'lansering-q4',
@@ -2659,6 +2738,71 @@
     let activeProjectId = null;
     let activeSummaryElement = null;
     let activeStickyElement = null;
+
+    function updateFilterUI() {
+      filterTags.forEach((tag) => {
+        const type = tag.dataset.filterType;
+        const value = tag.dataset.filterValue;
+
+        if (!type || !value) {
+          tag.classList.remove('is-active');
+          tag.setAttribute('aria-pressed', 'false');
+          return;
+        }
+
+        const isActive = activeFilters[type] === value;
+        tag.classList.toggle('is-active', isActive);
+        tag.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+      });
+    }
+
+    function applyTodoFilters() {
+      const cards = document.querySelectorAll('[data-todo-card]');
+      const labelFilter = activeFilters.label;
+      const dueFilter = activeFilters.due;
+      const isFiltering = Boolean(labelFilter || dueFilter);
+
+      cards.forEach((card) => {
+        const labels = (card.dataset.labels ?? '')
+          .split(/\s+/)
+          .map((entry) => entry.trim())
+          .filter(Boolean);
+        const due = card.dataset.due ?? 'none';
+
+        const matchesLabel = !labelFilter || labels.includes(labelFilter);
+        const matchesDue = !dueFilter || due === dueFilter;
+        const shouldShow = matchesLabel && matchesDue;
+        const shouldHide = !shouldShow && card !== activeCard;
+
+        card.hidden = shouldHide;
+      });
+
+      columns.forEach((column) => {
+        const body = column.querySelector('[data-column-body]');
+
+        if (!body) {
+          column.classList.remove('is-filter-empty');
+          return;
+        }
+
+        const hasVisibleCard = Array.from(body.querySelectorAll('[data-todo-card]')).some(
+          (card) => !card.hidden
+        );
+
+        column.classList.toggle('is-filter-empty', isFiltering && !hasVisibleCard);
+      });
+    }
+
+    function resetTodoFilters() {
+      if (!activeFilters.label && !activeFilters.due) {
+        return;
+      }
+
+      activeFilters.label = null;
+      activeFilters.due = null;
+      updateFilterUI();
+      applyTodoFilters();
+    }
 
     function getNextDeadline(project) {
       if (!project?.deadlines?.length) {
@@ -3652,6 +3796,28 @@
     renderProjectShortcuts();
     renderProjectList();
 
+    updateFilterUI();
+    applyTodoFilters();
+
+    filterTags.forEach((tag) => {
+      tag.addEventListener('click', () => {
+        const type = tag.dataset.filterType;
+        const value = tag.dataset.filterValue;
+
+        if (!type || !value) {
+          return;
+        }
+
+        activeFilters[type] = activeFilters[type] === value ? null : value;
+        updateFilterUI();
+        applyTodoFilters();
+      });
+    });
+
+    filterResetButton?.addEventListener('click', () => {
+      resetTodoFilters();
+    });
+
     if (projectFavoriteToggle) {
       projectFavoriteToggle.addEventListener('click', () => {
         if (!activeProjectId) {
@@ -3677,6 +3843,8 @@
       card.setAttribute('data-todo-card', '');
       const uniqueId = `${columnIndex ?? 'col'}-${Date.now()}-${generatedIdCounter += 1}`;
       card.dataset.todoId = uniqueId;
+      card.dataset.labels = 'work';
+      card.dataset.due = 'none';
 
       const checkButton = document.createElement('button');
       checkButton.className = 'todo-check-btn';
@@ -3931,6 +4099,7 @@
       const targetBody = nextColumn.querySelector('[data-column-body]');
       if (targetBody) {
         targetBody.appendChild(card);
+        applyTodoFilters();
       }
 
       if (activeCard === card) {
@@ -4039,6 +4208,7 @@
 
       addToHistory(textContent);
       card.remove();
+      applyTodoFilters();
     }
 
     function placeCaretAtEnd(element) {
@@ -4115,6 +4285,7 @@
       activeCard.classList.remove('is-editing');
       activeCard = null;
       hideMenu();
+      applyTodoFilters();
     }
 
     function activateEditing(card) {
@@ -4477,6 +4648,7 @@
       const cardToRemove = activeCard;
       closeEditing();
       cardToRemove.remove();
+      applyTodoFilters();
     });
 
     addTodoButtons.forEach((button) => {
@@ -4495,6 +4667,7 @@
         const newCard = createTodoCard('Ny oppgave', columnIndex);
         columnBody.appendChild(newCard);
         activateEditing(newCard);
+        applyTodoFilters();
       });
     });
 
