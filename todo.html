@@ -262,6 +262,23 @@
       display: none;
     }
 
+    .overview-panels {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(18px, 3vw, 28px);
+      align-items: stretch;
+    }
+
+    .overview-panels > * {
+      min-width: 0;
+    }
+
+    @media (max-width: 1080px) {
+      .overview-panels {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
     .project-shortcuts {
       position: relative;
       border-radius: 28px;
@@ -440,6 +457,114 @@
       transform: translate(-50%, 0);
     }
 
+    .filter-panel {
+      position: relative;
+      border-radius: 28px;
+      border: 1px solid var(--column-border);
+      background: rgba(12, 15, 24, 0.6);
+      backdrop-filter: blur(18px);
+      padding: clamp(20px, 3vw, 28px);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(16px, 3vw, 24px);
+      box-shadow: var(--column-shadow);
+      overflow: hidden;
+    }
+
+    .filter-panel::before,
+    .filter-panel::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+    }
+
+    .filter-panel::before {
+      background: linear-gradient(155deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02) 70%);
+      z-index: 0;
+    }
+
+    .filter-panel::after {
+      inset: -12% -20% 30%;
+      border-radius: 42%;
+      background: radial-gradient(circle at top, rgba(255, 255, 255, 0.18) 0%, transparent 65%);
+      z-index: 0;
+      filter: blur(0.5px);
+    }
+
+    .filter-panel > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .filter-panel-header h2 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+    }
+
+    .filter-panel-content {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(16px, 3vw, 28px);
+      padding-top: 6px;
+    }
+
+    .filter-panel-content::after {
+      content: '';
+      position: absolute;
+      top: 10%;
+      bottom: 10%;
+      left: 50%;
+      width: 1px;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .filter-group-title {
+      margin: 0;
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+
+    .filter-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 18px;
+      border-radius: 18px;
+      border: 1px solid var(--action-border);
+      background: rgba(12, 15, 24, 0.6);
+      color: var(--text-primary);
+      font-weight: 500;
+      text-transform: capitalize;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      transition: transform 150ms ease, background 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+      backdrop-filter: blur(14px);
+    }
+
+    .filter-chip:hover,
+    .filter-chip:focus-visible {
+      transform: translateY(-1px);
+      background: rgba(12, 15, 24, 0.78);
+      border-color: rgba(255, 255, 255, 0.32);
+      box-shadow: 0 12px 32px rgba(5, 7, 12, 0.4);
+      outline: none;
+    }
+
     .project-shortcuts-list {
       display: flex;
       flex-wrap: wrap;
@@ -508,7 +633,6 @@
       backdrop-filter: blur(20px);
       padding: clamp(24px, 3vw, 32px);
       box-shadow: var(--column-shadow);
-      height: 100%;
       min-height: 0;
     }
 
@@ -522,7 +646,6 @@
 
     .project-panel-header h2 {
       margin: 0;
-      font-size: clamp(1.4rem, 1.2vw + 1rem, 2rem);
     }
 
     .project-favorite-toggle {
@@ -595,13 +718,13 @@
       justify-content: space-between;
     }
 
-    .project-list-title {
+    .project-heading {
       margin: 0;
-      font-size: 0.85rem;
+      font-size: 0.95rem;
       font-weight: 600;
       letter-spacing: 0.04em;
       text-transform: uppercase;
-      color: var(--text-secondary);
+      color: var(--text-primary);
     }
 
     .project-list-items {
@@ -771,8 +894,7 @@
     }
 
     .project-list-content,
-    .project-deadlines,
-    .project-milestones {
+    .project-deadlines {
       margin: 0;
       padding: 0;
       list-style: none;
@@ -781,27 +903,50 @@
       gap: 10px;
     }
 
-    .project-deadlines li,
-    .project-milestones li {
-      padding: 10px 12px;
-      border-radius: 14px;
+    .project-deadline-item {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 14px 16px;
+      border-radius: 16px;
       border: 1px solid rgba(255, 255, 255, 0.12);
       background: rgba(20, 24, 34, 0.6);
       color: var(--text-primary);
-      line-height: 1.4;
     }
 
-    .project-deadlines time {
-      display: block;
-      color: var(--text-secondary);
-      font-size: 0.85rem;
-      margin-top: 4px;
+    .project-deadline-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
     }
 
-    .project-milestones strong {
-      display: block;
+    .project-deadline-meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
       font-weight: 600;
-      margin-bottom: 4px;
+    }
+
+    .project-deadline-pin {
+      font-size: 1.1rem;
+      line-height: 1;
+      color: var(--text-secondary);
+    }
+
+    .project-deadline-date {
+      color: var(--text-primary);
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+
+    .project-deadline-title {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.5;
     }
 
     .project-section-header {
@@ -809,6 +954,12 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
+    }
+
+    .project-section-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .project-sticky-add {
@@ -837,6 +988,92 @@
     }
 
     .project-list-content {
+      gap: 10px;
+    }
+
+    .project-pill-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 16px;
+      border: 1px solid var(--action-border);
+      background: var(--action-bg);
+      color: var(--text-primary);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: transform 150ms ease, background 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+      backdrop-filter: blur(14px);
+    }
+
+    .project-pill-button:hover,
+    .project-pill-button:focus-visible {
+      transform: translateY(-1px);
+      background: var(--action-bg-hover);
+      border-color: rgba(255, 255, 255, 0.32);
+      box-shadow: 0 12px 32px rgba(5, 7, 12, 0.38);
+      outline: none;
+    }
+
+    .project-pill-button[disabled] {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .project-pill-button--subtle {
+      background: rgba(12, 15, 24, 0.4);
+      border-color: rgba(255, 255, 255, 0.22);
+    }
+
+    .project-pill-button--subtle:hover,
+    .project-pill-button--subtle:focus-visible {
+      background: rgba(12, 15, 24, 0.6);
+      border-color: rgba(255, 255, 255, 0.32);
+    }
+
+    .project-inline-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .project-inline-form[hidden] {
+      display: none;
+    }
+
+    .project-inline-fields {
+      display: grid;
+      gap: 10px;
+    }
+
+    .project-inline-fields--split {
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+
+    .project-inline-form input {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--column-border);
+      background: rgba(12, 15, 24, 0.55);
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      transition: border-color 150ms ease, box-shadow 150ms ease;
+    }
+
+    .project-inline-form input:focus-visible {
+      outline: none;
+      border-color: rgba(255, 255, 255, 0.32);
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15);
+    }
+
+    .project-inline-actions {
+      display: inline-flex;
+      flex-wrap: wrap;
       gap: 8px;
     }
 
@@ -863,11 +1100,73 @@
       color: rgba(255, 255, 255, 0.72);
       font-size: 0.9rem;
       flex-shrink: 0;
+      cursor: pointer;
+      transition: transform 150ms ease, background 150ms ease, border-color 150ms ease;
     }
 
     .project-todo-text {
       flex: 1;
       min-width: 0;
+    }
+
+    .project-todo-item.is-complete .project-todo-text {
+      text-decoration: line-through;
+      color: var(--text-secondary);
+      opacity: 0.75;
+    }
+
+    .project-todo-item.is-complete .project-todo-check {
+      background: rgba(99, 189, 140, 0.32);
+      border-color: rgba(99, 189, 140, 0.78);
+      color: #d1ffe4;
+    }
+
+    .project-todo-check:hover,
+    .project-todo-check:focus-visible {
+      transform: translateY(-1px);
+      background: var(--action-bg-hover);
+      border-color: rgba(255, 255, 255, 0.32);
+      outline: none;
+    }
+
+    .project-item-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .project-item-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 12px;
+      border: 1px solid var(--action-border);
+      background: rgba(12, 15, 24, 0.6);
+      color: var(--text-primary);
+      display: grid;
+      place-items: center;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: transform 150ms ease, background 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+      backdrop-filter: blur(12px);
+    }
+
+    .project-item-btn:hover,
+    .project-item-btn:focus-visible {
+      transform: translateY(-1px);
+      background: rgba(12, 15, 24, 0.78);
+      border-color: rgba(255, 255, 255, 0.32);
+      box-shadow: 0 10px 24px rgba(5, 7, 12, 0.38);
+      outline: none;
+    }
+
+    .project-item-btn--delete {
+      color: #ff9f9f;
+      border-color: rgba(255, 159, 159, 0.36);
+    }
+
+    .project-item-btn--delete:hover,
+    .project-item-btn--delete:focus-visible {
+      border-color: rgba(255, 159, 159, 0.6);
     }
 
     .project-stickies {
@@ -891,6 +1190,10 @@
       transform: rotate(var(--tilt, -1.5deg));
       transition: transform 160ms ease, box-shadow 160ms ease;
       display: flex;
+    }
+
+    .project-stickies-section {
+      grid-column: 1 / -1;
     }
 
     .project-sticky-note:nth-of-type(even) {
@@ -1681,6 +1984,16 @@
       }
     }
 
+    @media (max-width: 720px) {
+      .filter-panel-content {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .filter-panel-content::after {
+        display: none;
+      }
+    }
+
     @media (max-width: 1080px) {
       .project-area {
         grid-template-columns: minmax(0, 1fr);
@@ -1730,32 +2043,59 @@
         </div>
       </div>
     </header>
-    <section class="project-shortcuts" data-project-shortcuts>
-      <div class="project-shortcuts-header">
-        <div class="project-shortcuts-heading">
-          <h2>Prosjekt</h2>
+    <div class="overview-panels">
+      <section class="project-shortcuts" data-project-shortcuts>
+        <div class="project-shortcuts-header">
+          <div class="project-shortcuts-heading">
+            <h2>Prosjekt</h2>
+            <p>Favoritter og aktive prosjekter samlet på ett sted.</p>
+          </div>
+          <div class="project-shortcuts-actions">
+            <button
+              class="project-action-btn project-action-btn--icon"
+              type="button"
+              data-project-add
+              aria-label="Legg til prosjekt"
+              data-tooltip="Nytt prosjekt"
+            >
+              <span aria-hidden="true">+</span>
+            </button>
+            <button
+              class="project-action-btn project-action-btn--icon"
+              type="button"
+              data-project-open
+              aria-expanded="false"
+              aria-controls="project-panel"
+              aria-label="Gå til prosjektområdet"
+              data-tooltip="Gå til prosjektområdet"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+            </button>
+          </div>
         </div>
-        <div class="project-shortcuts-actions">
-          <button class="project-action-btn project-action-btn--icon" type="button" data-project-add aria-label="Legg til prosjekt">
-            <span aria-hidden="true">+</span>
-          </button>
-          <button
-            class="project-action-btn project-action-btn--icon"
-            type="button"
-            data-project-open
-            aria-expanded="false"
-            aria-controls="project-panel"
-            aria-label="Gå til prosjektområdet"
-            data-tooltip="Gå til prosjektområdet"
-          >
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
-          </button>
+        <div class="project-shortcuts-list" data-project-shortcut-list>
+          <p class="project-section-empty">Ingen favorittprosjekter er merket ennå.</p>
         </div>
-      </div>
-      <div class="project-shortcuts-list" data-project-shortcut-list>
-        <p class="project-section-empty">Ingen favorittprosjekter er merket ennå.</p>
-      </div>
-    </section>
+      </section>
+      <section class="filter-panel" aria-labelledby="filter-panel-title">
+        <div class="filter-panel-header">
+          <h2 id="filter-panel-title">Filtrer</h2>
+        </div>
+        <div class="filter-panel-content">
+          <div class="filter-group">
+            <p class="filter-group-title">Etiketter</p>
+            <button type="button" class="filter-chip">Work</button>
+            <button type="button" class="filter-chip">Private</button>
+          </div>
+          <div class="filter-group">
+            <p class="filter-group-title">Forfallsdato</p>
+            <button type="button" class="filter-chip">I dag</button>
+            <button type="button" class="filter-chip">Neste 3 dager</button>
+            <button type="button" class="filter-chip">Neste 7 dager</button>
+          </div>
+        </div>
+      </section>
+    </div>
     <section class="history-panel" id="history-panel" data-history-panel aria-hidden="true">
       <div class="history-header">
         <h2>Historikk</h2>
@@ -2035,7 +2375,7 @@
       </button>
       <aside class="project-list">
         <div class="project-list-header">
-          <h3 class="project-list-title">Prosjektnavn</h3>
+          <h3 class="project-heading">Prosjektnavn</h3>
         </div>
         <div class="project-list-items" data-project-list>
           <p class="project-section-empty">Ingen prosjekter er tilgjengelige ennå.</p>
@@ -2043,7 +2383,7 @@
       </aside>
       <section class="project-panel" id="project-panel" data-project-panel aria-hidden="true">
         <div class="project-panel-header">
-          <h2>Prosjektdetaljer</h2>
+          <h2 class="project-heading">Prosjektdetaljer</h2>
           <button type="button" class="project-favorite-toggle" data-project-favorite aria-pressed="false" hidden>
             <span class="project-favorite-toggle-icon" aria-hidden="true" data-favorite-icon>☆</span>
             <span class="project-favorite-toggle-text">Favoritt</span>
@@ -2061,21 +2401,75 @@
               </div>
               <div class="project-sections">
                 <article class="project-section">
-                  <h3>Todo liste</h3>
+                  <div class="project-section-header">
+                    <h3>Todo liste</h3>
+                    <div class="project-section-actions">
+                      <button
+                        type="button"
+                        class="project-pill-button"
+                        data-project-todo-toggle
+                        aria-expanded="false"
+                        aria-controls="project-todo-form"
+                      >
+                        Legg til oppgave
+                      </button>
+                    </div>
+                  </div>
+                  <form class="project-inline-form" id="project-todo-form" data-project-todo-form autocomplete="off" hidden>
+                    <div class="project-inline-fields">
+                      <label class="visually-hidden" for="project-todo-input">Ny oppgave</label>
+                      <input id="project-todo-input" name="project-todo" placeholder="Skriv ny oppgave" required />
+                    </div>
+                    <div class="project-inline-actions">
+                      <button type="submit" class="project-pill-button">Legg til</button>
+                      <button type="button" class="project-pill-button project-pill-button--subtle" data-project-todo-cancel>Avbryt</button>
+                    </div>
+                  </form>
                   <ul class="project-list-content" data-project-todos>
                     <li class="project-section-empty">Ingen oppgaver registrert.</li>
                   </ul>
                 </article>
                 <article class="project-section">
-                  <h3>Vesentlige frister</h3>
+                  <div class="project-section-header">
+                    <h3>Vesentlige frister</h3>
+                    <div class="project-section-actions">
+                      <button
+                        type="button"
+                        class="project-pill-button"
+                        data-project-deadline-toggle
+                        aria-expanded="false"
+                        aria-controls="project-deadline-form"
+                      >
+                        Legg til frist
+                      </button>
+                    </div>
+                  </div>
+                  <form class="project-inline-form" id="project-deadline-form" data-project-deadline-form autocomplete="off" hidden>
+                    <div class="project-inline-fields project-inline-fields--split">
+                      <label class="visually-hidden" for="project-deadline-date">Forfallsdato</label>
+                      <input id="project-deadline-date" name="project-deadline-date" type="date" required />
+                      <label class="visually-hidden" for="project-deadline-title">Hva gjelder fristen?</label>
+                      <input
+                        id="project-deadline-title"
+                        name="project-deadline-title"
+                        type="text"
+                        placeholder="Hva gjelder fristen?"
+                        required
+                      />
+                    </div>
+                    <div class="project-inline-actions">
+                      <button type="submit" class="project-pill-button">Lagre frist</button>
+                      <button
+                        type="button"
+                        class="project-pill-button project-pill-button--subtle"
+                        data-project-deadline-cancel
+                      >
+                        Avbryt
+                      </button>
+                    </div>
+                  </form>
                   <ul class="project-deadlines" data-project-deadlines>
                     <li class="project-section-empty">Ingen frister lagt inn.</li>
-                  </ul>
-                </article>
-                <article class="project-section">
-                  <h3>Notater og milepæler</h3>
-                  <ul class="project-milestones" data-project-milestones>
-                    <li class="project-section-empty">Ingen notater registrert.</li>
                   </ul>
                 </article>
                 <article class="project-section project-stickies-section">
@@ -2186,8 +2580,16 @@
     const projectSummary = projectPanel?.querySelector('[data-project-summary]');
     const projectTodos = projectPanel?.querySelector('[data-project-todos]');
     const projectDeadlines = projectPanel?.querySelector('[data-project-deadlines]');
-    const projectMilestones = projectPanel?.querySelector('[data-project-milestones]');
     const projectStickies = projectPanel?.querySelector('[data-project-stickies]');
+    const projectTodoToggle = projectPanel?.querySelector('[data-project-todo-toggle]');
+    const projectTodoForm = projectPanel?.querySelector('[data-project-todo-form]');
+    const projectTodoInput = projectTodoForm?.querySelector('input[name="project-todo"]');
+    const projectTodoCancel = projectPanel?.querySelector('[data-project-todo-cancel]');
+    const projectDeadlineToggle = projectPanel?.querySelector('[data-project-deadline-toggle]');
+    const projectDeadlineForm = projectPanel?.querySelector('[data-project-deadline-form]');
+    const projectDeadlineDateInput = projectDeadlineForm?.querySelector('input[name="project-deadline-date"]');
+    const projectDeadlineTitleInput = projectDeadlineForm?.querySelector('input[name="project-deadline-title"]');
+    const projectDeadlineCancel = projectPanel?.querySelector('[data-project-deadline-cancel]');
     const projectFavoriteToggle = projectPanel?.querySelector('[data-project-favorite]');
     const projectStickyAddButton = projectPanel?.querySelector('[data-sticky-add]');
     const completedTasks = [];
@@ -2199,17 +2601,13 @@
         favorite: true,
         status: 'I rute',
         todos: [
-          'Finpuss produktpresentasjon',
-          'Brief salgsteamet på USP-er',
-          'Avklar budsjett med finans'
+          { text: 'Finpuss produktpresentasjon', completed: false },
+          { text: 'Brief salgsteamet på USP-er', completed: false },
+          { text: 'Avklar budsjett med finans', completed: false }
         ],
         deadlines: [
           { title: 'Budsjett godkjent', date: '2024-09-02' },
           { title: 'Lanseringsdato', date: '2024-10-15' }
-        ],
-        milestones: [
-          { title: 'Pilotgruppe', note: 'Fullfør beta-test og samle tilbakemeldinger.' },
-          { title: 'Go-to-market', note: 'Finaliser kampanjeplan og mediafordeling.' }
         ],
         stickies: ['Husk demo med salgsteamet', 'Oppdater pressekit']
       },
@@ -2220,17 +2618,13 @@
         favorite: true,
         status: 'Planlegging',
         todos: [
-          'Analyse av supporthenvendelser',
-          'Workshops med kundeteamet',
-          'Prioriter tiltak for Q1'
+          { text: 'Analyse av supporthenvendelser', completed: false },
+          { text: 'Workshops med kundeteamet', completed: false },
+          { text: 'Prioriter tiltak for Q1', completed: false }
         ],
         deadlines: [
           { title: 'Intervjuer ferdig', date: '2024-08-19' },
           { title: 'Roadmap klar', date: '2024-09-30' }
-        ],
-        milestones: [
-          { title: 'Innsiktsrapport', note: 'Oppsummer funn og forslag til forbedringer.' },
-          { title: 'MVP-definisjon', note: 'Avklar scope for første leveranse.' }
         ],
         stickies: ['Sikre deltakelse fra kundesenteret', 'Book møte med produktteamet']
       },
@@ -2241,15 +2635,12 @@
         favorite: false,
         status: 'Oppstart',
         todos: [
-          'Samle krav fra avdelingene',
-          'Utarbeid wireframes',
-          'Planlegg migrering av innhold'
+          { text: 'Samle krav fra avdelingene', completed: false },
+          { text: 'Utarbeid wireframes', completed: false },
+          { text: 'Planlegg migrering av innhold', completed: false }
         ],
         deadlines: [
           { title: 'Design sign-off', date: '2024-11-05' }
-        ],
-        milestones: [
-          { title: 'Innholdsoversikt', note: 'Kartlegg eiere og ansvar.' }
         ],
         stickies: ['Sett opp testmiljø', 'Vurder søkefunksjonalitet']
       }
@@ -2322,6 +2713,351 @@
         if (element) {
           container.appendChild(element);
         }
+      });
+    }
+
+    function normalizeProjectTodos(project) {
+      if (!project) {
+        return [];
+      }
+
+      if (!Array.isArray(project.todos)) {
+        project.todos = [];
+      }
+
+      project.todos = project.todos.map((entry) => {
+        if (typeof entry === 'string') {
+          return { text: entry, completed: false };
+        }
+
+        return {
+          text: typeof entry?.text === 'string' ? entry.text : '',
+          completed: Boolean(entry?.completed),
+        };
+      });
+
+      return project.todos;
+    }
+
+    function normalizeProjectDeadlines(project) {
+      if (!project) {
+        return [];
+      }
+
+      if (!Array.isArray(project.deadlines)) {
+        project.deadlines = [];
+      }
+
+      project.deadlines = project.deadlines.map((entry) => {
+        if (!entry || typeof entry !== 'object') {
+          if (typeof entry === 'string') {
+            return { title: entry, date: '' };
+          }
+
+          return { title: '', date: '' };
+        }
+
+        return {
+          title: typeof entry.title === 'string' ? entry.title : '',
+          date: typeof entry.date === 'string' ? entry.date : '',
+        };
+      });
+
+      return project.deadlines;
+    }
+
+    function closeProjectTodoForm({ clearInput = false } = {}) {
+      if (!projectTodoForm) {
+        return;
+      }
+
+      projectTodoForm.hidden = true;
+
+      if (projectTodoToggle) {
+        projectTodoToggle.setAttribute('aria-expanded', 'false');
+      }
+
+      if (clearInput && projectTodoInput) {
+        projectTodoInput.value = '';
+      }
+    }
+
+    function openProjectTodoForm() {
+      if (!projectTodoForm || !projectTodoToggle) {
+        return;
+      }
+
+      if (!activeProjectId) {
+        return;
+      }
+
+      projectTodoForm.hidden = false;
+      projectTodoToggle.setAttribute('aria-expanded', 'true');
+      projectTodoToggle.removeAttribute('disabled');
+
+      if (projectTodoInput) {
+        projectTodoInput.value = '';
+        projectTodoInput.focus({ preventScroll: true });
+      }
+    }
+
+    function closeProjectDeadlineForm({ clearInputs = false } = {}) {
+      if (!projectDeadlineForm) {
+        return;
+      }
+
+      projectDeadlineForm.hidden = true;
+
+      if (projectDeadlineToggle) {
+        projectDeadlineToggle.setAttribute('aria-expanded', 'false');
+      }
+
+      if (clearInputs) {
+        if (projectDeadlineDateInput) {
+          projectDeadlineDateInput.value = '';
+        }
+        if (projectDeadlineTitleInput) {
+          projectDeadlineTitleInput.value = '';
+        }
+      }
+    }
+
+    function openProjectDeadlineForm() {
+      if (!projectDeadlineForm || !projectDeadlineToggle) {
+        return;
+      }
+
+      if (!activeProjectId) {
+        return;
+      }
+
+      projectDeadlineForm.hidden = false;
+      projectDeadlineToggle.setAttribute('aria-expanded', 'true');
+      projectDeadlineToggle.removeAttribute('disabled');
+
+      if (projectDeadlineDateInput && !projectDeadlineDateInput.value) {
+        try {
+          projectDeadlineDateInput.value = new Date().toISOString().split('T')[0];
+        } catch (dateError) {
+          console.error('Kunne ikke sette standarddato for frist', dateError);
+        }
+      }
+
+      (projectDeadlineDateInput ?? projectDeadlineTitleInput)?.focus({ preventScroll: true });
+    }
+
+    function renderProjectTodos(project) {
+      if (!projectTodos) {
+        return;
+      }
+
+      projectTodos.innerHTML = '';
+
+      if (!project) {
+        const empty = document.createElement('li');
+        empty.className = 'project-section-empty';
+        empty.textContent = 'Ingen oppgaver registrert.';
+        projectTodos.appendChild(empty);
+        projectTodoToggle?.setAttribute('disabled', '');
+        projectTodoToggle?.setAttribute('aria-expanded', 'false');
+        return;
+      }
+
+      projectTodoToggle?.removeAttribute('disabled');
+
+      const todos = normalizeProjectTodos(project);
+
+      if (todos.length === 0) {
+        const empty = document.createElement('li');
+        empty.className = 'project-section-empty';
+        empty.textContent = 'Ingen oppgaver registrert.';
+        projectTodos.appendChild(empty);
+        return;
+      }
+
+      todos.forEach((todo, index) => {
+        const item = document.createElement('li');
+        item.className = 'project-todo-item';
+        if (todo.completed) {
+          item.classList.add('is-complete');
+        }
+        item.dataset.projectId = project.id;
+        item.dataset.todoIndex = String(index);
+
+        const toggle = document.createElement('button');
+        toggle.type = 'button';
+        toggle.className = 'project-todo-check';
+        toggle.setAttribute('aria-pressed', todo.completed ? 'true' : 'false');
+        toggle.setAttribute('aria-label', todo.completed ? 'Marker oppgave som ufullført' : 'Marker oppgave som ferdig');
+        toggle.textContent = todo.completed ? '✓' : '';
+        toggle.addEventListener('click', () => {
+          todo.completed = !todo.completed;
+          updateProjectContent(project);
+        });
+        item.appendChild(toggle);
+
+        const text = document.createElement('span');
+        text.className = 'project-todo-text';
+        text.textContent = todo.text ?? '';
+        item.appendChild(text);
+
+        const actions = document.createElement('div');
+        actions.className = 'project-item-actions';
+
+        const editButton = document.createElement('button');
+        editButton.type = 'button';
+        editButton.className = 'project-item-btn';
+        editButton.setAttribute('aria-label', 'Rediger oppgave');
+        editButton.textContent = '✎';
+        editButton.addEventListener('click', () => {
+          const nextValue = window.prompt('Oppdater oppgave', todo.text ?? '');
+          if (nextValue === null) {
+            return;
+          }
+          const trimmed = nextValue.trim();
+          if (!trimmed) {
+            return;
+          }
+          todo.text = trimmed;
+          updateProjectContent(project);
+        });
+        actions.appendChild(editButton);
+
+        const deleteButton = document.createElement('button');
+        deleteButton.type = 'button';
+        deleteButton.className = 'project-item-btn project-item-btn--delete';
+        deleteButton.setAttribute('aria-label', 'Slett oppgave');
+        deleteButton.textContent = '×';
+        deleteButton.addEventListener('click', () => {
+          todos.splice(index, 1);
+          updateProjectContent(project);
+        });
+        actions.appendChild(deleteButton);
+
+        item.appendChild(actions);
+
+        projectTodos.appendChild(item);
+      });
+    }
+
+    function renderProjectDeadlines(project) {
+      if (!projectDeadlines) {
+        return;
+      }
+
+      projectDeadlines.innerHTML = '';
+
+      if (!project) {
+        const empty = document.createElement('li');
+        empty.className = 'project-section-empty';
+        empty.textContent = 'Ingen frister lagt inn.';
+        projectDeadlines.appendChild(empty);
+        projectDeadlineToggle?.setAttribute('disabled', '');
+        projectDeadlineToggle?.setAttribute('aria-expanded', 'false');
+        return;
+      }
+
+      projectDeadlineToggle?.removeAttribute('disabled');
+
+      const deadlines = normalizeProjectDeadlines(project);
+
+      if (deadlines.length === 0) {
+        const empty = document.createElement('li');
+        empty.className = 'project-section-empty';
+        empty.textContent = 'Ingen frister lagt inn.';
+        projectDeadlines.appendChild(empty);
+        return;
+      }
+
+      deadlines.forEach((deadline, index) => {
+        const item = document.createElement('li');
+        item.className = 'project-deadline-item';
+        item.dataset.projectId = project.id;
+        item.dataset.deadlineIndex = String(index);
+
+        const header = document.createElement('div');
+        header.className = 'project-deadline-header';
+
+        const meta = document.createElement('div');
+        meta.className = 'project-deadline-meta';
+
+        const pin = document.createElement('span');
+        pin.className = 'project-deadline-pin';
+        pin.setAttribute('aria-hidden', 'true');
+        pin.textContent = '📌';
+        meta.appendChild(pin);
+
+        const time = document.createElement('time');
+        time.className = 'project-deadline-date';
+
+        if (deadline.date) {
+          const parsed = new Date(deadline.date);
+          if (!Number.isNaN(parsed.getTime())) {
+            time.dateTime = parsed.toISOString().split('T')[0];
+            time.textContent = formatDate(deadline.date);
+          } else {
+            time.dateTime = deadline.date;
+            time.textContent = deadline.date;
+          }
+        } else {
+          time.textContent = 'Ingen dato';
+        }
+
+        meta.appendChild(time);
+        header.appendChild(meta);
+
+        const actions = document.createElement('div');
+        actions.className = 'project-item-actions';
+
+        const editButton = document.createElement('button');
+        editButton.type = 'button';
+        editButton.className = 'project-item-btn';
+        editButton.setAttribute('aria-label', 'Rediger frist');
+        editButton.textContent = '✎';
+        editButton.addEventListener('click', () => {
+          const nextTitle = window.prompt('Oppdater beskrivelse', deadline.title ?? '');
+          if (nextTitle === null) {
+            return;
+          }
+          const trimmedTitle = nextTitle.trim();
+          if (!trimmedTitle) {
+            return;
+          }
+          const nextDate = window.prompt('Oppdater forfallsdato (ÅÅÅÅ-MM-DD)', deadline.date ?? '');
+          if (nextDate === null) {
+            return;
+          }
+          const trimmedDate = nextDate.trim();
+          if (!trimmedDate) {
+            return;
+          }
+          deadline.title = trimmedTitle;
+          deadline.date = trimmedDate;
+          updateProjectContent(project);
+        });
+        actions.appendChild(editButton);
+
+        const deleteButton = document.createElement('button');
+        deleteButton.type = 'button';
+        deleteButton.className = 'project-item-btn project-item-btn--delete';
+        deleteButton.setAttribute('aria-label', 'Slett frist');
+        deleteButton.textContent = '×';
+        deleteButton.addEventListener('click', () => {
+          deadlines.splice(index, 1);
+          updateProjectContent(project);
+        });
+        actions.appendChild(deleteButton);
+
+        header.appendChild(actions);
+
+        item.appendChild(header);
+
+        const description = document.createElement('p');
+        description.className = 'project-deadline-title';
+        description.textContent = deadline.title || 'Ingen beskrivelse';
+        item.appendChild(description);
+
+        projectDeadlines.appendChild(item);
       });
     }
 
@@ -2750,8 +3486,18 @@
       updateFavoriteToggle(project ?? null);
 
       if (!project) {
+        closeProjectTodoForm({ clearInput: true });
+        closeProjectDeadlineForm({ clearInputs: true });
         projectContent.hidden = true;
         projectEmpty.hidden = false;
+        renderProjectTodos(null);
+        renderProjectDeadlines(null);
+        populateList(
+          projectStickies,
+          [],
+          'Ingen notater enda.',
+          () => null
+        );
         return;
       }
 
@@ -2766,77 +3512,20 @@
         projectSummary.textContent = project.summary || 'Ingen beskrivelse lagt til ennå.';
       }
 
-      populateList(
-        projectTodos,
-        project.todos,
-        'Ingen oppgaver registrert.',
-        (todo) => {
-          const item = document.createElement('li');
-          item.className = 'project-todo-item';
+      closeProjectTodoForm({ clearInput: true });
+      closeProjectDeadlineForm({ clearInputs: true });
 
-          const indicator = document.createElement('span');
-          indicator.className = 'project-todo-check';
-          indicator.textContent = '✓';
-          item.appendChild(indicator);
-
-          const text = document.createElement('span');
-          text.className = 'project-todo-text';
-          text.textContent = todo;
-          item.appendChild(text);
-
-          return item;
-        }
-      );
-
-      populateList(
-        projectDeadlines,
-        project.deadlines,
-        'Ingen frister lagt inn.',
-        (deadline) => {
-          const item = document.createElement('li');
-          const title = document.createElement('span');
-          title.textContent = deadline.title ?? 'Frist';
-          item.appendChild(title);
-
-          if (deadline.date) {
-            const time = document.createElement('time');
-            const parsed = new Date(deadline.date);
-            if (!Number.isNaN(parsed.getTime())) {
-              time.dateTime = parsed.toISOString();
-            }
-            time.textContent = formatDate(deadline.date);
-            item.appendChild(time);
-          }
-
-          return item;
-        }
-      );
-
-      populateList(
-        projectMilestones,
-        project.milestones,
-        'Ingen notater registrert.',
-        (milestone) => {
-          const item = document.createElement('li');
-          if (milestone.title) {
-            const title = document.createElement('strong');
-            title.textContent = milestone.title;
-            item.appendChild(title);
-          }
-          if (milestone.note) {
-            const note = document.createElement('span');
-            note.textContent = milestone.note;
-            item.appendChild(note);
-          }
-          return item;
-        }
-      );
+      renderProjectTodos(project);
+      renderProjectDeadlines(project);
 
       populateList(
         projectStickies,
-        project.stickies,
+        project?.stickies ?? [],
         'Ingen notater enda.',
         (sticky, index) => {
+          if (!project) {
+            return null;
+          }
           const item = document.createElement('li');
           item.className = 'project-sticky-note';
           item.dataset.stickyIndex = String(index);
@@ -3569,7 +4258,6 @@
         status: 'Nytt',
         todos: [],
         deadlines: [],
-        milestones: [],
         stickies: [],
       };
 
@@ -3578,6 +4266,98 @@
       renderProjectShortcuts();
       renderProjectList();
       openProjectArea(newProject.id);
+    });
+
+    projectTodoToggle?.addEventListener('click', () => {
+      if (projectTodoToggle.hasAttribute('disabled')) {
+        return;
+      }
+
+      if (projectTodoForm?.hidden) {
+        openProjectTodoForm();
+      } else {
+        closeProjectTodoForm({ clearInput: true });
+      }
+    });
+
+    projectTodoCancel?.addEventListener('click', () => {
+      closeProjectTodoForm({ clearInput: true });
+      projectTodoToggle?.focus();
+    });
+
+    projectTodoForm?.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      if (!activeProjectId) {
+        closeProjectTodoForm({ clearInput: true });
+        return;
+      }
+
+      const project = findProject(activeProjectId);
+
+      if (!project) {
+        closeProjectTodoForm({ clearInput: true });
+        return;
+      }
+
+      const value = projectTodoInput?.value.trim() ?? '';
+
+      if (!value) {
+        closeProjectTodoForm({ clearInput: true });
+        return;
+      }
+
+      const todos = normalizeProjectTodos(project);
+      todos.push({ text: value, completed: false });
+      updateProjectContent(project);
+      closeProjectTodoForm({ clearInput: true });
+      projectTodoToggle?.focus();
+    });
+
+    projectDeadlineToggle?.addEventListener('click', () => {
+      if (projectDeadlineToggle.hasAttribute('disabled')) {
+        return;
+      }
+
+      if (projectDeadlineForm?.hidden) {
+        openProjectDeadlineForm();
+      } else {
+        closeProjectDeadlineForm({ clearInputs: true });
+      }
+    });
+
+    projectDeadlineCancel?.addEventListener('click', () => {
+      closeProjectDeadlineForm({ clearInputs: true });
+      projectDeadlineToggle?.focus();
+    });
+
+    projectDeadlineForm?.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      if (!activeProjectId) {
+        closeProjectDeadlineForm({ clearInputs: true });
+        return;
+      }
+
+      const project = findProject(activeProjectId);
+
+      if (!project) {
+        closeProjectDeadlineForm({ clearInputs: true });
+        return;
+      }
+
+      const dateValue = projectDeadlineDateInput?.value ?? '';
+      const titleValue = projectDeadlineTitleInput?.value.trim() ?? '';
+
+      if (!dateValue || !titleValue) {
+        return;
+      }
+
+      const deadlines = normalizeProjectDeadlines(project);
+      deadlines.push({ title: titleValue, date: dateValue });
+      updateProjectContent(project);
+      closeProjectDeadlineForm({ clearInputs: true });
+      projectDeadlineToggle?.focus();
     });
 
     projectStickyAddButton?.addEventListener('click', () => {
