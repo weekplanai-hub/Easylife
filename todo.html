@@ -263,15 +263,43 @@
     }
 
     .project-shortcuts {
+      position: relative;
       border-radius: 28px;
       border: 1px solid var(--column-border);
-      background: rgba(12, 15, 24, 0.48);
+      background: var(--column-base);
       backdrop-filter: blur(18px);
       padding: clamp(20px, 3vw, 28px);
       display: flex;
       flex-direction: column;
       gap: clamp(16px, 3vw, 24px);
       box-shadow: var(--column-shadow);
+      overflow: hidden;
+    }
+
+    .project-shortcuts::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      background: linear-gradient(155deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02) 70%);
+      z-index: 0;
+    }
+
+    .project-shortcuts::after {
+      content: '';
+      position: absolute;
+      inset: -12% -20% 30%;
+      border-radius: 42%;
+      pointer-events: none;
+      background: radial-gradient(circle at top, rgba(255, 255, 255, 0.22) 0%, transparent 65%);
+      z-index: 0;
+      filter: blur(0.5px);
+    }
+
+    .project-shortcuts > * {
+      position: relative;
+      z-index: 1;
     }
 
     .project-shortcuts-header {
@@ -284,7 +312,10 @@
 
     .project-shortcuts-header h2 {
       margin: 0;
-      font-size: clamp(1.4rem, 1.2vw + 1rem, 1.8rem);
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
     }
 
     .project-shortcuts-header p {
@@ -318,6 +349,7 @@
       cursor: pointer;
       transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease, border-color 150ms ease;
       backdrop-filter: blur(14px);
+      position: relative;
     }
 
     .project-action-btn svg {
@@ -337,6 +369,75 @@
       border-color: rgba(255, 255, 255, 0.32);
       box-shadow: 0 12px 32px rgba(5, 7, 12, 0.4);
       outline: none;
+    }
+
+    .project-action-btn--icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      gap: 0;
+      font-size: 1.4rem;
+      font-weight: 600;
+      line-height: 1;
+    }
+
+    .project-action-btn--icon svg {
+      width: 20px;
+      height: 20px;
+      stroke-width: 1.8;
+    }
+
+    .project-action-btn--icon[data-tooltip]::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: calc(100% + 14px);
+      left: 50%;
+      transform: translate(-50%, 6px);
+      background: rgba(12, 15, 24, 0.82);
+      color: var(--text-primary);
+      padding: 6px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 18px 40px rgba(5, 7, 12, 0.45);
+      font-size: 0.8rem;
+      font-weight: 600;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 160ms ease, transform 160ms ease;
+      z-index: 12;
+    }
+
+    .project-action-btn--icon[data-tooltip]::before {
+      content: '';
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 50%;
+      width: 12px;
+      height: 12px;
+      transform: translate(-50%, 6px) rotate(45deg);
+      background: rgba(12, 15, 24, 0.82);
+      border-right: 1px solid rgba(255, 255, 255, 0.2);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 160ms ease, transform 160ms ease;
+      z-index: 11;
+    }
+
+    .project-action-btn--icon[data-tooltip]:hover::before,
+    .project-action-btn--icon[data-tooltip]:focus-visible::before {
+      opacity: 1;
+      transform: translate(-50%, 0) rotate(45deg);
+    }
+
+    .project-action-btn--icon[data-tooltip]:hover::after,
+    .project-action-btn--icon[data-tooltip]:focus-visible::after {
+      opacity: 1;
+      transform: translate(-50%, 0);
     }
 
     .project-shortcuts-list {
@@ -795,6 +896,11 @@
     }
 
     main[data-project-open='true'] .history-panel {
+      display: none;
+    }
+
+    main[data-project-open='true'] .layout-controls,
+    main[data-project-open='true'] .history-button {
       display: none;
     }
 
@@ -1531,13 +1637,19 @@
           <h2>Prosjekt</h2>
         </div>
         <div class="project-shortcuts-actions">
-          <button class="project-action-btn" type="button" data-project-add>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14m-7-7h14" /></svg>
-            <span>Legg til prosjekt</span>
+          <button class="project-action-btn project-action-btn--icon" type="button" data-project-add aria-label="Legg til prosjekt">
+            <span aria-hidden="true">+</span>
           </button>
-          <button class="project-action-btn" type="button" data-project-open aria-expanded="false" aria-controls="project-panel">
+          <button
+            class="project-action-btn project-action-btn--icon"
+            type="button"
+            data-project-open
+            aria-expanded="false"
+            aria-controls="project-panel"
+            aria-label="Gå til prosjektområdet"
+            data-tooltip="Gå til prosjektområdet"
+          >
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
-            <span>Gå til prosjektområdet</span>
           </button>
         </div>
       </div>
@@ -1929,6 +2041,7 @@
     enforceSession();
 
     const main = document.querySelector('main');
+    const headerTitle = document.querySelector('header h1');
     const board = document.querySelector('.board');
     const columns = Array.from(board?.querySelectorAll('.task-column[data-column]') ?? []);
     const layoutButtons = document.querySelectorAll('[data-layout-button]');
@@ -2659,6 +2772,9 @@
       projectPanel.setAttribute('aria-hidden', 'false');
       board?.setAttribute('aria-hidden', 'true');
       projectOpenButton?.setAttribute('aria-expanded', 'true');
+      if (headerTitle) {
+        headerTitle.textContent = 'Prosjekt';
+      }
 
       if (targetProjectId) {
         showProject(targetProjectId);
@@ -2685,6 +2801,9 @@
       main?.removeAttribute('data-project-open');
       board?.removeAttribute('aria-hidden');
       projectOpenButton?.setAttribute('aria-expanded', 'false');
+      if (headerTitle) {
+        headerTitle.textContent = 'Todo';
+      }
     }
 
     if (projects.length > 0) {
