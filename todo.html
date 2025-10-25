@@ -621,7 +621,7 @@
     .project-area {
       display: none;
       width: 100%;
-      grid-template-columns: clamp(240px, 24vw, 320px) minmax(0, 1fr);
+      grid-template-columns: minmax(260px, 320px) minmax(560px, 1fr);
       grid-template-rows: auto minmax(0, 1fr);
       column-gap: clamp(18px, 3vw, 28px);
       row-gap: clamp(18px, 3vw, 28px);
@@ -645,6 +645,7 @@
       padding: clamp(24px, 3vw, 32px);
       box-shadow: var(--column-shadow);
       min-height: 0;
+      min-width: min(100%, clamp(560px, 58vw, 840px));
     }
 
     .project-panel-header {
@@ -711,7 +712,7 @@
     }
 
     .project-list {
-      flex: 0 0 clamp(240px, 24vw, 320px);
+      flex: 0 0 clamp(260px, 24vw, 340px);
       display: flex;
       flex-direction: column;
       gap: clamp(12px, 1.5vw, 18px);
@@ -853,12 +854,37 @@
     .project-workspace-title {
       margin: 0;
       font-size: clamp(1.2rem, 1vw + 1rem, 1.8rem);
+      cursor: text;
+    }
+
+    .project-workspace-title[contenteditable='true'] {
+      outline: none;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 14px;
+      padding: 6px 12px;
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14);
     }
 
     .project-workspace-summary {
       margin: 0;
       color: var(--text-secondary);
       line-height: 1.5;
+      cursor: text;
+      min-height: 24px;
+    }
+
+    .project-workspace-summary[contenteditable='true'] {
+      outline: none;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+      padding: 8px 12px;
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14);
+      color: var(--text-primary);
+    }
+
+    .project-workspace-summary[data-placeholder]:empty::before {
+      content: attr(data-placeholder);
+      color: rgba(255, 255, 255, 0.6);
     }
 
     .project-empty {
@@ -938,6 +964,7 @@
       gap: 8px;
       font-size: 0.95rem;
       font-weight: 600;
+      flex: 1;
     }
 
     .project-deadline-pin {
@@ -951,6 +978,20 @@
       font-size: 1rem;
       font-weight: 600;
       letter-spacing: 0.01em;
+      cursor: text;
+      border-radius: 10px;
+      padding: 2px 6px;
+    }
+
+    .project-deadline-date[contenteditable='true'] {
+      outline: none;
+      background: rgba(255, 255, 255, 0.04);
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12);
+    }
+
+    .project-deadline-date[data-placeholder]:empty::before {
+      content: attr(data-placeholder);
+      color: rgba(255, 255, 255, 0.6);
     }
 
     .project-deadline-title {
@@ -958,6 +999,22 @@
       color: var(--text-secondary);
       font-size: 0.9rem;
       line-height: 1.5;
+      cursor: text;
+      min-height: 22px;
+    }
+
+    .project-deadline-title[contenteditable='true'] {
+      outline: none;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 10px;
+      padding: 6px 10px;
+      color: var(--text-primary);
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12);
+    }
+
+    .project-deadline-title[data-placeholder]:empty::before {
+      content: attr(data-placeholder);
+      color: rgba(255, 255, 255, 0.6);
     }
 
     .project-section-header {
@@ -1118,6 +1175,16 @@
     .project-todo-text {
       flex: 1;
       min-width: 0;
+      cursor: text;
+    }
+
+    .project-todo-text[contenteditable='true'] {
+      outline: none;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 10px;
+      padding: 6px 10px;
+      color: var(--text-primary);
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12);
     }
 
     .project-todo-item.is-complete .project-todo-text {
@@ -1140,44 +1207,47 @@
       outline: none;
     }
 
-    .project-item-actions {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
+    .project-todo-item.is-editing,
+    .project-deadline-item.is-editing {
+      border-color: rgba(255, 255, 255, 0.32);
+      box-shadow: 0 10px 28px rgba(5, 7, 12, 0.38);
+      background: rgba(28, 32, 45, 0.72);
     }
 
-    .project-item-btn {
-      width: 30px;
-      height: 30px;
-      border-radius: 12px;
-      border: 1px solid var(--action-border);
-      background: rgba(12, 15, 24, 0.6);
+    .project-inline-delete {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      background: transparent;
       color: var(--text-primary);
+      font-size: 1rem;
       display: grid;
       place-items: center;
-      font-size: 0.85rem;
       cursor: pointer;
-      transition: transform 150ms ease, background 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
-      backdrop-filter: blur(12px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 150ms ease, transform 150ms ease, border-color 150ms ease, background 150ms ease;
+      flex-shrink: 0;
     }
 
-    .project-item-btn:hover,
-    .project-item-btn:focus-visible {
+    .project-inline-delete:hover,
+    .project-inline-delete:focus-visible {
       transform: translateY(-1px);
-      background: rgba(12, 15, 24, 0.78);
-      border-color: rgba(255, 255, 255, 0.32);
-      box-shadow: 0 10px 24px rgba(5, 7, 12, 0.38);
+      background: rgba(12, 15, 24, 0.35);
+      border-color: rgba(255, 255, 255, 0.28);
       outline: none;
     }
 
-    .project-item-btn--delete {
-      color: #ff9f9f;
-      border-color: rgba(255, 159, 159, 0.36);
+    .project-inline-delete:focus-visible {
+      opacity: 1;
+      pointer-events: auto;
     }
 
-    .project-item-btn--delete:hover,
-    .project-item-btn--delete:focus-visible {
-      border-color: rgba(255, 159, 159, 0.6);
+    .project-todo-item.is-editing .project-inline-delete,
+    .project-deadline-item.is-editing .project-inline-delete {
+      opacity: 1;
+      pointer-events: auto;
     }
 
     .project-stickies {
@@ -2027,6 +2097,10 @@
       .project-back-button {
         justify-self: flex-end;
       }
+
+      .project-panel {
+        min-width: 0;
+      }
     }
   </style>
 </head>
@@ -2481,12 +2555,13 @@
                     <div class="project-section-actions">
                       <button
                         type="button"
-                        class="project-pill-button"
+                        class="project-sticky-add project-add-toggle"
                         data-project-todo-toggle
                         aria-expanded="false"
                         aria-controls="project-todo-form"
+                        aria-label="Legg til oppgave"
                       >
-                        Legg til oppgave
+                        +
                       </button>
                     </div>
                   </div>
@@ -2510,12 +2585,13 @@
                     <div class="project-section-actions">
                       <button
                         type="button"
-                        class="project-pill-button"
+                        class="project-sticky-add project-add-toggle"
                         data-project-deadline-toggle
                         aria-expanded="false"
                         aria-controls="project-deadline-form"
+                        aria-label="Legg til frist"
                       >
-                        Legg til frist
+                        +
                       </button>
                     </div>
                   </div>
@@ -2738,6 +2814,9 @@
     let activeProjectId = null;
     let activeSummaryElement = null;
     let activeStickyElement = null;
+    let activeTitleElement = null;
+    let activeTodoElement = null;
+    let activeDeadlineElement = null;
 
     function updateFilterUI() {
       filterTags.forEach((tag) => {
@@ -3043,42 +3122,27 @@
         const text = document.createElement('span');
         text.className = 'project-todo-text';
         text.textContent = todo.text ?? '';
+        text.tabIndex = 0;
+        text.dataset.projectId = project.id;
+        text.dataset.todoIndex = String(index);
+        text.setAttribute('contenteditable', 'false');
         item.appendChild(text);
-
-        const actions = document.createElement('div');
-        actions.className = 'project-item-actions';
-
-        const editButton = document.createElement('button');
-        editButton.type = 'button';
-        editButton.className = 'project-item-btn';
-        editButton.setAttribute('aria-label', 'Rediger oppgave');
-        editButton.textContent = '✎';
-        editButton.addEventListener('click', () => {
-          const nextValue = window.prompt('Oppdater oppgave', todo.text ?? '');
-          if (nextValue === null) {
-            return;
-          }
-          const trimmed = nextValue.trim();
-          if (!trimmed) {
-            return;
-          }
-          todo.text = trimmed;
-          updateProjectContent(project);
-        });
-        actions.appendChild(editButton);
 
         const deleteButton = document.createElement('button');
         deleteButton.type = 'button';
-        deleteButton.className = 'project-item-btn project-item-btn--delete';
+        deleteButton.className = 'project-inline-delete';
         deleteButton.setAttribute('aria-label', 'Slett oppgave');
+        deleteButton.dataset.projectId = project.id;
+        deleteButton.dataset.todoIndex = String(index);
         deleteButton.textContent = '×';
         deleteButton.addEventListener('click', () => {
-          todos.splice(index, 1);
+          const todoItems = normalizeProjectTodos(project);
+          todoItems.splice(index, 1);
           updateProjectContent(project);
         });
-        actions.appendChild(deleteButton);
+        item.appendChild(deleteButton);
 
-        item.appendChild(actions);
+        attachProjectTodoHandlers(text, project.id, index);
 
         projectTodos.appendChild(item);
       });
@@ -3133,6 +3197,12 @@
 
         const time = document.createElement('time');
         time.className = 'project-deadline-date';
+        time.tabIndex = 0;
+        time.dataset.projectId = project.id;
+        time.dataset.deadlineIndex = String(index);
+        time.dataset.deadlineField = 'date';
+        time.dataset.placeholder = 'Legg til dato…';
+        time.setAttribute('contenteditable', 'false');
 
         if (deadline.date) {
           const parsed = new Date(deadline.date);
@@ -3144,62 +3214,42 @@
             time.textContent = deadline.date;
           }
         } else {
-          time.textContent = 'Ingen dato';
+          time.textContent = '';
         }
 
         meta.appendChild(time);
         header.appendChild(meta);
 
-        const actions = document.createElement('div');
-        actions.className = 'project-item-actions';
-
-        const editButton = document.createElement('button');
-        editButton.type = 'button';
-        editButton.className = 'project-item-btn';
-        editButton.setAttribute('aria-label', 'Rediger frist');
-        editButton.textContent = '✎';
-        editButton.addEventListener('click', () => {
-          const nextTitle = window.prompt('Oppdater beskrivelse', deadline.title ?? '');
-          if (nextTitle === null) {
-            return;
-          }
-          const trimmedTitle = nextTitle.trim();
-          if (!trimmedTitle) {
-            return;
-          }
-          const nextDate = window.prompt('Oppdater forfallsdato (ÅÅÅÅ-MM-DD)', deadline.date ?? '');
-          if (nextDate === null) {
-            return;
-          }
-          const trimmedDate = nextDate.trim();
-          if (!trimmedDate) {
-            return;
-          }
-          deadline.title = trimmedTitle;
-          deadline.date = trimmedDate;
-          updateProjectContent(project);
-        });
-        actions.appendChild(editButton);
+        attachProjectDeadlineHandlers(time, project.id, index, 'date');
 
         const deleteButton = document.createElement('button');
         deleteButton.type = 'button';
-        deleteButton.className = 'project-item-btn project-item-btn--delete';
+        deleteButton.className = 'project-inline-delete';
         deleteButton.setAttribute('aria-label', 'Slett frist');
+        deleteButton.dataset.projectId = project.id;
+        deleteButton.dataset.deadlineIndex = String(index);
         deleteButton.textContent = '×';
         deleteButton.addEventListener('click', () => {
-          deadlines.splice(index, 1);
+          const deadlineItems = normalizeProjectDeadlines(project);
+          deadlineItems.splice(index, 1);
           updateProjectContent(project);
         });
-        actions.appendChild(deleteButton);
-
-        header.appendChild(actions);
+        header.appendChild(deleteButton);
 
         item.appendChild(header);
 
         const description = document.createElement('p');
         description.className = 'project-deadline-title';
-        description.textContent = deadline.title || 'Ingen beskrivelse';
+        description.textContent = deadline.title || '';
+        description.tabIndex = 0;
+        description.dataset.projectId = project.id;
+        description.dataset.deadlineIndex = String(index);
+        description.dataset.deadlineField = 'title';
+        description.dataset.placeholder = 'Legg til beskrivelse…';
+        description.setAttribute('contenteditable', 'false');
         item.appendChild(description);
+
+        attachProjectDeadlineHandlers(description, project.id, index, 'title');
 
         projectDeadlines.appendChild(item);
       });
@@ -3307,10 +3357,7 @@
         summary.dataset.projectId = project.id;
         summary.dataset.placeholder = 'Legg til beskrivelse…';
         summary.tabIndex = 0;
-        summary.setAttribute('contenteditable', 'false');
-        if (project.summary) {
-          summary.textContent = project.summary;
-        }
+        summary.textContent = project.summary ?? '';
         item.appendChild(summary);
 
         const metaParts = [];
@@ -3330,23 +3377,28 @@
           item.appendChild(meta);
         }
 
-        item.addEventListener('click', (event) => {
-          if (event.target.closest('.project-list-summary')) {
-            return;
-          }
-
+        item.addEventListener('click', () => {
           showProject(project.id);
         });
 
         item.addEventListener('keydown', (event) => {
-          const isEditingSummary = summary.getAttribute('contenteditable') === 'true';
-          if (!isEditingSummary && (event.key === 'Enter' || event.key === ' ')) {
+          if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
             showProject(project.id);
           }
         });
 
-        attachProjectSummaryHandlers(summary, project.id);
+        summary.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            showProject(project.id);
+          }
+        });
+
+        summary.addEventListener('click', (event) => {
+          event.stopPropagation();
+          showProject(project.id);
+        });
 
         projectList.appendChild(item);
       });
@@ -3385,15 +3437,17 @@
       }
     }
 
-    function attachProjectSummaryHandlers(element, projectId) {
-      if (!element) {
+    function attachProjectTitleHandlers(element) {
+      if (!element || element.dataset.titleHandlersBound === 'true') {
         return;
       }
 
-      element.addEventListener('click', (event) => {
+      const handleStart = (event) => {
         event.stopPropagation();
-        startProjectSummaryEditing(projectId, element);
-      });
+        startProjectTitleEditing(element);
+      };
+
+      element.addEventListener('click', handleStart);
 
       element.addEventListener('keydown', (event) => {
         const isEditing = element.getAttribute('contenteditable') === 'true';
@@ -3401,6 +3455,53 @@
         if (!isEditing && (event.key === 'Enter' || event.key === ' ')) {
           event.preventDefault();
           event.stopPropagation();
+          startProjectTitleEditing(element);
+          return;
+        }
+
+        if (!isEditing) {
+          return;
+        }
+
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          event.stopPropagation();
+          element.blur();
+        } else if (event.key === 'Escape') {
+          event.preventDefault();
+          event.stopPropagation();
+          stopProjectTitleEditing(element, false);
+          element.blur();
+        }
+      });
+
+      element.addEventListener('blur', () => {
+        stopProjectTitleEditing(element, true);
+      });
+
+      element.dataset.titleHandlersBound = 'true';
+    }
+
+    function attachProjectSummaryHandlers(element) {
+      if (!element || element.dataset.summaryHandlersBound === 'true') {
+        return;
+      }
+
+      const handleStart = (event) => {
+        event.stopPropagation();
+        const projectId = element.dataset.projectId || activeProjectId;
+        startProjectSummaryEditing(projectId, element);
+      };
+
+      element.addEventListener('click', handleStart);
+
+      element.addEventListener('keydown', (event) => {
+        const isEditing = element.getAttribute('contenteditable') === 'true';
+
+        if (!isEditing && (event.key === 'Enter' || event.key === ' ')) {
+          event.preventDefault();
+          event.stopPropagation();
+          const projectId = element.dataset.projectId || activeProjectId;
           startProjectSummaryEditing(projectId, element);
           return;
         }
@@ -3424,6 +3525,80 @@
       element.addEventListener('blur', () => {
         stopProjectSummaryEditing(element, true);
       });
+
+      element.dataset.summaryHandlersBound = 'true';
+    }
+
+    function startProjectTitleEditing(element) {
+      if (!element || element.getAttribute('contenteditable') === 'true') {
+        return;
+      }
+
+      if (!activeProjectId) {
+        return;
+      }
+
+      if (activeTitleElement && activeTitleElement !== element) {
+        stopProjectTitleEditing(activeTitleElement, true);
+      }
+
+      const project = findProject(activeProjectId);
+      element.dataset.projectId = activeProjectId ?? '';
+      element.dataset.originalValue = project?.name ?? '';
+      element.setAttribute('contenteditable', 'true');
+      element.classList.add('is-editing');
+      activeTitleElement = element;
+
+      requestAnimationFrame(() => {
+        element.focus({ preventScroll: true });
+        placeCaretAtEnd(element);
+      });
+    }
+
+    function stopProjectTitleEditing(element, shouldSave = true) {
+      if (!element || element.getAttribute('contenteditable') !== 'true') {
+        return;
+      }
+
+      const projectId = element.dataset.projectId ?? activeProjectId ?? '';
+      const project = findProject(projectId);
+      const originalValue = element.dataset.originalValue ?? '';
+      let nextValue = element.textContent ?? '';
+
+      if (!shouldSave) {
+        nextValue = originalValue;
+      }
+
+      nextValue = nextValue.trim();
+
+      element.setAttribute('contenteditable', 'false');
+      element.classList.remove('is-editing');
+      delete element.dataset.originalValue;
+      activeTitleElement = null;
+
+      if (project) {
+        if (shouldSave && nextValue) {
+          project.name = nextValue;
+        } else {
+          nextValue = project.name ?? originalValue;
+        }
+
+        if (!nextValue) {
+          nextValue = project.name ?? originalValue;
+        }
+
+        if (project.id === activeProjectId) {
+          updateProjectContent(project);
+        } else {
+          element.textContent = project.name ?? nextValue;
+        }
+
+        renderProjectList();
+        renderProjectShortcuts();
+        return;
+      }
+
+      element.textContent = nextValue;
     }
 
     function startProjectSummaryEditing(projectId, element) {
@@ -3435,8 +3610,9 @@
         stopProjectSummaryEditing(activeSummaryElement, true);
       }
 
-      element.dataset.projectId = projectId ?? '';
-      const project = findProject(projectId);
+      const targetProjectId = projectId ?? activeProjectId ?? '';
+      element.dataset.projectId = targetProjectId;
+      const project = findProject(targetProjectId);
       element.dataset.originalValue = project?.summary ?? '';
       element.setAttribute('contenteditable', 'true');
       element.classList.add('is-editing');
@@ -3476,18 +3652,266 @@
           nextValue = project.summary ?? '';
         }
 
-        if (project.id === activeProjectId) {
-          if (projectSummary) {
-            projectSummary.textContent = project.summary
-              ? project.summary
-              : 'Ingen beskrivelse lagt til ennå.';
-          }
-
-          updateProjectContent(project);
+        if (project.id === activeProjectId && projectSummary) {
+          projectSummary.textContent = project.summary ?? '';
         }
+
+        renderProjectList();
+        renderProjectShortcuts();
       }
 
       element.textContent = nextValue;
+    }
+
+    function attachProjectTodoHandlers(element, projectId, index) {
+      if (!element) {
+        return;
+      }
+
+      element.addEventListener('click', (event) => {
+        event.stopPropagation();
+        startProjectTodoEditing(projectId, index, element);
+      });
+
+      element.addEventListener('keydown', (event) => {
+        const isEditing = element.getAttribute('contenteditable') === 'true';
+
+        if (!isEditing && (event.key === 'Enter' || event.key === ' ')) {
+          event.preventDefault();
+          event.stopPropagation();
+          startProjectTodoEditing(projectId, index, element);
+          return;
+        }
+
+        if (!isEditing) {
+          return;
+        }
+
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          event.stopPropagation();
+          element.blur();
+        } else if (event.key === 'Escape') {
+          event.preventDefault();
+          event.stopPropagation();
+          stopProjectTodoEditing(element, false);
+          element.blur();
+        }
+      });
+
+      element.addEventListener('blur', () => {
+        stopProjectTodoEditing(element, true);
+      });
+    }
+
+    function startProjectTodoEditing(projectId, index, element) {
+      if (!element || element.getAttribute('contenteditable') === 'true') {
+        return;
+      }
+
+      if (activeTodoElement && activeTodoElement !== element) {
+        stopProjectTodoEditing(activeTodoElement, true);
+      }
+
+      const project = findProject(projectId);
+      if (!project) {
+        return;
+      }
+
+      const todos = normalizeProjectTodos(project);
+      if (index < 0 || index >= todos.length) {
+        return;
+      }
+
+      const todo = todos[index];
+      element.dataset.projectId = projectId ?? '';
+      element.dataset.todoIndex = String(index);
+      element.dataset.originalValue = todo?.text ?? '';
+      element.setAttribute('contenteditable', 'true');
+      element.classList.add('is-editing');
+      const item = element.closest('.project-todo-item');
+      item?.classList.add('is-editing');
+      activeTodoElement = element;
+
+      requestAnimationFrame(() => {
+        element.focus({ preventScroll: true });
+        placeCaretAtEnd(element);
+      });
+    }
+
+    function stopProjectTodoEditing(element, shouldSave = true) {
+      if (!element || element.getAttribute('contenteditable') !== 'true') {
+        return;
+      }
+
+      const projectId = element.dataset.projectId ?? '';
+      const project = findProject(projectId);
+      const index = Number(element.dataset.todoIndex ?? -1);
+      const originalValue = element.dataset.originalValue ?? '';
+      let nextValue = element.textContent ?? '';
+
+      if (!shouldSave) {
+        nextValue = originalValue;
+      }
+
+      nextValue = nextValue.trim();
+
+      element.setAttribute('contenteditable', 'false');
+      element.classList.remove('is-editing');
+      const container = element.closest('.project-todo-item');
+      container?.classList.remove('is-editing');
+      delete element.dataset.originalValue;
+      activeTodoElement = null;
+
+      if (!project || Number.isNaN(index)) {
+        element.textContent = nextValue;
+        return;
+      }
+
+      const todos = normalizeProjectTodos(project);
+
+      if (index < 0 || index >= todos.length) {
+        element.textContent = nextValue;
+        return;
+      }
+
+      if (!shouldSave || !nextValue) {
+        element.textContent = originalValue;
+        return;
+      }
+
+      todos[index].text = nextValue;
+      updateProjectContent(project);
+    }
+
+    function attachProjectDeadlineHandlers(element, projectId, index, field) {
+      if (!element) {
+        return;
+      }
+
+      element.addEventListener('click', (event) => {
+        event.stopPropagation();
+        startProjectDeadlineEditing(projectId, index, element, field);
+      });
+
+      element.addEventListener('keydown', (event) => {
+        const isEditing = element.getAttribute('contenteditable') === 'true';
+
+        if (!isEditing && (event.key === 'Enter' || event.key === ' ')) {
+          event.preventDefault();
+          event.stopPropagation();
+          startProjectDeadlineEditing(projectId, index, element, field);
+          return;
+        }
+
+        if (!isEditing) {
+          return;
+        }
+
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          event.stopPropagation();
+          element.blur();
+        } else if (event.key === 'Escape') {
+          event.preventDefault();
+          event.stopPropagation();
+          stopProjectDeadlineEditing(element, false);
+          element.blur();
+        }
+      });
+
+      element.addEventListener('blur', () => {
+        stopProjectDeadlineEditing(element, true);
+      });
+    }
+
+    function startProjectDeadlineEditing(projectId, index, element, field) {
+      if (!element || element.getAttribute('contenteditable') === 'true') {
+        return;
+      }
+
+      if (activeDeadlineElement && activeDeadlineElement !== element) {
+        stopProjectDeadlineEditing(activeDeadlineElement, true);
+      }
+
+      const project = findProject(projectId);
+      if (!project) {
+        return;
+      }
+
+      const deadlines = normalizeProjectDeadlines(project);
+      if (index < 0 || index >= deadlines.length) {
+        return;
+      }
+
+      const deadline = deadlines[index];
+      element.dataset.projectId = projectId ?? '';
+      element.dataset.deadlineIndex = String(index);
+      element.dataset.deadlineField = field;
+      element.dataset.originalValue =
+        field === 'date' ? deadline?.date ?? '' : deadline?.title ?? '';
+      element.setAttribute('contenteditable', 'true');
+      element.classList.add('is-editing');
+      const item = element.closest('.project-deadline-item');
+      item?.classList.add('is-editing');
+      activeDeadlineElement = element;
+
+      requestAnimationFrame(() => {
+        element.focus({ preventScroll: true });
+        placeCaretAtEnd(element);
+      });
+    }
+
+    function stopProjectDeadlineEditing(element, shouldSave = true) {
+      if (!element || element.getAttribute('contenteditable') !== 'true') {
+        return;
+      }
+
+      const projectId = element.dataset.projectId ?? '';
+      const project = findProject(projectId);
+      const index = Number(element.dataset.deadlineIndex ?? -1);
+      const field = element.dataset.deadlineField ?? 'title';
+      const originalValue = element.dataset.originalValue ?? '';
+      let nextValue = element.textContent ?? '';
+
+      if (!shouldSave) {
+        nextValue = originalValue;
+      }
+
+      nextValue = nextValue.trim();
+
+      element.setAttribute('contenteditable', 'false');
+      element.classList.remove('is-editing');
+      const container = element.closest('.project-deadline-item');
+      container?.classList.remove('is-editing');
+      delete element.dataset.originalValue;
+      activeDeadlineElement = null;
+
+      if (!project || Number.isNaN(index)) {
+        element.textContent = nextValue;
+        return;
+      }
+
+      const deadlines = normalizeProjectDeadlines(project);
+
+      if (index < 0 || index >= deadlines.length) {
+        element.textContent = nextValue;
+        return;
+      }
+
+      if (!shouldSave) {
+        element.textContent = originalValue;
+        return;
+      }
+
+      if (field === 'date') {
+        deadlines[index].date = nextValue;
+      } else {
+        deadlines[index].title = nextValue;
+      }
+
+      updateProjectContent(project);
+      renderProjectList();
     }
 
     function attachStickyHandlers(element, projectId, index) {
@@ -3627,6 +4051,18 @@
         return;
       }
 
+      if (activeTodoElement && activeTodoElement.getAttribute('contenteditable') === 'true') {
+        stopProjectTodoEditing(activeTodoElement, true);
+      }
+
+      if (activeDeadlineElement && activeDeadlineElement.getAttribute('contenteditable') === 'true') {
+        stopProjectDeadlineEditing(activeDeadlineElement, true);
+      }
+
+      if (activeSummaryElement && activeSummaryElement.getAttribute('contenteditable') === 'true') {
+        stopProjectSummaryEditing(activeSummaryElement, true);
+      }
+
       updateFavoriteToggle(project ?? null);
 
       if (!project) {
@@ -3634,6 +4070,16 @@
         closeProjectDeadlineForm({ clearInputs: true });
         projectContent.hidden = true;
         projectEmpty.hidden = false;
+        if (projectTitle) {
+          projectTitle.textContent = '';
+          projectTitle.dataset.projectId = '';
+          projectTitle.setAttribute('contenteditable', 'false');
+        }
+        if (projectSummary) {
+          projectSummary.textContent = '';
+          projectSummary.dataset.projectId = '';
+          projectSummary.setAttribute('contenteditable', 'false');
+        }
         renderProjectTodos(null);
         renderProjectDeadlines(null);
         populateList(
@@ -3650,10 +4096,19 @@
 
       if (projectTitle) {
         projectTitle.textContent = project.name;
+        projectTitle.dataset.projectId = project.id;
+        projectTitle.setAttribute('contenteditable', 'false');
+        projectTitle.tabIndex = 0;
+        attachProjectTitleHandlers(projectTitle);
       }
 
       if (projectSummary) {
-        projectSummary.textContent = project.summary || 'Ingen beskrivelse lagt til ennå.';
+        projectSummary.dataset.projectId = project.id;
+        projectSummary.dataset.placeholder = 'Legg til beskrivelse…';
+        projectSummary.textContent = project.summary ?? '';
+        projectSummary.setAttribute('contenteditable', 'false');
+        projectSummary.tabIndex = 0;
+        attachProjectSummaryHandlers(projectSummary);
       }
 
       closeProjectTodoForm({ clearInput: true });
@@ -3774,6 +4229,18 @@
 
       if (activeStickyElement && activeStickyElement.getAttribute('contenteditable') === 'true') {
         stopStickyEditing(activeStickyElement, true);
+      }
+
+      if (activeTitleElement && activeTitleElement.getAttribute('contenteditable') === 'true') {
+        stopProjectTitleEditing(activeTitleElement, true);
+      }
+
+      if (activeTodoElement && activeTodoElement.getAttribute('contenteditable') === 'true') {
+        stopProjectTodoEditing(activeTodoElement, true);
+      }
+
+      if (activeDeadlineElement && activeDeadlineElement.getAttribute('contenteditable') === 'true') {
+        stopProjectDeadlineEditing(activeDeadlineElement, true);
       }
 
       projectPanel.removeAttribute('data-open');
