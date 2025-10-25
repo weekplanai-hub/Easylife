@@ -486,10 +486,10 @@
       display: none;
       width: 100%;
       grid-template-columns: clamp(240px, 24vw, 320px) minmax(0, 1fr);
-      grid-template-rows: auto 1fr;
+      grid-template-rows: auto minmax(0, 1fr);
       column-gap: clamp(18px, 3vw, 28px);
       row-gap: clamp(18px, 3vw, 28px);
-      align-items: start;
+      align-items: stretch;
     }
 
     .project-back-button {
@@ -508,6 +508,8 @@
       backdrop-filter: blur(20px);
       padding: clamp(24px, 3vw, 32px);
       box-shadow: var(--column-shadow);
+      height: 100%;
+      min-height: 0;
     }
 
     .project-panel-header {
@@ -523,30 +525,99 @@
       font-size: clamp(1.4rem, 1.2vw + 1rem, 2rem);
     }
 
+    .project-favorite-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--action-border);
+      background: var(--action-bg);
+      color: var(--text-primary);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: background 150ms ease, border-color 150ms ease, transform 150ms ease,
+        box-shadow 150ms ease;
+      backdrop-filter: blur(14px);
+    }
+
+    .project-favorite-toggle:hover,
+    .project-favorite-toggle:focus-visible {
+      transform: translateY(-1px);
+      border-color: rgba(255, 255, 255, 0.32);
+      background: var(--action-bg-hover);
+      box-shadow: 0 12px 32px rgba(5, 7, 12, 0.38);
+      outline: none;
+    }
+
+    .project-favorite-toggle.is-active {
+      border-color: rgba(255, 255, 255, 0.38);
+      background: rgba(12, 15, 24, 0.78);
+    }
+
+    .project-favorite-toggle-icon {
+      font-size: 1rem;
+      line-height: 1;
+    }
+
+    .project-favorite-toggle-text {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
     .project-panel-body {
       display: flex;
       flex-direction: column;
       gap: clamp(18px, 3vw, 28px);
+      flex: 1;
+      min-height: 0;
     }
 
     .project-list {
       flex: 0 0 clamp(240px, 24vw, 320px);
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: clamp(12px, 1.5vw, 18px);
       padding: clamp(16px, 2vw, 22px);
       border-radius: 22px;
       border: 1px solid var(--column-border);
       background: rgba(12, 15, 24, 0.55);
-      max-height: min(70vh, 720px);
+      height: 100%;
+      min-height: 0;
+    }
+
+    .project-list-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .project-list-title {
+      margin: 0;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+
+    .project-list-items {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1;
+      min-height: 0;
       overflow-y: auto;
     }
 
-    .project-list::-webkit-scrollbar {
+    .project-list-items::-webkit-scrollbar {
       width: 6px;
     }
 
-    .project-list::-webkit-scrollbar-thumb {
+    .project-list-items::-webkit-scrollbar-thumb {
       background: rgba(255, 255, 255, 0.18);
       border-radius: 999px;
     }
@@ -671,12 +742,15 @@
       display: flex;
       flex-direction: column;
       gap: clamp(18px, 3vw, 24px);
+      flex: 1;
+      min-height: 0;
     }
 
     .project-sections {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: clamp(16px, 2.4vw, 24px);
+      align-content: start;
     }
 
     .project-section {
@@ -1959,12 +2033,21 @@
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-6 7 6 7" /></svg>
         <span>Tilbake til oppgaver</span>
       </button>
-      <aside class="project-list" data-project-list>
-        <p class="project-section-empty">Ingen prosjekter er tilgjengelige ennå.</p>
+      <aside class="project-list">
+        <div class="project-list-header">
+          <h3 class="project-list-title">Prosjektnavn</h3>
+        </div>
+        <div class="project-list-items" data-project-list>
+          <p class="project-section-empty">Ingen prosjekter er tilgjengelige ennå.</p>
+        </div>
       </aside>
       <section class="project-panel" id="project-panel" data-project-panel aria-hidden="true">
         <div class="project-panel-header">
-          <h2>Prosjektområde</h2>
+          <h2>Prosjektdetaljer</h2>
+          <button type="button" class="project-favorite-toggle" data-project-favorite aria-pressed="false" hidden>
+            <span class="project-favorite-toggle-icon" aria-hidden="true" data-favorite-icon>☆</span>
+            <span class="project-favorite-toggle-text">Favoritt</span>
+          </button>
         </div>
         <div class="project-panel-body">
           <div class="project-workspace" data-project-workspace>
@@ -2105,6 +2188,7 @@
     const projectDeadlines = projectPanel?.querySelector('[data-project-deadlines]');
     const projectMilestones = projectPanel?.querySelector('[data-project-milestones]');
     const projectStickies = projectPanel?.querySelector('[data-project-stickies]');
+    const projectFavoriteToggle = projectPanel?.querySelector('[data-project-favorite]');
     const projectStickyAddButton = projectPanel?.querySelector('[data-sticky-add]');
     const completedTasks = [];
     const projects = [
@@ -2388,6 +2472,39 @@
       });
     }
 
+    function updateFavoriteToggle(project) {
+      if (!projectFavoriteToggle) {
+        return;
+      }
+
+      const icon = projectFavoriteToggle.querySelector('[data-favorite-icon]');
+
+      if (!project) {
+        projectFavoriteToggle.hidden = true;
+        projectFavoriteToggle.setAttribute('aria-pressed', 'false');
+        projectFavoriteToggle.classList.remove('is-active');
+        projectFavoriteToggle.dataset.projectId = '';
+        projectFavoriteToggle.setAttribute('aria-label', 'Merk prosjektet som favoritt');
+        if (icon) {
+          icon.textContent = '☆';
+        }
+        return;
+      }
+
+      const isFavorite = Boolean(project.favorite);
+      projectFavoriteToggle.hidden = false;
+      projectFavoriteToggle.dataset.projectId = project.id;
+      projectFavoriteToggle.setAttribute('aria-pressed', isFavorite ? 'true' : 'false');
+      projectFavoriteToggle.classList.toggle('is-active', isFavorite);
+      projectFavoriteToggle.setAttribute(
+        'aria-label',
+        isFavorite ? 'Fjern prosjektet fra favoritter' : 'Merk prosjektet som favoritt'
+      );
+      if (icon) {
+        icon.textContent = isFavorite ? '★' : '☆';
+      }
+    }
+
     function attachProjectSummaryHandlers(element, projectId) {
       if (!element) {
         return;
@@ -2630,6 +2747,8 @@
         return;
       }
 
+      updateFavoriteToggle(project ?? null);
+
       if (!project) {
         projectContent.hidden = true;
         projectEmpty.hidden = false;
@@ -2843,6 +2962,25 @@
 
     renderProjectShortcuts();
     renderProjectList();
+
+    if (projectFavoriteToggle) {
+      projectFavoriteToggle.addEventListener('click', () => {
+        if (!activeProjectId) {
+          return;
+        }
+
+        const project = findProject(activeProjectId);
+
+        if (!project) {
+          return;
+        }
+
+        project.favorite = !project.favorite;
+        updateFavoriteToggle(project);
+        renderProjectShortcuts();
+        renderProjectList();
+      });
+    }
 
     function createTodoCard(text, columnIndex) {
       const card = document.createElement('article');
